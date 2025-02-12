@@ -8,4 +8,5 @@ enum Gender: string
     case FEMALE = 'female';
     case UNDEFINED = '';
     case OTHER = 'other';
+    
 }

@@ -10,8 +10,12 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Repository\UserRepository;
+
 
 class MedecinRegistrationController extends AbstractController
 {
@@ -20,13 +24,23 @@ class MedecinRegistrationController extends AbstractController
         Request $request,
         UserPasswordHasherInterface $userPasswordHasher,
         EntityManagerInterface $entityManager,
-        PasswordGenerator $passwordGenerator
+        PasswordGenerator $passwordGenerator,
+        MailerInterface $mailer,
+        UserRepository $userRepository // Injecter le repository User
     ): Response {
         $user = new User();
         $form = $this->createForm(MedecinRegistrationFormType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Vérifier si l'email existe déjà
+            $existingUser = $userRepository->findOneBy(['email' => $user->getEmail()]);
+
+            if ($existingUser) {
+                $this->addFlash('error', 'Un utilisateur avec cet email existe déjà.');
+                return $this->redirectToRoute('app_register_medecin');
+            }
+
             // Générer un mot de passe aléatoire
             $plainPassword = $passwordGenerator->generateRandomPassword();
 
@@ -45,11 +59,25 @@ class MedecinRegistrationController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            // Afficher un message de succès avec le mot de passe généré
-            $this->addFlash('success', 'Compte médecin créé avec succès. Mot de passe généré : ' . $plainPassword);
+            // Envoyer un email avec les informations de connexion
+            $email = (new Email())
+                ->from('mohamedsaidboubaker10@gmail.com')
+                ->to($user->getEmail())
+                ->subject('Vos informations de connexion')
+                ->html($this->renderView(
+                    'emails/medecin_registration.html.twig',
+                    [
+                        'email' => $user->getEmail(),
+                        'password' => $plainPassword,
+                        'firstName' => $user->getFirstName(),
+                        'lastName' => $user->getLastName(),
+                    ]
+                ));
 
-            // Rediriger l'utilisateur après l'inscription
-            return $this->redirectToRoute('app_register_medecin');
+            $mailer->send($email);
+
+            $this->addFlash('success', 'Compte médecin créé avec succès. Un email a été envoyé avec les informations de connexion.');
+            return $this->redirectToRoute('app_medecins_list');
         }
 
         return $this->render('registration/medecin_register.html.twig', [
