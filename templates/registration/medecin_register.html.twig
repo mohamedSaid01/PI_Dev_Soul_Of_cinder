@@ -1,0 +1,21 @@
+{# templates/registration/medecin_register.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription Médecin{% endblock %}
+
+{% block body %}
+    <h1>Inscription Médecin</h1>
+
+    {{ form_start(medecinRegistrationForm) }}
+        {{ form_row(medecinRegistrationForm.email) }}
+        {{ form_row(medecinRegistrationForm.firstName) }}
+        {{ form_row(medecinRegistrationForm.lastName) }}
+        {{ form_row(medecinRegistrationForm.gender) }}
+        {{ form_row(medecinRegistrationForm.adress) }}
+        {{ form_row(medecinRegistrationForm.phoneNumber) }}
+        {{ form_row(medecinRegistrationForm.specialite) }}
+        {{ form_row(medecinRegistrationForm.numeroLicence) }}
+        <button type="submit" class="btn btn-primary">S'inscrire</button>
+    {{ form_end(medecinRegistrationForm) }}
+{% endblock %}

@@ -1,5 +1,7 @@
 <?php
 
+// src/Form/RegistrationFormType.php
+
 namespace App\Form;
 
 use App\Entity\User;
@@ -39,9 +41,8 @@ class RegistrationFormType extends AbstractType
             ])
             ->add('adress', TextType::class)
             ->add('phoneNumber', TextType::class)
-            // Champ password
             ->add('plainPassword', PasswordType::class, [
-                'mapped' => false, // Ne pas mapper directement à l'entité
+                'mapped' => false,
                 'attr' => ['autocomplete' => 'new-password'],
                 'constraints' => [
                     new NotBlank(['message' => 'Veuillez entrer un mot de passe.']),
@@ -51,7 +52,7 @@ class RegistrationFormType extends AbstractType
                         'max' => 4096,
                     ]),
                     new Regex([
-                        'pattern' => '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\d\s]).{8,}$/', // Minimum 8 caractères, lettres, chiffres et caractères spéciaux
+                        'pattern' => '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\d\s]).{8,}$/',
                         'message' => 'Le mot de passe doit contenir au moins une lettre minuscule, une lettre majuscule, un chiffre et un caractère spécial.',
                     ]),
                     new NotCompromisedPassword([
@@ -73,6 +74,7 @@ class RegistrationFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+            'validation_groups' => ['RegistrationUser'], // Utiliser le groupe de validation
         ]);
     }
 }

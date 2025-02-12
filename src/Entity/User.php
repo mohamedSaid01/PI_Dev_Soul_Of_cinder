@@ -3,17 +3,18 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use App\Enum\Gender;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Enum\Specialite;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[UniqueEntity(fields: ['numeroLicence'], message: 'Ce numéro de licence est déjà utilisé.')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -22,11 +23,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
-    #[Assert\NotBlank(message: 'Veuillez entrer un email.')]
-    #[Assert\Email(message: 'L\'email doit être valide.')]
+    #[Assert\NotBlank(message: 'Veuillez entrer un email.', groups: ['RegistrationUser', 'RegistrationMedecin'])]
+    #[Assert\Email(message: 'L\'email doit être valide.', groups: ['RegistrationUser', 'RegistrationMedecin'])]
     #[Assert\Regex(
         pattern: '/^[a-zA-Z0-9._%+-]+@gmail\.com$/',
-        message: 'L\'email doit appartenir à gmail.com.'
+        message: 'L\'email doit appartenir à gmail.com.',
+        groups: ['RegistrationUser', 'RegistrationMedecin']
     )]
     private ?string $email = null;
 
@@ -43,60 +45,86 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: 'Veuillez entrer votre prénom.')]
+    #[Assert\NotBlank(message: 'Veuillez entrer votre prénom.', groups: ['RegistrationUser', 'RegistrationMedecin'])]
     #[Assert\Regex(
         pattern: '/^[a-zA-Z]+$/',
-        message: 'Le prénom ne doit contenir que des lettres.'
+        message: 'Le prénom ne doit contenir que des lettres.',
+        groups: ['RegistrationUser', 'RegistrationMedecin']
     )]
     #[Assert\Length(
         max: 15,
-        maxMessage: 'Le prénom ne peut pas dépasser {{ limit }} caractères.'
+        maxMessage: 'Le prénom ne peut pas dépasser {{ limit }} caractères.',
+        groups: ['RegistrationUser', 'RegistrationMedecin']
     )]
     private ?string $firstName = null;
 
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: 'Veuillez entrer votre nom.')]
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\NotBlank(message: 'Veuillez entrer votre nom.', groups: ['RegistrationUser', 'RegistrationMedecin'])]
     #[Assert\Regex(
         pattern: '/^[a-zA-Z]+$/',
-        message: 'Le nom ne doit contenir que des lettres.'
+        message: 'Le nom ne doit contenir que des lettres.',
+        groups: ['RegistrationUser', 'RegistrationMedecin']
     )]
     #[Assert\Length(
         max: 15,
-        maxMessage: 'Le nom ne peut pas dépasser {{ limit }} caractères.'
+        maxMessage: 'Le nom ne peut pas dépasser {{ limit }} caractères.',
+        groups: ['RegistrationUser', 'RegistrationMedecin']
     )]
     private ?string $lastName = null;
 
-    #[ORM\Column(enumType: Gender::class)]
-    #[Assert\NotBlank(message: 'Veuillez sélectionner un genre.')]
+    #[ORM\Column(enumType: Gender::class, nullable: true)]
+    #[Assert\NotBlank(message: 'Veuillez sélectionner un genre.', groups: ['RegistrationUser', 'RegistrationMedecin'])]
     private ?Gender $gender = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Assert\NotBlank(message: 'Veuillez entrer votre adresse.')]
+    #[Assert\NotBlank(message: 'Veuillez entrer votre adresse.', groups: ['RegistrationUser', 'RegistrationMedecin'])]
     #[Assert\Length(
         min: 5,
         max: 255,
         minMessage: 'L\'adresse doit comporter au moins {{ limit }} caractères.',
-        maxMessage: 'L\'adresse ne peut pas dépasser {{ limit }} caractères.'
+        maxMessage: 'L\'adresse ne peut pas dépasser {{ limit }} caractères.',
+        groups: ['RegistrationUser', 'RegistrationMedecin']
     )]
     #[Assert\Regex(
         pattern: '/^[a-zA-Z0-9\s,.\'-]+$/',
-        message: 'L\'adresse contient des caractères invalides.'
+        message: 'L\'adresse contient des caractères invalides.',
+        groups: ['RegistrationUser', 'RegistrationMedecin']
     )]
     private ?string $adress = null;
 
     #[ORM\Column(length: 8, nullable: true)]
-    #[Assert\NotBlank(message: 'Veuillez entrer votre numéro de téléphone.')]
+    #[Assert\NotBlank(message: 'Veuillez entrer votre numéro de téléphone.', groups: ['RegistrationUser', 'RegistrationMedecin'])]
     #[Assert\Length(
         min: 8,
         max: 8,
-        exactMessage: 'Le numéro de téléphone doit contenir exactement {{ limit }} chiffres.'
+        exactMessage: 'Le numéro de téléphone doit contenir exactement {{ limit }} chiffres.',
+        groups: ['RegistrationUser', 'RegistrationMedecin']
     )]
     #[Assert\Regex(
         pattern: '/^[259]\d{7}$/',
-        message: 'Le numéro de téléphone doit commencer par 2, 5 ou 9 et contenir uniquement des chiffres.'
+        message: 'Le numéro de téléphone doit commencer par 2, 5 ou 9 et contenir uniquement des chiffres.',
+        groups: ['RegistrationUser', 'RegistrationMedecin']
     )]
     private ?string $phoneNumber = null;
 
+    #[ORM\Column(length: 50, nullable: true)]
+    #[Assert\NotBlank(message: 'Veuillez entrer votre numéro de licence.', groups: ['RegistrationMedecin'])]
+    #[Assert\Length(
+        max: 50,
+        maxMessage: 'Le numéro de licence ne peut pas dépasser {{ limit }} caractères.',
+        groups: ['RegistrationMedecin']
+    )]
+    #[Assert\Regex(
+        pattern: '/^[A-Z]{3}\d{5}$/',
+        message: 'Le numéro de licence doit être au format ABC12345 (3 lettres suivies de 5 chiffres).',
+        groups: ['RegistrationMedecin']
+    )]
+    private ?string $numeroLicence = null;
+
+
+    #[ORM\Column(enumType: Specialite::class, nullable: true)]
+    #[Assert\NotBlank(message: 'Veuillez sélectionner une spécialité.', groups: ['RegistrationMedecin'])]
+    private ?Specialite $specialite = null;
     
     public function getId(): ?int
     {
@@ -202,7 +230,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->gender;
     }
 
-    public function setGender(Gender $gender): static
+    public function setGender(?Gender $gender): static
     {
         $this->gender = $gender;
 
@@ -232,5 +260,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    // Ajoute le getter et le setter
+public function getNumeroLicence(): ?string
+{
+    return $this->numeroLicence;
+}
+
+public function setNumeroLicence(?string $numeroLicence): static
+{
+    $this->numeroLicence = $numeroLicence;
+
+    return $this;
+}
+
+public function getSpecialite(): ?Specialite
+{
+    return $this->specialite;
+}
+
+public function setSpecialite(?Specialite $specialite): static
+{
+    $this->specialite = $specialite;
+
+    return $this;
+}
 
 }
