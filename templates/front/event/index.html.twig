@@ -1,0 +1,18 @@
+{% extends 'baseFrontOffice.html.twig' %}
+
+{% block body %}
+    <h1>Liste des événements</h1>
+
+    <ul>
+        {% for event in events %}
+            <li>
+                <h2>{{ event.title }}</h2>
+                <p>{{ event.description }}</p>
+                <p>Date: {{ event.date|date('d-m-Y') }}</p>
+                <p>Lieu: {{ event.location }}</p>
+            </li>
+        {% else %}
+            <li>Aucun événement trouvé.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

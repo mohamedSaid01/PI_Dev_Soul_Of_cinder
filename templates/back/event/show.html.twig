@@ -1,0 +1,52 @@
+{# templates/event/medecin_show.html.twig #}
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Détails de l'événement{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <h1 class="h3 mb-4 text-gray-800">Détails de l'événement</h1>
+
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <tbody>
+                    <tr>
+                        <th>Titre</th>
+                        <td>{{ event.title }}</td>
+                    </tr>
+                    <tr>
+                        <th>Description</th>
+                        <td>{{ event.description }}</td>
+                    </tr>
+                    <tr>
+                        <th>Date de début</th>
+                        <td>{{ event.startDate ? event.startDate|date('Y-m-d H:i') : '' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Date de fin</th>
+                        <td>{{ event.endDate ? event.endDate|date('Y-m-d H:i') : '' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Lieu</th>
+                        <td>{{ event.location }}</td>
+                    </tr>
+                    <tr>
+                        <th>Affiche</th>
+                        <td>
+                            {% if event.affiche %}
+                                <img src="{{ asset('uploads/affiches/' ~ event.affiche) }}" alt="Affiche de l'événement" style="max-width: 200px;">
+                            {% else %}
+                                Pas d'affiche disponible.
+                            {% endif %}
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <a href="{{ path('admin_event_index') }}" class="btn btn-secondary">Retour à la liste</a>
+        <a href="{{ path('admin_event_edit', {'id': event.id}) }}" class="btn btn-warning">Modifier</a>
+    </div>
+{% endblock %}
