@@ -47,7 +47,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'Veuillez entrer votre prénom.', groups: ['RegistrationUser', 'RegistrationMedecin'])]
     #[Assert\Regex(
-        pattern: '/^[a-zA-Z]+$/',
+        pattern: '/^[a-zA-Z\s]+$/',
         message: 'Le prénom ne doit contenir que des lettres.',
         groups: ['RegistrationUser', 'RegistrationMedecin']
     )]
@@ -61,7 +61,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     #[Assert\NotBlank(message: 'Veuillez entrer votre nom.', groups: ['RegistrationUser', 'RegistrationMedecin'])]
     #[Assert\Regex(
-        pattern: '/^[a-zA-Z]+$/',
+        pattern: '/^[a-zA-Z\s]+$/', 
         message: 'Le nom ne doit contenir que des lettres.',
         groups: ['RegistrationUser', 'RegistrationMedecin']
     )]
@@ -121,6 +121,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     )]
     private ?string $numeroLicence = null;
 
+    #[ORM\Column(type: 'integer', nullable: true)]
+#[Assert\NotBlank(message: 'Veuillez entrer votre âge.', groups: ['RegistrationUser', 'RegistrationMedecin'])]
+#[Assert\Range(
+    min: 1,
+    max: 120,
+    notInRangeMessage: 'L\'âge doit être compris entre {{ min }} et {{ max }}.',
+    groups: ['RegistrationUser', 'RegistrationMedecin']
+)]
+private ?int $age = null;
+
 
     #[ORM\Column(enumType: Specialite::class, nullable: true)]
     #[Assert\NotBlank(message: 'Veuillez sélectionner une spécialité.', groups: ['RegistrationMedecin'])]
@@ -160,11 +170,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getRoles(): array
     {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        return $roles = $this->roles;
+        //  guarantee every user at least has ROLE_USER
+            $roles[] = 'ROLE_USER';
 
-        return array_unique($roles);
+            return array_unique($roles);
     }
 
     /**
@@ -282,6 +292,18 @@ public function getSpecialite(): ?Specialite
 public function setSpecialite(?Specialite $specialite): static
 {
     $this->specialite = $specialite;
+
+    return $this;
+}
+
+public function getAge(): ?int
+{
+    return $this->age;
+}
+
+public function setAge(?int $age): static
+{
+    $this->age = $age;
 
     return $this;
 }

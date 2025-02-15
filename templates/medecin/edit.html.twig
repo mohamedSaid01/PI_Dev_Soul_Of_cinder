@@ -5,7 +5,7 @@
 {% block title %}Modifier le Médecin - SAHATECK{% endblock %}
 
 {% block stylesheets %}
-    {{ parent() }}
+    {{ parent() }}  <!-- Ceci appelle les styles du template parent -->
     <style>
         .form-row {
             display: flex;
@@ -90,6 +90,17 @@
             font-weight: 200;
             font-size: 13px;
         }
+
+        /* Aligner le bouton avec le champ "Age" */
+        .form-row .form-group.btn-group {
+            margin-top: 30px; /* Ajuster l'espacement si nécessaire */
+        }
+
+        /* Garder la taille du bouton */
+        .form-group button {
+            width: auto;
+            height: auto;
+        }
     </style>
 {% endblock %}
 
@@ -101,59 +112,68 @@
                     <h5 class="card-title">Modifier le Médecin</h5>
                     <p>Utilisez ce formulaire pour modifier les informations du médecin.<br>Assurez-vous de remplir tous les champs requis pour mettre à jour correctement le médecin.</p>
 
+                    {{ form_errors(form) }}
+
                     {{ form_start(form, {'attr': {'class': 'form', novalidate: 'novalidate'}}) }}
                         <div class="form-row">
                             <!-- Colonne de gauche -->
                             <div class="form-col">
                                 <div class="form-group">
-                                    {{ form_label(form.firstName, 'Prénom', {'label_attr': {'class': 'form-label'}}) }}
-                                    {{ form_widget(form.firstName, {'attr': {'class': 'form-control'}}) }}
+                                    <label>Prénom</label>
+                                    {{ form_widget(form.firstName, {'attr': {'class': 'form-control', 'placeholder': 'Entrer le prénom'}}) }}
                                     {{ form_errors(form.firstName) }}
                                 </div>
                                 <div class="form-group">
-                                    {{ form_label(form.email, 'Email', {'label_attr': {'class': 'form-label'}}) }}
-                                    {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+                                    <label>Email</label>
+                                    {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'Entrer l\'email'}}) }}
                                     {{ form_errors(form.email) }}
                                 </div>
                                 <div class="form-group">
-                                    {{ form_label(form.adress, 'Adresse', {'label_attr': {'class': 'form-label'}}) }}
-                                    {{ form_widget(form.adress, {'attr': {'class': 'form-control'}}) }}
+                                    <label>Adresse</label>
+                                    {{ form_widget(form.adress, {'attr': {'class': 'form-control', 'placeholder': 'Entrer l\'adresse'}}) }}
                                     {{ form_errors(form.adress) }}
                                 </div>
                                 <div class="form-group">
-                                    {{ form_label(form.numeroLicence, 'Numéro de Licence', {'label_attr': {'class': 'form-label'}}) }}
-                                    {{ form_widget(form.numeroLicence, {'attr': {'class': 'form-control'}}) }}
+                                    <label>Numéro de Licence</label>
+                                    {{ form_widget(form.numeroLicence, {'attr': {'class': 'form-control', 'placeholder': 'Format : ABC12345 (3 lettres suivies de 5 chiffres)'}}) }}
                                     {{ form_errors(form.numeroLicence) }}
+                                </div>
+                                <div class="form-group">
+                                    <label>Age</label>
+                                    {{ form_widget(form.age, {'attr': {'class': 'form-control', 'placeholder': 'Entrer l\'âge'}}) }}
+                                    {{ form_errors(form.age) }}
                                 </div>
                             </div>
 
                             <!-- Colonne de droite -->
                             <div class="form-col">
                                 <div class="form-group">
-                                    {{ form_label(form.lastName, 'Nom', {'label_attr': {'class': 'form-label'}}) }}
-                                    {{ form_widget(form.lastName, {'attr': {'class': 'form-control'}}) }}
+                                    <label>Nom</label>
+                                    {{ form_widget(form.lastName, {'attr': {'class': 'form-control', 'placeholder': 'Entrer le nom'}}) }}
                                     {{ form_errors(form.lastName) }}
                                 </div>
                                 <div class="form-group">
-                                    {{ form_label(form.phoneNumber, 'Téléphone', {'label_attr': {'class': 'form-label'}}) }}
-                                    {{ form_widget(form.phoneNumber, {'attr': {'class': 'form-control'}}) }}
+                                    <label>Téléphone</label>
+                                    {{ form_widget(form.phoneNumber, {'attr': {'class': 'form-control', 'placeholder': 'Entrer le numéro de téléphone'}}) }}
                                     {{ form_errors(form.phoneNumber) }}
                                 </div>
                                 <div class="form-group">
-                                    {{ form_label(form.gender, 'Genre', {'label_attr': {'class': 'form-label'}}) }}
-                                    {{ form_widget(form.gender, {'attr': {'class': 'form-select'}}) }}
+                                    <label>Genre</label>
+                                    {{ form_widget(form.gender, {'attr': {'class': 'form-control'}}) }}
                                     {{ form_errors(form.gender) }}
                                 </div>
                                 <div class="form-group">
-                                    {{ form_label(form.specialite, 'Spécialité', {'label_attr': {'class': 'form-label'}}) }}
-                                    {{ form_widget(form.specialite, {'attr': {'class': 'form-select'}}) }}
+                                    <label>Spécialité</label>
+                                    {{ form_widget(form.specialite, {'attr': {'class': 'form-control'}}) }}
                                     {{ form_errors(form.specialite) }}
                                 </div>
+
+                                <!-- Boutons "Enregistrer" et "Annuler" -->
+                                <div class="form-group btn-group">
+                                    <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                                    <a href="{{ path('app_medecins_list') }}" class="btn btn-secondary">Annuler</a>
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
-                            <a href="{{ path('app_medecins_list') }}" class="btn btn-secondary">Annuler</a>
                         </div>
                     {{ form_end(form) }}
                 </div>

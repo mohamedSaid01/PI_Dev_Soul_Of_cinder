@@ -1,6 +1,8 @@
+{# templates/patient/new.html.twig #}
+
 {% extends 'baseBackOffice.html.twig' %}
 
-{% block title %}Inscription Médecin{% endblock %}
+{% block title %}Ajouter un Patient - SAHATECK{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}  <!-- Ceci appelle les styles du template parent -->
@@ -59,6 +61,23 @@
             border-color: #0096C7;
         }
 
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            padding: 10px 20px;
+            font-size: 14px;
+            border-radius: 8px;
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+        }
+
         .text-error {
             color: #dc3545;
             font-size: 12px;
@@ -72,8 +91,8 @@
             font-size: 13px;
         }
 
-        /* Aligner le bouton avec le champ "Age" */
-        .form-row .form-group.btn-group {
+        /* Aligner les boutons horizontalement */
+        .form-group.btn-group {
             margin-top: 30px; /* Ajuster l'espacement si nécessaire */
         }
 
@@ -90,39 +109,34 @@
         <div class="card">
             <div class="card-body">
                 <div class="form-container">
-                    <h5 class="card-title">Ajouter un nouveau médecin</h5>
-                    <p>Utilisez ce formulaire pour ajouter un nouveau médecin à notre application.<br>Assurez-vous de remplir tous les champs requis pour enregistrer correctement le médecin.</p>
+                    <h5 class="card-title">Ajouter un nouveau patient</h5>
+                    <p>Utilisez ce formulaire pour ajouter un nouveau patient à notre application.<br>Assurez-vous de remplir tous les champs requis pour enregistrer correctement le patient.</p>
 
-                    {{ form_errors(medecinRegistrationForm) }}
+                    {{ form_errors(form) }}
 
-                    {{ form_start(medecinRegistrationForm, {'attr': {'class': 'form', novalidate: 'novalidate'}}) }}
+                    {{ form_start(form, {'attr': {'class': 'form', novalidate: 'novalidate'}}) }}
                         <div class="form-row">
                             <!-- Colonne de gauche -->
                             <div class="form-col">
                                 <div class="form-group">
                                     <label>Prénom</label>
-                                    {{ form_widget(medecinRegistrationForm.firstName, {'attr': {'class': 'form-control', 'placeholder': 'Entrer le prénom'}}) }}
-                                    {{ form_errors(medecinRegistrationForm.firstName) }}
+                                    {{ form_widget(form.firstName, {'attr': {'class': 'form-control', 'placeholder': 'Entrer le prénom'}}) }}
+                                    {{ form_errors(form.firstName) }}
                                 </div>
                                 <div class="form-group">
                                     <label>Email</label>
-                                    {{ form_widget(medecinRegistrationForm.email, {'attr': {'class': 'form-control', 'placeholder': 'Entrer l\'email'}}) }}
-                                    {{ form_errors(medecinRegistrationForm.email) }}
+                                    {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'Entrer l\'email'}}) }}
+                                    {{ form_errors(form.email) }}
                                 </div>
                                 <div class="form-group">
                                     <label>Adresse</label>
-                                    {{ form_widget(medecinRegistrationForm.adress, {'attr': {'class': 'form-control', 'placeholder': 'Entrer l\'adresse'}}) }}
-                                    {{ form_errors(medecinRegistrationForm.adress) }}
+                                    {{ form_widget(form.adress, {'attr': {'class': 'form-control', 'placeholder': 'Entrer l\'adresse'}}) }}
+                                    {{ form_errors(form.adress) }}
                                 </div>
                                 <div class="form-group">
-                                    <label>Age</label>
-                                    {{ form_widget(medecinRegistrationForm.age, {'attr': {'class': 'form-control', 'placeholder': 'Entrer l\'âge'}}) }}
-                                    {{ form_errors(medecinRegistrationForm.age) }}
-                                </div>
-                                <div class="form-group">
-                                    <label>Numéro de Licence</label>
-                                    {{ form_widget(medecinRegistrationForm.numeroLicence, {'attr': {'class': 'form-control', 'placeholder': 'Format : ABC12345 (3 lettres suivies de 5 chiffres)'}}) }}
-                                    {{ form_errors(medecinRegistrationForm.numeroLicence) }}
+                                    <label>Âge</label>
+                                    {{ form_widget(form.age, {'attr': {'class': 'form-control', 'placeholder': 'Entrer l\'âge'}}) }}
+                                    {{ form_errors(form.age) }}
                                 </div>
                             </div>
 
@@ -130,32 +144,28 @@
                             <div class="form-col">
                                 <div class="form-group">
                                     <label>Nom</label>
-                                    {{ form_widget(medecinRegistrationForm.lastName, {'attr': {'class': 'form-control', 'placeholder': 'Entrer le nom'}}) }}
-                                    {{ form_errors(medecinRegistrationForm.lastName) }}
+                                    {{ form_widget(form.lastName, {'attr': {'class': 'form-control', 'placeholder': 'Entrer le nom'}}) }}
+                                    {{ form_errors(form.lastName) }}
                                 </div>
                                 <div class="form-group">
                                     <label>Téléphone</label>
-                                    {{ form_widget(medecinRegistrationForm.phoneNumber, {'attr': {'class': 'form-control', 'placeholder': 'Entrer le numéro de téléphone'}}) }}
-                                    {{ form_errors(medecinRegistrationForm.phoneNumber) }}
+                                    {{ form_widget(form.phoneNumber, {'attr': {'class': 'form-control', 'placeholder': 'Entrer le numéro de téléphone'}}) }}
+                                    {{ form_errors(form.phoneNumber) }}
                                 </div>
                                 <div class="form-group">
                                     <label>Genre</label>
-                                    {{ form_widget(medecinRegistrationForm.gender, {'attr': {'class': 'form-control'}}) }}
-                                    {{ form_errors(medecinRegistrationForm.gender) }}
-                                </div>
-                                <div class="form-group">
-                                    <label>Spécialité</label>
-                                    {{ form_widget(medecinRegistrationForm.specialite, {'attr': {'class': 'form-control'}}) }}
-                                    {{ form_errors(medecinRegistrationForm.specialite) }}
+                                    {{ form_widget(form.gender, {'attr': {'class': 'form-control'}}) }}
+                                    {{ form_errors(form.gender) }}
                                 </div>
 
-                                <!-- Bouton "Ajouter médecin" -->
+                                <!-- Boutons "Enregistrer" et "Annuler" -->
                                 <div class="form-group btn-group">
-                                    <button type="submit" class="btn btn-primary">Ajouter médecin</button>
+                                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                    <a href="{{ path('app_patient_index') }}" class="btn btn-secondary">Annuler</a>
                                 </div>
                             </div>
                         </div>
-                    {{ form_end(medecinRegistrationForm) }}
+                    {{ form_end(form) }}
                 </div>
             </div>
         </div>

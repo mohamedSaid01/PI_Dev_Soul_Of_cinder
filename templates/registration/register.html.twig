@@ -32,6 +32,9 @@
             justify-content: center;
             padding: 0;
         }
+        .hidden {
+            display: none;
+        }
     </style>
 {% endblock %}
 
@@ -57,12 +60,9 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="col-12">
-                                    <label>First Name</label>
-                                    {{ form_widget(registrationForm.firstName, {'attr': {'class': 'form-control'}}) }}
-                                    {{ form_errors(registrationForm.firstName) }}
-                                        
-                                        
-                                       
+                                        <label>First Name</label>
+                                        {{ form_widget(registrationForm.firstName, {'attr': {'class': 'form-control'}}) }}
+                                        {{ form_errors(registrationForm.firstName) }}
                                     </div>
                                     <div class="col-12">
                                         <label>Email</label>
@@ -73,6 +73,11 @@
                                         <label>Adress</label>
                                         {{ form_widget(registrationForm.adress, {'attr': {'class': 'form-control'}}) }}
                                         {{ form_errors(registrationForm.adress) }}
+                                    </div>
+                                    <div class="col-12">
+                                        <label>Age</label>
+                                        {{ form_widget(registrationForm.age, {'attr': {'class': 'form-control'}}) }}
+                                        {{ form_errors(registrationForm.age) }}
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -103,6 +108,28 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Champ pour le rôle -->
+                            <div class="col-12">
+                                <label>Rôle</label>
+                                {{ form_widget(registrationForm.roles, {'attr': {'class': 'form-control', 'id': 'role-select'}}) }}
+                                {{ form_errors(registrationForm.roles) }}
+                            </div>
+
+                            <!-- Champs spécifiques au médecin -->
+                            <div id="medecin-fields" class="hidden">
+                                <div class="col-12">
+                                    <label>Numéro de licence</label>
+                                    {{ form_widget(registrationForm.numeroLicence, {'attr': {'class': 'form-control medecin-field'}}) }}
+                                    {{ form_errors(registrationForm.numeroLicence) }}
+                                </div>
+                                <div class="col-12">
+                                    <label>Spécialité</label>
+                                    {{ form_widget(registrationForm.specialite, {'attr': {'class': 'form-control medecin-field'}}) }}
+                                    {{ form_errors(registrationForm.specialite) }}
+                                </div>
+                            </div>
+
                             <div class="col-12">
                                 <div class="d-grid">
                                     <button type="submit" class="btn bsb-btn-xl text-white" style="background-color: #00B4D8; border-color: #00B4D8; padding: 8px 16px; font-size: 14px;">Register</button>
@@ -140,4 +167,40 @@
             </div>
         </div>
     </section>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    console.log("Script chargé !");
+
+    const roleSelect = document.getElementById('role-select');
+    const medecinFields = document.getElementById('medecin-fields');
+
+    if (roleSelect && medecinFields) {
+        console.log("roleSelect trouvé !");
+        console.log("Valeur actuelle :", roleSelect.value);
+
+        // Fonction pour afficher ou masquer les champs spécifiques au médecin
+        function toggleMedecinFields() {
+            if (roleSelect.value === 'ROLE_MEDECIN') {
+                medecinFields.classList.remove('hidden');
+            } else {
+                medecinFields.classList.add('hidden');
+            }
+        }
+
+        // Appeler la fonction au chargement de la page
+        toggleMedecinFields();
+
+        // Écouter les changements de sélection
+        roleSelect.addEventListener('change', function () {
+            console.log("Valeur sélectionnée :", roleSelect.value);
+            toggleMedecinFields();
+        });
+    } else {
+        console.error("❌ Erreur : Element #role-select ou #medecin-fields introuvable !");
+    }
+});
+</script>
 {% endblock %}

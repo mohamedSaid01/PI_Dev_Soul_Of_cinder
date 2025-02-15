@@ -1,8 +1,8 @@
-{# templates/medecin/show.html.twig #}
+{# templates/patient/show.html.twig #}
 
 {% extends 'baseBackOffice.html.twig' %}
 
-{% block title %}Détails du Médecin - SAHATECK{% endblock %}
+{% block title %}Détails du Patient - SAHATECK{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -27,14 +27,13 @@
     <link href="{{ asset('assetsBackOffice/img/favicon.png') }}" rel="icon">
     <link href="{{ asset('assetsBackOffice/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
 
-        <style>
+    <style>
         .label {
-            color:rgb(31, 31, 34);
+            color: rgb(31, 31, 34);
             font-weight: 600;
             font-size: 16px;
         }
     </style>
-
 {% endblock %}
 
 {% block body %}
@@ -46,7 +45,7 @@
                     <div class="tab-pane fade show active profile-overview" id="profile-overview">
                         <h5 class="card-title">About</h5>
                         <p class="small fst-italic" style="font-family: 'Poppins', sans-serif; font-weight: 200; font-size: 13px;">
-                            Retrouvez ici les détails complets du médecin. Vous pouvez consulter ses informations personnelles et professionnelles.
+                            Retrouvez ici les détails complets du patient. Vous pouvez consulter ses informations personnelles.
                         </p>
 
                         <h5 class="card-title">Détails du Profil</h5>
@@ -54,58 +53,46 @@
                         <!-- Full Name -->
                         <div class="row">
                             <div class="col-lg-3 col-md-4 label">Nom Complet</div>
-                            <div class="col-lg-9 col-md-8">{{ medecin.firstName }} {{ medecin.lastName }}</div>
+                            <div class="col-lg-9 col-md-8">{{ patient.firstName }} {{ patient.lastName }}</div>
                         </div>
 
                         <!-- Email -->
                         <div class="row">
                             <div class="col-lg-3 col-md-4 label">Email</div>
-                            <div class="col-lg-9 col-md-8">{{ medecin.email }}</div>
+                            <div class="col-lg-9 col-md-8">{{ patient.email }}</div>
                         </div>
 
                         <!-- Genre -->
                         <div class="row">
                             <div class="col-lg-3 col-md-4 label">Genre</div>
-                            <div class="col-lg-9 col-md-8">{{ medecin.gender ? medecin.gender.value : 'Non spécifié' }}</div>
+                            <div class="col-lg-9 col-md-8">{{ patient.gender ? patient.gender.value : 'Non spécifié' }}</div>
                         </div>
 
                         <!-- Adresse -->
                         <div class="row">
                             <div class="col-lg-3 col-md-4 label">Adresse</div>
-                            <div class="col-lg-9 col-md-8">{{ medecin.adress }}</div>
+                            <div class="col-lg-9 col-md-8">{{ patient.adress }}</div>
                         </div>
 
                         <!-- Téléphone -->
                         <div class="row">
                             <div class="col-lg-3 col-md-4 label">Téléphone</div>
-                            <div class="col-lg-9 col-md-8">{{ medecin.phoneNumber }}</div>
-                        </div>
-
-                        <!-- Numéro de Licence -->
-                        <div class="row">
-                            <div class="col-lg-3 col-md-4 label">Numéro de Licence</div>
-                            <div class="col-lg-9 col-md-8">{{ medecin.numeroLicence }}</div>
+                            <div class="col-lg-9 col-md-8">{{ patient.phoneNumber }}</div>
                         </div>
 
                         <!-- Âge -->
                         <div class="row">
                             <div class="col-lg-3 col-md-4 label">Âge</div>
-                            <div class="col-lg-9 col-md-8">{{ medecin.age ?? 'Non spécifié' }}</div>
-                        </div>
-
-                        <!-- Spécialité -->
-                        <div class="row">
-                            <div class="col-lg-3 col-md-4 label">Spécialité</div>
-                            <div class="col-lg-9 col-md-8">{{ medecin.specialite ? medecin.specialite.value : 'Non spécifié' }}</div>
+                            <div class="col-lg-9 col-md-8">{{ patient.age ?? 'Non spécifié' }}</div>
                         </div>
                     </div>
 
                     <!-- Boutons d'action -->
                     <div class="mt-4">
-                        <a href="{{ path('app_medecins_list') }}" class="btn btn-secondary">
+                        <a href="{{ path('app_patient_index') }}" class="btn btn-secondary">
                             <i class="bi bi-arrow-left"></i> Retour à la liste
                         </a>
-                        <a href="{{ path('app_medecin_edit', {'id': medecin.id}) }}" class="btn btn-warning" style="background-color: #00B4D8; color: white; border: none;">
+                        <a href="{{ path('app_patient_edit', {'id': patient.id}) }}" class="btn btn-warning" style="background-color: #00B4D8; color: white; border: none;">
                             <i class="bi bi-pencil"></i> Modifier
                         </a>
                     </div>

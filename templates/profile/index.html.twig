@@ -1,0 +1,205 @@
+{# templates/profile/index.html.twig #}
+{% extends 'baseBackOffice.html.twig' %}
+
+{% block title %}Mon Profil{% endblock %}
+
+{% block body %}
+  <main id="main" class="main">
+    <div class="pagetitle">
+      <h1>Profile</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="">Home</a></li>
+          <li class="breadcrumb-item">Users</li>
+          <li class="breadcrumb-item active">Profile</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section profile">
+      <div class="row">
+        <div class="col-xl-4">
+          <div class="card">
+            <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+              <img src="{{ asset('assets/img/profile-img.jpg') }}" alt="Profile" class="rounded-circle">
+              <h2>{{ user.firstName }} {{ user.lastName }}</h2>
+              <h3>
+                {% if 'ROLE_MEDECIN' in user.roles %}
+                  Médecin
+                {% elseif 'ROLE_USER' in user.roles %}
+                  Patient
+                {% endif %}
+              </h3>
+              <div class="social-links mt-2">
+                <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
+                <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
+                <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
+                <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-8">
+          <div class="card">
+            <div class="card-body pt-3">
+              <!-- Bordered Tabs -->
+              <ul class="nav nav-tabs nav-tabs-bordered">
+                <li class="nav-item">
+                  <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Overview</button>
+                </li>
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Edit Profile</button>
+                </li>
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-settings">Settings</button>
+                </li>
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">Change Password</button>
+                </li>
+              </ul>
+
+              <div class="tab-content pt-2">
+                <div class="tab-pane fade show active profile-overview" id="profile-overview">
+                  <h5 class="card-title">About</h5>
+                  <p class="small fst-italic">Bienvenue sur votre profil. Vous pouvez consulter et modifier vos informations personnelles ici.</p>
+
+                  <h5 class="card-title">Détails du Profil</h5>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Nom Complet</div>
+                    <div class="col-lg-9 col-md-8">{{ user.firstName }} {{ user.lastName }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Email</div>
+                    <div class="col-lg-9 col-md-8">{{ user.email }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Téléphone</div>
+                    <div class="col-lg-9 col-md-8">{{ user.phoneNumber }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Adresse</div>
+                    <div class="col-lg-9 col-md-8">{{ user.adress }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Âge</div>
+                    <div class="col-lg-9 col-md-8">{{ user.age }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Genre</div>
+                    <div class="col-lg-9 col-md-8">{{ user.gender ? user.gender.value : 'Non spécifié' }}</div>
+                  </div>
+
+                  {% if 'ROLE_MEDECIN' in user.roles %}
+                    <div class="row">
+                      <div class="col-lg-3 col-md-4 label">Spécialité</div>
+                      <div class="col-lg-9 col-md-8">{{ user.specialite.value }}</div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-lg-3 col-md-4 label">Numéro de Licence</div>
+                      <div class="col-lg-9 col-md-8">{{ user.numeroLicence }}</div>
+                    </div>
+                  {% endif %}
+                </div><!-- End Overview Tab -->
+
+                <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
+                  <!-- Profile Edit Form -->
+                  {{ form_start(form) }}
+                    <div class="row mb-3">
+                      <label class="col-md-4 col-lg-3 col-form-label">Image de Profil</label>
+                      <div class="col-md-8 col-lg-9">
+                        <img src="{{ asset('assets/img/profile-img.jpg') }}" alt="Profile">
+                        <div class="pt-2">
+                          <a href="#" class="btn btn-primary btn-sm" title="Upload new profile image"><i class="bi bi-upload"></i></a>
+                          <a href="#" class="btn btn-danger btn-sm" title="Remove my profile image"><i class="bi bi-trash"></i></a>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      {{ form_label(form.firstName, null, {'label_attr': {'class': 'col-md-4 col-lg-3 col-form-label'}}) }}
+                      <div class="col-md-8 col-lg-9">
+                        {{ form_widget(form.firstName, {'attr': {'class': 'form-control'}}) }}
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      {{ form_label(form.lastName, null, {'label_attr': {'class': 'col-md-4 col-lg-3 col-form-label'}}) }}
+                      <div class="col-md-8 col-lg-9">
+                        {{ form_widget(form.lastName, {'attr': {'class': 'form-control'}}) }}
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      {{ form_label(form.email, null, {'label_attr': {'class': 'col-md-4 col-lg-3 col-form-label'}}) }}
+                      <div class="col-md-8 col-lg-9">
+                        {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      {{ form_label(form.phoneNumber, null, {'label_attr': {'class': 'col-md-4 col-lg-3 col-form-label'}}) }}
+                      <div class="col-md-8 col-lg-9">
+                        {{ form_widget(form.phoneNumber, {'attr': {'class': 'form-control'}}) }}
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      {{ form_label(form.adress, null, {'label_attr': {'class': 'col-md-4 col-lg-3 col-form-label'}}) }}
+                      <div class="col-md-8 col-lg-9">
+                        {{ form_widget(form.adress, {'attr': {'class': 'form-control'}}) }}
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      {{ form_label(form.age, null, {'label_attr': {'class': 'col-md-4 col-lg-3 col-form-label'}}) }}
+                      <div class="col-md-8 col-lg-9">
+                        {{ form_widget(form.age, {'attr': {'class': 'form-control'}}) }}
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      {{ form_label(form.gender, null, {'label_attr': {'class': 'col-md-4 col-lg-3 col-form-label'}}) }}
+                      <div class="col-md-8 col-lg-9">
+                        {{ form_widget(form.gender, {'attr': {'class': 'form-control'}}) }}
+                      </div>
+                    </div>
+
+                    {% if 'ROLE_MEDECIN' in user.roles %}
+                      <div class="row mb-3">
+                        {{ form_label(form.specialite, null, {'label_attr': {'class': 'col-md-4 col-lg-3 col-form-label'}}) }}
+                        <div class="col-md-8 col-lg-9">
+                          {{ form_widget(form.specialite, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                      </div>
+
+                      <div class="row mb-3">
+                        {{ form_label(form.numeroLicence, null, {'label_attr': {'class': 'col-md-4 col-lg-3 col-form-label'}}) }}
+                        <div class="col-md-8 col-lg-9">
+                          {{ form_widget(form.numeroLicence, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                      </div>
+                    {% endif %}
+
+                    <div class="text-center">
+                      <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                    </div>
+                  {{ form_end(form) }}
+                </div><!-- End Profile Edit Form -->
+
+                <!-- Ajoute ici les autres onglets (Settings, Change Password) si nécessaire -->
+              </div><!-- End Bordered Tabs -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main><!-- End #main -->
+{% endblock %}
