@@ -135,6 +135,15 @@ private ?int $age = null;
     #[ORM\Column(enumType: Specialite::class, nullable: true)]
     #[Assert\NotBlank(message: 'Veuillez sélectionner une spécialité.', groups: ['RegistrationMedecin'])]
     private ?Specialite $specialite = null;
+
+
+    private ?string $currentPassword = null;
+private ?string $newPassword = null;
+private ?string $confirmPassword = null;
+
+#[ORM\Column(type: 'string', nullable: true)]
+private $medicalFile;
+    
     
     public function getId(): ?int
     {
@@ -304,6 +313,51 @@ public function getAge(): ?int
 public function setAge(?int $age): static
 {
     $this->age = $age;
+
+    return $this;
+}
+
+public function getCurrentPassword(): ?string
+{
+    return $this->currentPassword;
+}
+
+public function setCurrentPassword(?string $currentPassword): static
+{
+    $this->currentPassword = $currentPassword;
+    return $this;
+}
+
+public function getNewPassword(): ?string
+{
+    return $this->newPassword;
+}
+
+public function setNewPassword(?string $newPassword): static
+{
+    $this->newPassword = $newPassword;
+    return $this;
+}
+
+public function getConfirmPassword(): ?string
+{
+    return $this->confirmPassword;
+}
+
+public function setConfirmPassword(?string $confirmPassword): static
+{
+    $this->confirmPassword = $confirmPassword;
+    return $this;
+}
+
+public function getMedicalFile(): ?string
+{
+    return $this->medicalFile;
+}
+
+public function setMedicalFile(?string $medicalFile): self
+{
+    $this->medicalFile = $medicalFile;
 
     return $this;
 }

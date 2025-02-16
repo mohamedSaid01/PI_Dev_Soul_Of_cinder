@@ -16,6 +16,10 @@ use Symfony\Component\Mime\Email; // Importez la classe Email
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\UserRepository; // Importez UserRepository
+use App\Form\MedicalFileType;
+use App\Service\FileUploader;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 
 class PatientController extends AbstractController
@@ -131,5 +135,37 @@ class PatientController extends AbstractController
         }
 
         return $this->redirectToRoute('app_patient_index');
+    }
+
+    #[Route('/download-medical-file/{filename}', name: 'download_medical_file')]
+    public function downloadMedicalFile(string $filename): Response
+    {
+        // Récupérer l'utilisateur connecté
+        $user = $this->getUser();
+        
+        // Debug : Afficher les rôles de l'utilisateur
+        dump($user->getRoles());
+        
+        // Vérifier si l'utilisateur est un administrateur
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            // Si l'utilisateur n'est pas un administrateur, vérifier si le fichier lui appartient
+            if ($user->getMedicalFile() !== $filename) {
+                throw new AccessDeniedException('Vous n\'êtes pas autorisé à télécharger ce fichier.');
+            }
+        }
+        
+        // Chemin du fichier
+        $filePath = $this->getParameter('kernel.project_dir') . '/public/uploads/' . $filename;
+        
+        // Debug : Afficher le chemin du fichier
+        dump($filePath);
+        
+        // Vérifier que le fichier existe
+        if (!file_exists($filePath)) {
+            throw $this->createNotFoundException('Le fichier n\'existe pas.');
+        }
+        
+        // Retourner le fichier en tant que réponse avec l'en-tête Content-Disposition
+        return $this->file($filePath, null, ResponseHeaderBag::DISPOSITION_ATTACHMENT);
     }
 }

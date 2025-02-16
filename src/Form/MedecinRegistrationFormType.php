@@ -17,6 +17,11 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use App\Enum\Specialite;
+use Symfony\Component\Validator\Constraints\IsTrue; // Import manquant
+use Symfony\Component\Validator\Constraints\NotBlank; // Import manquant
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 class MedecinRegistrationFormType extends AbstractType
 {
@@ -26,6 +31,20 @@ class MedecinRegistrationFormType extends AbstractType
             ->add('email', EmailType::class)
             ->add('firstName', TextType::class)
             ->add('lastName', TextType::class)
+            ->add('plainPassword', PasswordType::class, [
+                'mapped' => false, // Ce champ n'est pas mappé à l'entité
+                'attr' => ['autocomplete' => 'new-password'],
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Veuillez entrer un mot de passe.',
+                    ]),
+                    new Length([
+                        'min' => 8,
+                        'minMessage' => 'Le mot de passe doit contenir au moins {{ limit }} caractères.',
+                        'max' => 4096,
+                    ]),
+                ],
+            ])
             ->add('gender', ChoiceType::class, [
                 'choices' => [
                     'Homme' => Gender::MALE,
@@ -65,7 +84,16 @@ class MedecinRegistrationFormType extends AbstractType
                         'notInRangeMessage' => 'L\'âge doit être compris entre {{ min }} et {{ max }}.',
                     ]),
                 ],
-            ]);
+            ])
+            ->add('agreeTerms', CheckboxType::class, [
+                'label' => 'Accepter les conditions',
+                'mapped' => false,
+                'constraints' => [
+                    new IsTrue([
+                        'message' => 'Vous devez accepter les conditions.',
+                    ]),
+                ],
+            ]);;
 
         // Ajouter un événement pour formater le numéro de licence avant la soumission
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {

@@ -20,5 +20,11 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    # Configuration explicite pour le service FileUploader
+    App\Service\FileUploader:
+        arguments:
+            $targetDirectory: '%kernel.project_dir%/public/uploads'
+            $slugger: '@Symfony\Component\String\Slugger\SluggerInterface'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

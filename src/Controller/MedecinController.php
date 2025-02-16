@@ -1,15 +1,19 @@
-<?php 
+<?php
 
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Repository\UserRepository;
+use App\Form\MedecinType;
+use App\Service\PasswordGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Form\MedecinRegistrationFormType;
+use App\Repository\UserRepository;
 
 class MedecinController extends AbstractController
 {
@@ -24,53 +28,116 @@ class MedecinController extends AbstractController
         ]);
     }
 
-    // src/Controller/MedecinController.php
+    #[Route('/admin/medecin/{id}', name: 'app_medecin_show', methods: ['GET'])]
+    public function showMedecin(User $medecin): Response
+    {
+        return $this->render('medecin/show.html.twig', [
+            'medecin' => $medecin,
+        ]);
+    }
 
-#[Route('/admin/medecin/{id}', name: 'app_medecin_show', methods: ['GET'])]
-public function showMedecin(User $medecin): Response
-{
-    return $this->render('medecin/show.html.twig', [
-        'medecin' => $medecin,
-    ]);
-}
+    #[Route('/admin/medecin/{id}/edit', name: 'app_medecin_edit', methods: ['GET', 'POST'])]
+    public function editMedecin(Request $request, User $medecin, EntityManagerInterface $entityManager): Response
+    {
+        $form = $this->createForm(MedecinRegistrationFormType::class, $medecin);
+        $form->handleRequest($request);
 
-#[Route('/admin/medecin/{id}/edit', name: 'app_medecin_edit', methods: ['GET', 'POST'])]
-public function editMedecin(Request $request, User $medecin, EntityManagerInterface $entityManager): Response
-{
-    $form = $this->createForm(MedecinRegistrationFormType::class, $medecin);
-    $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
 
-    if ($form->isSubmitted() && $form->isValid()) {
-        $entityManager->flush();
+            $this->addFlash('success', 'Le médecin a été mis à jour avec succès.');
+            return $this->redirectToRoute('app_medecins_list');
+        }
 
-        $this->addFlash('success', 'Le médecin a été mis à jour avec succès.');
+        return $this->render('medecin/edit.html.twig', [
+            'medecin' => $medecin,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/admin/medecin/{id}/delete', name: 'app_medecin_delete', methods: ['POST'])]
+    public function deleteMedecin(Request $request, User $medecin, EntityManagerInterface $entityManager): Response
+    {
+        // Vérifier le token CSRF pour sécuriser la suppression
+        if ($this->isCsrfTokenValid('delete' . $medecin->getId(), $request->request->get('_token'))) {
+            // Supprimer le médecin de la base de données
+            $entityManager->remove($medecin);
+            $entityManager->flush();
+
+            // Ajouter un message de succès
+            $this->addFlash('success', 'Le médecin a été supprimé avec succès.');
+        } else {
+            // Ajouter un message d'erreur si le token CSRF est invalide
+            $this->addFlash('error', 'Token CSRF invalide, suppression annulée.');
+        }
+
+        // Rediriger vers la liste des médecins
         return $this->redirectToRoute('app_medecins_list');
     }
 
-    return $this->render('medecin/edit.html.twig', [
-        'medecin' => $medecin,
-        'form' => $form->createView(),
-    ]);
-}
+    #[Route('/admin/new-register/medecin', name: 'app_new_register_medecin')]
+    public function register(
+        Request $request,
+        UserPasswordHasherInterface $userPasswordHasher,
+        EntityManagerInterface $entityManager,
+        PasswordGenerator $passwordGenerator,
+        MailerInterface $mailer,
+        UserRepository $userRepository
+    ): Response {
+        $user = new User();
+        $form = $this->createForm(MedecinType::class, $user);
+        $form->handleRequest($request);
 
-#[Route('/admin/medecin/{id}/delete', name: 'app_medecin_delete', methods: ['POST'])]
-public function deleteMedecin(Request $request, User $medecin, EntityManagerInterface $entityManager): Response
-{
-    // Vérifier le token CSRF pour sécuriser la suppression
-    if ($this->isCsrfTokenValid('delete' . $medecin->getId(), $request->request->get('_token'))) {
-        // Supprimer le médecin de la base de données
-        $entityManager->remove($medecin);
-        $entityManager->flush();
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Vérifier si l'email existe déjà
+            $existingUser = $userRepository->findOneBy(['email' => $user->getEmail()]);
 
-        // Ajouter un message de succès
-        $this->addFlash('success', 'Le médecin a été supprimé avec succès.');
-    } else {
-        // Ajouter un message d'erreur si le token CSRF est invalide
-        $this->addFlash('error', 'Token CSRF invalide, suppression annulée.');
+            if ($existingUser) {
+                $this->addFlash('error', 'Un utilisateur avec cet email existe déjà.');
+                return $this->redirectToRoute('app_new_register_medecin');
+            }
+
+            // Générer un mot de passe aléatoire
+            $plainPassword = $passwordGenerator->generateRandomPassword();
+
+            // Encoder le mot de passe
+            $user->setPassword(
+                $userPasswordHasher->hashPassword(
+                    $user,
+                    $plainPassword
+                )
+            );
+
+            // Attribuer le rôle ROLE_MEDECIN
+            $user->setRoles(['ROLE_MEDECIN']);
+
+            // Enregistrer l'utilisateur en base de données
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            // Envoyer un email avec les informations de connexion
+            $email = (new Email())
+                ->from('mohamedsaidboubaker10@gmail.com')
+                ->to($user->getEmail())
+                ->subject('Vos informations de connexion')
+                ->html($this->renderView(
+                    'emails/medecin_registration.html.twig',
+                    [
+                        'email' => $user->getEmail(),
+                        'password' => $plainPassword,
+                        'firstName' => $user->getFirstName(),
+                        'lastName' => $user->getLastName(),
+                    ]
+                ));
+
+            $mailer->send($email);
+
+            $this->addFlash('success', 'Compte médecin créé avec succès. Un email a été envoyé avec les informations de connexion.');
+            return $this->redirectToRoute('app_medecins_list');
+        }
+
+        return $this->render('registration/medecin_register.html.twig', [
+            'medecinRegistrationForm' => $form->createView(),
+        ]);
     }
-
-    // Rediriger vers la liste des médecins
-    return $this->redirectToRoute('app_medecins_list');
-}
-
 }

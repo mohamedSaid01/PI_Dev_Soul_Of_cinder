@@ -85,6 +85,23 @@
                             <div class="col-lg-3 col-md-4 label">Âge</div>
                             <div class="col-lg-9 col-md-8">{{ patient.age ?? 'Non spécifié' }}</div>
                         </div>
+<!-- Dossier Médical -->
+<div class="row">
+    <div class="col-lg-3 col-md-4 label">Dossier Médical</div>
+    <div class="col-lg-9 col-md-8">
+        {% if patient.medicalFile %}
+            <a href="{{ asset('uploads/' ~ patient.medicalFile) }}" target="_blank" class="btn btn-primary btn-sm">
+                <i class="bi bi-eye"></i> Afficher le dossier médical
+            </a>
+                <a href="{{ path('download_medical_file', {'filename': patient.medicalFile}) }}" class="btn btn-success btn-sm">
+                    <i class="bi bi-download"></i> Télécharger le dossier médical
+                </a>
+        {% else %}
+            <span class="text-muted">Aucun dossier médical téléversé.</span>
+        {% endif %}
+    </div>
+</div>
+                        </div>
                     </div>
 
                     <!-- Boutons d'action -->
