@@ -1,0 +1,15 @@
+{% extends 'baseBackOffice.html.twig' %}
+
+{% block title %}Edit Produit{% endblock %}
+
+{% block body %}
+  <div style="padding-top:  5%; padding-left: 20%;">
+    <h1>Edit Produit</h1>
+
+    {{ include('produit/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_produit_index') }}">back to list</a>
+
+    {{ include('produit/_delete_form.html.twig') }}
+    </div>
+{% endblock %}
