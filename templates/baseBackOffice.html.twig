@@ -56,12 +56,12 @@
       <i class="bi bi-list toggle-sidebar-btn"></i>
     </div><!-- End Logo -->
 
-    <div class="search-bar">
+    {# <div class="search-bar">
       <form class="search-form d-flex align-items-center" method="POST" action="#">
         <input type="text" name="query" placeholder="Search" title="Enter search keyword">
         <button type="submit" title="Search"><i class="bi bi-search"></i></button>
       </form>
-    </div><!-- End Search Bar -->
+    </div><!-- End Search Bar --> #}
 
     <nav class="header-nav ms-auto">
       <ul class="d-flex align-items-center">
@@ -216,7 +216,7 @@
         <li class="nav-item dropdown pe-3">
 
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-            <img src="assetsBackOffice/img/profile-img.jpg" alt="Profile" class="rounded-circle">
+            {# <img src="assetsBackOffice/img/profile-img.jpg" alt="Profile" class="rounded-circle"> #}
             <span class="d-none d-md-block dropdown-toggle ps-2">
               {% if app.user %}
                 {{ app.user.firstName }} {{ app.user.lastName }}
@@ -266,7 +266,7 @@
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="{{ path('app_patient_new') }}">
+              <a class="dropdown-item d-flex align-items-center" href="{{ path('app_logout') }}">
                 <i class="bi bi-box-arrow-right"></i>
                 <span>Sign Out</span>
               </a>
@@ -467,32 +467,36 @@
       <li class="nav-heading">Pages</li>
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="users-profile.html">
-          <i class="bi bi-person"></i>
-          <span>Profile</span>
+    {% if is_granted('ROLE_MEDECIN') or is_granted('ROLE_USER') %}
+        <a class="nav-link collapsed" href="{{ path('profile') }}">
+            <i class="bi bi-person"></i>
+            <span>Profile</span>
         </a>
-      </li><!-- End Profile Page Nav -->
+    {% endif %}
+</li><!-- End Profile Page Nav -->
 
 <li class="nav-item">
-    <a class="nav-link collapsed" data-bs-target="#gestion-users-nav" data-bs-toggle="collapse" href="#">
-        <i class="bi bi-people"></i>
-        <span>Gestion users</span>
-        <i class="bi bi-chevron-down ms-auto"></i>
-    </a>
-    <ul id="gestion-users-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
-        <li>
-            <a href="{{ path('app_medecins_list') }}">
-                <i class="bi bi-circle"></i>
-                <span>Médecins</span>
-            </a>
-        </li>
-        <li>
-            <a href="{{ path('app_patient_index') }}">
-                <i class="bi bi-circle"></i>
-                <span>Patients</span>
-            </a>
-        </li>
-    </ul>
+    {% if is_granted('ROLE_ADMIN') %}
+        <a class="nav-link collapsed" data-bs-target="#gestion-users-nav" data-bs-toggle="collapse" href="#">
+            <i class="bi bi-people"></i>
+            <span>Gestion users</span>
+            <i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="gestion-users-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+            <li>
+                <a href="{{ path('app_medecins_list') }}">
+                    <i class="bi bi-circle"></i>
+                    <span>Médecins</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ path('app_patient_index') }}">
+                    <i class="bi bi-circle"></i>
+                    <span>Patients</span>
+                </a>
+            </li>
+        </ul>
+    {% endif %}
 </li><!-- End Gestion Users Nav -->
 
       <li class="nav-item">

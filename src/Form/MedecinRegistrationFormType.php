@@ -8,7 +8,7 @@ use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType; // Ajout du type IntegerType
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\GroupSequence;
@@ -17,31 +17,51 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use App\Enum\Specialite;
-use Symfony\Component\Validator\Constraints\IsTrue; // Import manquant
-use Symfony\Component\Validator\Constraints\NotBlank; // Import manquant
+use Symfony\Component\Validator\Constraints\IsTrue;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Validator\Constraints\Regex;
+use Symfony\Component\Validator\Constraints\NotCompromisedPassword;
+use Symfony\Component\Validator\Constraints\Range; // <-- Ajout de l'importation manquante
 
 class MedecinRegistrationFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('email', EmailType::class)
-            ->add('firstName', TextType::class)
-            ->add('lastName', TextType::class)
+            ->add('email', EmailType::class, [
+                'constraints' => [
+                    new NotBlank(['message' => 'Veuillez entrer une adresse email.']),
+                ],
+            ])
+            ->add('firstName', TextType::class, [
+                'constraints' => [
+                    new NotBlank(['message' => 'Veuillez entrer votre prénom.']),
+                ],
+            ])
+            ->add('lastName', TextType::class, [
+                'constraints' => [
+                    new NotBlank(['message' => 'Veuillez entrer votre nom.']),
+                ],
+            ])
             ->add('plainPassword', PasswordType::class, [
-                'mapped' => false, // Ce champ n'est pas mappé à l'entité
+                'mapped' => false,
                 'attr' => ['autocomplete' => 'new-password'],
                 'constraints' => [
-                    new NotBlank([
-                        'message' => 'Veuillez entrer un mot de passe.',
-                    ]),
+                    new NotBlank(['message' => 'Veuillez entrer un mot de passe.']),
                     new Length([
                         'min' => 8,
                         'minMessage' => 'Le mot de passe doit contenir au moins {{ limit }} caractères.',
                         'max' => 4096,
+                    ]),
+                    new Regex([
+                        'pattern' => '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\d\s]).{8,}$/',
+                        'message' => 'Le mot de passe doit contenir au moins une lettre minuscule, une lettre majuscule, un chiffre et un caractère spécial.',
+                    ]),
+                    new NotCompromisedPassword([
+                        'message' => 'Ce mot de passe a été compromis dans une fuite de données. Veuillez en choisir un autre.',
                     ]),
                 ],
             ])
@@ -55,12 +75,30 @@ class MedecinRegistrationFormType extends AbstractType
                 'expanded' => false,
                 'multiple' => false,
                 'placeholder' => 'Sélectionner le genre',
+                'constraints' => [
+                    new NotBlank(['message' => 'Veuillez sélectionner votre genre.']),
+                ],
             ])
-            ->add('adress', TextType::class)
-            ->add('phoneNumber', TextType::class)
+            ->add('adress', TextType::class, [
+                'constraints' => [
+                    new NotBlank(['message' => 'Veuillez entrer votre adresse.']),
+                ],
+            ])
+            ->add('phoneNumber', TextType::class, [
+                'constraints' => [
+                    new NotBlank(['message' => 'Veuillez entrer votre numéro de téléphone.']),
+                    new Regex([
+                        'pattern' => '/^\+?\d{8,15}$/',
+                        'message' => 'Le numéro de téléphone doit être valide.',
+                    ]),
+                ],
+            ])
             ->add('numeroLicence', TextType::class, [
                 'label' => 'Numéro de licence',
                 'required' => true,
+                'constraints' => [
+                    new NotBlank(['message' => 'Veuillez entrer votre numéro de licence.']),
+                ],
             ])
             ->add('specialite', ChoiceType::class, [
                 'label' => 'Spécialité',
@@ -70,15 +108,16 @@ class MedecinRegistrationFormType extends AbstractType
                 },
                 'placeholder' => 'Sélectionner la spécialité',
                 'required' => true,
+                'constraints' => [
+                    new NotBlank(['message' => 'Veuillez sélectionner votre spécialité.']),
+                ],
             ])
-            ->add('age', IntegerType::class, [ // Ajout du champ age
+            ->add('age', IntegerType::class, [
                 'label' => 'Âge',
                 'required' => true,
                 'constraints' => [
-                    new \Symfony\Component\Validator\Constraints\NotBlank([
-                        'message' => 'Veuillez entrer votre âge.',
-                    ]),
-                    new \Symfony\Component\Validator\Constraints\Range([
+                    new NotBlank(['message' => 'Veuillez entrer votre âge.']),
+                    new Range([ // <-- Utilisation de la classe Range
                         'min' => 1,
                         'max' => 120,
                         'notInRangeMessage' => 'L\'âge doit être compris entre {{ min }} et {{ max }}.',
@@ -93,7 +132,7 @@ class MedecinRegistrationFormType extends AbstractType
                         'message' => 'Vous devez accepter les conditions.',
                     ]),
                 ],
-            ]);;
+            ]);
 
         // Ajouter un événement pour formater le numéro de licence avant la soumission
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {

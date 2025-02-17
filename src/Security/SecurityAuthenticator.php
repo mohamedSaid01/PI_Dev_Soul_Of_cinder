@@ -49,7 +49,7 @@ class SecurityAuthenticator extends AbstractLoginFormAuthenticator
         }
 
         $user = $token->getUser();
-        if(in_array('ROLE_ADMIN', $user->getRoles(), true)){
+        if(in_array('ROLE_ADMIN', $user->getRoles(), true) || in_array('ROLE_MEDECIN', $user->getRoles(), true)){
         // For example:
         return new RedirectResponse($this->urlGenerator->generate('display_dashboard'));
         throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
@@ -57,6 +57,7 @@ class SecurityAuthenticator extends AbstractLoginFormAuthenticator
         return new RedirectResponse($this->urlGenerator->generate('display_front'));
         throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
     }
+    
 
     protected function getLoginUrl(Request $request): string
     {

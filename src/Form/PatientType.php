@@ -5,7 +5,7 @@
 namespace App\Form;
 
 use App\Entity\User;
-use App\Enum\Gender; // Importez l'enum Gender
+use App\Enum\Gender;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -14,6 +14,18 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\GroupSequence;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\IsTrue;
+use Symfony\Component\Validator\Constraints\Regex;
+use Symfony\Component\Validator\Constraints\Range;
+use Symfony\Component\Validator\Constraints\Email;
+
+
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 class PatientType extends AbstractType
 {
@@ -21,47 +33,55 @@ class PatientType extends AbstractType
     {
         $builder
             ->add('email', EmailType::class, [
-                'label' => 'Email',
-                'attr' => ['class' => 'form-control', 'placeholder' => 'Entrez l\'email'],
+                'constraints' => [
+                    new NotBlank(['message' => 'Veuillez entrer une adresse email.']),
+                    new Email(['message' => 'L\'email "{{ value }}" n\'est pas valide.']),
+                ],
             ])
             ->add('firstName', TextType::class, [
-                'label' => 'Prénom',
-                'attr' => ['class' => 'form-control', 'placeholder' => 'Entrez le prénom'],
+                'constraints' => [
+                    new NotBlank(['message' => 'Veuillez entrer votre prénom.']),
+                ],
             ])
             ->add('lastName', TextType::class, [
-                'label' => 'Nom',
-                'attr' => ['class' => 'form-control', 'placeholder' => 'Entrez le nom'],
+                'constraints' => [
+                    new NotBlank(['message' => 'Veuillez entrer votre nom.']),
+                ],
             ])
             ->add('gender', ChoiceType::class, [
-                'label' => 'Genre',
                 'choices' => [
                     'Homme' => Gender::MALE,
                     'Femme' => Gender::FEMALE,
                 ],
-                'choice_value' => fn(?Gender $gender) => $gender?->value, // Utilisez la valeur de l'enum
-                'choice_label' => fn(Gender $gender) => match ($gender) {
-                    Gender::MALE => 'Homme',
-                    Gender::FEMALE => 'Femme',
-                },
+                'choice_value' => fn(?Gender $gender) => $gender?->value,
+                'choice_label' => fn(Gender $gender) => ucfirst($gender->value),
+                'expanded' => false,
+                'multiple' => false,
                 'placeholder' => 'Sélectionner le genre',
-                'attr' => ['class' => 'form-control'],
+                'constraints' => [
+                    new NotBlank(['message' => 'Veuillez sélectionner votre genre.']),
+                ],
             ])
             ->add('adress', TextType::class, [
-                'label' => 'Adresse',
-                'attr' => ['class' => 'form-control', 'placeholder' => 'Entrez l\'adresse'],
+                'constraints' => [
+                    new NotBlank(['message' => 'Veuillez entrer votre adresse.']),
+                ],
             ])
             ->add('phoneNumber', TextType::class, [
-                'label' => 'Téléphone',
-                'attr' => ['class' => 'form-control', 'placeholder' => 'Entrez le numéro de téléphone'],
+                'constraints' => [
+                    new NotBlank(['message' => 'Veuillez entrer votre numéro de téléphone.']),
+                    new Regex([
+                        'pattern' => '/^\+?\d{8,15}$/',
+                        'message' => 'Le numéro de téléphone doit être valide.',
+                    ]),
+                ],
             ])
             ->add('age', IntegerType::class, [
                 'label' => 'Âge',
-                'attr' => ['class' => 'form-control', 'placeholder' => 'Entrez l\'âge'],
+                'required' => true,
                 'constraints' => [
-                    new \Symfony\Component\Validator\Constraints\NotBlank([
-                        'message' => 'Veuillez entrer votre âge.',
-                    ]),
-                    new \Symfony\Component\Validator\Constraints\Range([
+                    new NotBlank(['message' => 'Veuillez entrer votre âge.']),
+                    new Range([
                         'min' => 1,
                         'max' => 120,
                         'notInRangeMessage' => 'L\'âge doit être compris entre {{ min }} et {{ max }}.',

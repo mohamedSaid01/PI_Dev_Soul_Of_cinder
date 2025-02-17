@@ -20,6 +20,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800;900&amp;display=swap"
     rel="stylesheet">
+            <link href="{{ asset('assetsBackOffice/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+            
   {% endblock %} {# Fin du bloc stylesheets #}
 
   {% block javascripts %}
@@ -150,12 +152,64 @@
               </li>
             </ul>
           </div>
-          <div class="col-lg-3 col-md-4 col-sm-6">
-          <div class="btn-book text-end">
-           <a href="{{ path('app_login') }}" class="btn btn-sm btn-outline-primary btn-pill text-uppercase">Login</a>
-           <a href="{{ path('choix_inscription') }}" class="btn btn-sm btn-outline-primary btn-pill text-uppercase">Inscription</a>
-          </div>
-          </div>
+<div class="col-lg-3 col-md-4 col-sm-6">
+    {% if not is_granted('IS_AUTHENTICATED_FULLY') %}
+        <!-- Afficher les boutons de connexion et d'inscription si l'utilisateur n'est pas connecté -->
+        <div class="btn-book text-end">
+            <a href="{{ path('app_login') }}" class="btn btn-sm btn-outline-primary btn-pill text-uppercase">Login</a>
+            <a href="{{ path('choix_inscription') }}" class="btn btn-sm btn-outline-primary btn-pill text-uppercase">Inscription</a>
+        </div>
+    {% else %}
+        <!-- Afficher le menu de profil si l'utilisateur est connecté -->
+        <li class="nav-item dropdown pe-3">
+            <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                {# <img src="{{ asset('assetsBackOffice/img/profile-img.jpg') }}" alt="Profile" class="rounded-circle"> #}
+                <span class="d-none d-md-block dropdown-toggle ps-5" style="color: #00B4D8;">
+                    {{ app.user.firstName }} {{ app.user.lastName }}
+                </span>
+            </a><!-- End Profile Image Icon -->
+
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                <li class="dropdown-header">
+                    <h6>{{ app.user.firstName }} {{ app.user.lastName }}</h6>
+                    <span>
+                            Patient
+                    </span>
+                </li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+
+                <li>
+                    <a class="dropdown-item d-flex align-items-center" href="{{ path('profile_patient') }}">
+                        <i class="bi bi-person"></i>
+                        <span>Mon Profil</span>
+                    </a>
+                </li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+
+                <li>
+                    <a class="dropdown-item d-flex align-items-center" href="{{ path('profile_patient') }}">
+                        <i class="bi bi-gear"></i>
+                        <span>Paramètres du compte</span>
+                    </a>
+                </li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+
+                <li>
+                    <a class="dropdown-item d-flex align-items-center" href="{{ path('app_logout') }}">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Déconnexion</span>
+                    </a>
+                </li>
+            </ul><!-- End Profile Dropdown Items -->
+        </li><!-- End Profile Nav -->
+    {% endif %}
+</div>
         </div>
       </div>
     </nav>
@@ -188,9 +242,12 @@
             <li class="nav-item ps-4 pe-4 border-right">
               <a class="nav-link text-dark p-0" href="#faqs">Faqs</a>
             </li>
-            <li class="nav-item ps-4 pe-4 border-right">
-              <a class="nav-link text-dark p-0" href="#department">Department</a>
-            </li>
+{% if app.user is not null %}
+    <!-- Afficher le lien "Profil" si l'utilisateur est connecté -->
+    <li class="nav-item ps-4 pe-4 border-right">
+        <a class="nav-link text-dark p-0" href="{{ path('profile_patient') }}">Profil</a>
+    </li>
+{% endif %}
             <li class="nav-item ps-4 pe-3 dropdown border-right">
               <a class="nav-link text-dark p-0 dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
                 aria-expanded="false">Pages <iconify-icon icon="iconamoon:arrow-down-2-fill"></iconify-icon> </a>
@@ -238,7 +295,7 @@
   </header>
 {% endblock %}
 
-  <section id="intro" class="position-relative overflow-hidden">
+  {# <section id="intro" class="position-relative overflow-hidden">
     <div class="banner">
       <img src={{ asset('assetsFrontOffice/images/banner-image.jpg')}} alt="banner" class="img-fluid">
       <div class="container">
@@ -308,9 +365,9 @@
 
       </div>
     </div>
-  </section>
+  </section> #}
 
-  <section id="our-services"
+  {# <section id="our-services"
     style="background-image: url('{{ asset('assetsFrontOffice/images/services-bg.jpg') }}'); background-repeat: no-repeat; background-position: center; background-position: top;">
     <div class="container">
       <div class="row">
@@ -508,9 +565,9 @@
         </div>
       </div>
     </div>
-  </section>
+  </section> #}
 
-  <section id="our-team" class="padding-large">
+  {# <section id="our-team" class="padding-large">
     <div class="container">
       <div class="row">
         <div class="display-header mb-5">
@@ -859,9 +916,9 @@
         </div>
       </div>
     </div>
-  </section>
+  </section> #}
 
-  <section id="latest-blog" class="padding-large">
+  {# <section id="latest-blog" class="padding-large">
     <div class="container">
       <div class="row">
         <div class="display-header">
@@ -960,9 +1017,9 @@
         </div>
       </div>
     </div>
-  </section>
+  </section> #}
 
-  <section id="subscribe" class="d-flex align-items-center"
+  {# <section id="subscribe" class="d-flex align-items-center"
     style="background-image: url('{{ asset('assetsFrontOffice/images/subscribe-bg.jpg') }}'); background-repeat: no-repeat;background-size: cover; height: 444px;">
     <div class="container">
       <div class="row align-items-center">
@@ -986,7 +1043,7 @@
         </div>
       </div>
     </div>
-  </section>
+  </section> #}
 
   {% block body %}
 {% endblock %}

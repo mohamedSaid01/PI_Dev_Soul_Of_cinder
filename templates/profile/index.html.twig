@@ -7,13 +7,13 @@
   <main id="main" class="main">
     <div class="pagetitle">
       <h1>Profile</h1>
-      <nav>
+      {# <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="">Home</a></li>
           <li class="breadcrumb-item">Users</li>
           <li class="breadcrumb-item active">Profile</li>
         </ol>
-      </nav>
+      </nav> #}
     </div><!-- End Page Title -->
 
     <section class="section profile">
@@ -101,27 +101,6 @@
                     <div class="col-lg-9 col-md-8">{{ user.gender ? user.gender.value : 'Non spécifié' }}</div>
                   </div>
 
-                  {# Afficher le dossier médical si disponible #}
-                  {% if user.medicalFile %}
-                    <div class="row">
-                      <div class="col-lg-3 col-md-4 label">Dossier Médical</div>
-                      <div class="col-lg-9 col-md-8">
-                        <a href="{{ asset('uploads/' ~ user.medicalFile) }}" target="_blank" class="btn btn-primary btn-sm">
-                          <i class="bi bi-eye"></i>
-                        </a>
-                        <a href="{{ path('download_medical_file', {'filename': user.medicalFile}) }}" class="btn btn-primary btn-sm">
-                          <i class="bi bi-upload"></i>
-                        </a>
-                      </div>
-                    </div>
-                  {% else %}
-                    <div class="row">
-                      <div class="col-lg-3 col-md-4 label">Dossier Médical</div>
-                      <div class="col-lg-9 col-md-8">
-                        <span class="text-muted">Aucun dossier médical téléversé.</span>
-                      </div>
-                    </div>
-                  {% endif %}
 
                   {% if 'ROLE_MEDECIN' in user.roles %}
                     <div class="row">

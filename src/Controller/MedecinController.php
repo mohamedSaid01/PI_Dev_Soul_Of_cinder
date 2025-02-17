@@ -39,7 +39,7 @@ class MedecinController extends AbstractController
     #[Route('/admin/medecin/{id}/edit', name: 'app_medecin_edit', methods: ['GET', 'POST'])]
     public function editMedecin(Request $request, User $medecin, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(MedecinRegistrationFormType::class, $medecin);
+        $form = $this->createForm(MedecinType::class, $medecin);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
