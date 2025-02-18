@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Reclamation index{% endblock %}
+
+{% block body %}
+    <h1>Reclamation index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+
+                <th>Description</th>
+                <th>Date_reclamation</th>
+                <th>Idmedecin</th>
+                <th>Photo</th>
+                <th>TypeReclamation</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for reclamation in reclamations %}
+            <tr>
+                <td>{{ reclamation.description }}</td>
+                <td>{{ reclamation.dateReclamation ? reclamation.dateReclamation|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ reclamation.idmedecin }}</td>
+                <td>{{ reclamation.photo }}</td>
+                <td>{{ reclamation.typeReclamation ? reclamation.typeReclamation.typeReclamation : 'N/A' }}</td>                <td>
+                    <a href="{{ path('app_reclamation_controller_php_show', {'id': reclamation.id}) }}">show</a>
+                    <a href="{{ path('app_reclamation_controller_php_edit', {'id': reclamation.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_reclamation_controller_php_new') }}">Create new</a>
+{% endblock %}

@@ -1,0 +1,111 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Reclamation{% endblock %}
+{% block stylesheets %}
+<style>
+    /* Conteneur principal */
+    .container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* En-tête */
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .header h1 {
+        font-size: 28px;
+        color: #333;
+        margin: 0;
+    }
+
+    /* Bouton "Back to List" */
+    .btn-back {
+        background-color: #6c757d;
+        color: white;
+        padding: 10px 20px;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 14px;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-back:hover {
+        background-color: #5a6268;
+    }
+
+    /* Conteneur du formulaire */
+    .form-wrapper {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+    }
+
+    /* Styles pour le formulaire (optionnel) */
+    .form-wrapper .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-wrapper label {
+        font-weight: bold;
+        color: #555;
+    }
+
+    .form-wrapper input,
+    .form-wrapper textarea,
+    .form-wrapper select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+        color: #333;
+        background-color: #fff;
+        transition: border-color 0.3s ease;
+    }
+
+    .form-wrapper input:focus,
+    .form-wrapper textarea:focus,
+    .form-wrapper select:focus {
+        border-color: #00B4D8;
+        outline: none;
+    }
+
+    .form-wrapper .btn-custom {
+        background-color: #00B4D8;
+        border: none;
+        color: white;
+        padding: 12px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+        width: 100%;
+        transition: background-color 0.3s ease;
+    }
+
+    .form-wrapper .btn-custom:hover {
+        background-color: #0099b3;
+    }
+</style>
+{% endblock %}
+{% block body %}
+    <div class="container">
+        <div class="header">
+            <h1>Create New Reclamation</h1>
+            <a href="{{ path('app_reclamation_controller_php_index') }}" class="btn btn-back">Back to List</a>
+        </div>
+
+        <div class="form-wrapper">
+            {{ include('reclamation_controller_php/_form.html.twig') }}
+        </div>
+    </div>
+{% endblock %}

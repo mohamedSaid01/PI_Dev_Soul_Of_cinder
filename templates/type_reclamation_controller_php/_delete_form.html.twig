@@ -1,0 +1,6 @@
+<form id="delete-form-{{ type_reclamation.id }}" method="post" action="{{ path('app_type_reclamation_controller_php_delete', {'id': type_reclamation.id}) }}">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ type_reclamation.id) }}">
+    <button class="btn btn-danger btn-sm delete-typeRec" data-id="{{ type_reclamation.id }}">
+        <i class="bi bi-trash"></i>
+    </button>
+</form>

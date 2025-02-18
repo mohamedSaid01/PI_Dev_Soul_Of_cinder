@@ -1,0 +1,144 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de la Réclamation{% endblock %}
+
+{% block stylesheets %}
+<style>
+  /* Conteneur principal */
+  .details-container {
+    max-width: 800px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+  }
+
+  /* Tableau stylisé */
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+
+  .table th, .table td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+  }
+
+  .table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+    color: #333;
+  }
+
+  /* Style pour l'image */
+  .reclamation-photo {
+    width: 120px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 5px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Groupe de boutons */
+  .button-group {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+  }
+
+  .button-group .btn {
+    background-color: #00B4D8;
+    border: 1px solid #00B4D8;
+    color: white;
+    padding: 12px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 100%;
+    transition: all 0.3s ease;
+    height: 50px;
+  }
+
+  .btn {
+    background-color: #00B4D8;
+    color: white;
+    border: 1px solid #00B4D8;
+  }
+
+  .button-group .btn:hover {
+    background-color: white;
+    color: #00B4D8;
+  }
+
+  .btn-danger {
+    background-color: #00B4D8;
+    color: white;
+    border: 1px solid #00B4D8;
+  }
+
+  .btn-danger:hover {
+    background-color: white;
+    color: #00B4D8;
+  }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="details-container">
+    <h1>Détails de la Réclamation</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Description</th>
+                <td>{{ reclamation.description }}</td>
+            </tr>
+            <tr>
+                <th>Médecin</th>
+                <td>{{ reclamation.medcein }}</td>
+            </tr>
+            <!--<tr>
+                <th>Type de Réclamation</th>
+                <td>{{ reclamation.typereclamation }}</td>
+            </tr>-->
+            <tr>
+                <th>Date de Réclamation</th>
+                <td>{{ reclamation.dateReclamation ? reclamation.dateReclamation|date('Y-m-d H:i:s') : 'Non spécifiée' }}</td>
+            </tr>
+            <tr>
+                <th>Photo</th>
+                <td>
+                    {% if reclamation.photo %}
+                        <img class="reclamation-photo" src="{{ asset('upload/images/' ~ reclamation.photo) }}" alt="Photo de la réclamation">
+                    {% else %}
+                        Aucune photo disponible
+                    {% endif %}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="button-group ">
+        <a href="{{ path('app_reclamation_controller_php_index') }}" class="btn btn-primary">
+            <i class="fas fa-list"></i> Retour à la liste
+        </a>
+
+        <a href="{{ path('app_reclamation_controller_php_edit', {'id': reclamation.id}) }}" class="btn btn-warning">
+            <i class="fas fa-edit"></i> Modifier
+        </a>
+ <div>
+        {{ include('reclamation_controller_php/_delete_form.html.twig') }}
+       
+    
+</div>
+{% endblock %}

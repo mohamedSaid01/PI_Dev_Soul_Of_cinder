@@ -1,0 +1,67 @@
+{% extends 'baseBackOffice.html.twig' %}
+
+{% block title %}Reponse index{% endblock %}
+
+{% block body %}
+    <h1 class="text-center">Reponse index</h1>
+
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Contenu</th>
+                    <th>Date_reponse</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for reponse in reponses %}
+                <tr>
+                    <td>{{ reponse.contenu }}</td>
+                    <td>{{ reponse.dateReponse ? reponse.dateReponse|date('Y-m-d H:i:s') : '' }}</td>
+                    <td>
+                        <a href="{{ path('app_reponse_controller_php_show', {'id': reponse.id}) }}">show</a>
+                        <a href="{{ path('app_reponse_controller_php_edit', {'id': reponse.id}) }}">edit</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <a href="{{ path('app_reponse_controller_php_new') }}">Create new</a>
+{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .text-center {
+            text-align: center;
+        }
+
+        .table-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .table {
+            width: 80%; /* Vous pouvez ajuster la largeur de la table selon vos besoins */
+            border-collapse: collapse;
+        }
+
+        .table th, .table td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        .table th {
+            background-color: #f2f2f2;
+        }
+    </style>
+{% endblock %}

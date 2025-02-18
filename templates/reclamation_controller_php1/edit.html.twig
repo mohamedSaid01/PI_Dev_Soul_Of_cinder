@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Reclamation{% endblock %}
+{% block stylesheets %}
+    <style>
+.text-center {
+    margin: 50px auto;
+    max-width: 1200px;
+    text-align: center; /* Ajoute cette ligne pour centrer les éléments à l'intérieur */
+}
+
+.button-group .btn {
+    background-color: #00B4D8;
+    border: 1px solid #00B4D8;
+    color: white;
+    padding: 12px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 100px;
+    //transition: all 0.3s ease;
+    height: 50px;
+    margin: 50px auto;
+    max-width: 1200px;
+}
+
+.btn {
+    background-color: #00B4D8;
+    color: white;
+    border: 1px solid #00B4D8;
+    margin: 50px auto;
+    display: block; /* Cette ligne permet de centrer le bouton */
+    max-width: 200px;
+}
+
+.btn:hover {
+    background-color: white;
+    color: #00B4D8;
+}
+
+
+
+        </style>
+{% endblock %}
+{% block body %}
+    <h1  class="text-center text-primary mb-4">Edit Reclamation</h1>
+
+    {{ include('reclamation_controller_php/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_reclamation_controller_php_index') }}" class="btn btn-primary" style="text-align: center;">back to list</a>
+
+    {{ include('reclamation_controller_php/_delete_form.html.twig') }}
+{% endblock %}

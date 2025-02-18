@@ -1,0 +1,105 @@
+{{ form_start(form) }}
+// <script>
+//     document.addEventListener("DOMContentLoaded", function () {
+//         let checkbox = document.querySelector("#{{ form.addPhoto.vars.id }}");
+//         let photoInput = document.querySelector(".photo-input");
+        
+//         checkbox.addEventListener("change", function () {
+//             if (checkbox.checked) {
+//                 photoInput.style.display = "block";
+//             } else {
+//                 photoInput.style.display = "none";
+//             }
+//         });
+//     });
+
+//     document.addEventListener("DOMContentLoaded", function () {
+//         let checkbox = document.querySelector("#{{ form.addmedcein.vars.id }}");
+//         let medceinNameInput = document.querySelector(".medcein-name-input");
+
+//         checkbox.addEventListener("change", function () {
+//             if (checkbox.checked) {
+//                 medceinNameInput.style.display = "block";
+//             } else {
+//                 medceinNameInput.style.display = "none";
+//             }
+//         });
+//     });
+// </script>
+
+<style>
+    .form-container {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        max-width: 600px;
+        margin: 0 auto;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-container input,
+    .form-container select,
+    .form-container textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    .btn-custom {
+        background-color: #00B4D8;
+        border: 1px solid #00B4D8;
+        color: white;
+        padding: 12px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+        width: 100%;
+    }
+
+    .btn-custom:hover {
+        background-color: white;
+        color: #00B4D8;
+        border: 1px solid #00B4D8;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-container label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: inline-block;
+    }
+</style>
+
+<div class="form-container">
+    <h2>Réclamation de type : {{ type }}</h2>
+    <div>
+        {{ form_label(form.description) }}
+        {{ form_widget(form.description) }}
+    </div>
+    {# <div>
+        {{ form_label(form.addmedcein) }}
+        {{ form_widget(form.addmedcein) }}
+    </div> #}
+    <div class="medcein-name-input" style="display: none;">
+        {{ form_label(form.medcein) }}
+        {{ form_widget(form.medcein) }}
+    </div>
+    <div>
+        {{ form_label(form.date_reclamation) }}
+        {{ form_widget(form.date_reclamation) }}
+    </div>
+    <div style="display: none;">
+        {# {{ form_label(form.addPhoto) }}
+        {{ form_widget(form.addPhoto) }}
+    </div> #}
+    <div class="photo-container">
+        {{ form_label(form.photo) }}
+        {{ form_widget(form.photo) }}
+    </div>
+    <button class="btn btn-custom">{{ button_label|default('Save') }}</button>
+</div>
+
+{{ form_end(form) }}

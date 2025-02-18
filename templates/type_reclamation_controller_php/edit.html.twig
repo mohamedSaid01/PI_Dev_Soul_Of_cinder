@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit TypeReclamation{% endblock %}
+
+{% block body %}
+    <h1>Edit TypeReclamation</h1>
+
+    {{ include('type_reclamation_controller_php/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_type_reclamation_controller_php_index') }}">back to list</a>
+
+<form id="delete-form-{{ type_reclamation.id }}" method="post" action="{{ path('app_type_reclamation_controller_php_delete', {'id': type_reclamation.id}) }}">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ type_reclamation.id) }}">
+    <button class="btn btn-danger btn-sm delete-typeRec" data-id="{{ type_reclamation.id }}">
+        <i class="bi bi-trash"></i>supprimer
+    </button>
+</form>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.querySelectorAll('.delete-typeRec').forEach(button => {
+        button.addEventListener('click', function (event) {
+            event.preventDefault(); // Empêcher le rechargement du formulaire
+
+            const id = this.getAttribute('data-id');
+            const csrfToken = document.querySelector(#delete-form-${id} input[name="_token"]).value; // ✅ Correction ici
+
+            Swal.fire({
+                title: 'Confirmer la suppression',
+                text: 'Êtes-vous sûr de vouloir supprimer ce type ? Cette action est irréversible.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Oui, supprimer',
+                cancelButtonText: 'Annuler'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(/type/reclamation/controller/php/${id}, { // ✅ Correction ici
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            _token: csrfToken // ✅ Envoi correct du token CSRF
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire(
+                                'Supprimé !',
+                                'Le type de réclamation a été supprimé avec succès.',
+                                'success'
+                            ).then(() => {
+                                window.location.href = "{{ path('app_type_reclamation_controller_php_index') }}";
+                            });
+                        } else {
+                            Swal.fire(
+                                'Erreur',
+                                data.message || 'Une erreur est survenue.',
+                                'error'
+                            );
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la suppression :', error);
+                        Swal.fire(
+                            'Erreur',
+                            'Une erreur est survenue. Veuillez réessayer.',
+                            'error'
+                        );
+                    });
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

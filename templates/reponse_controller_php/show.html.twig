@@ -1,0 +1,27 @@
+{% extends 'baseBackOffice.html.twig' %}
+
+{% block title %}Reponse{% endblock %}
+
+{% block body %}
+    <h1>Reponse</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Contenu</th>
+                <td>{{ reponse.contenu }}</td>
+            </tr>
+            <tr>
+                <th>Date_reponse</th>
+                <td>
+                {{ reponse.dateReponse ? reponse.dateReponse|date('Y-m-d H:i:s') : 'Non spécifiée' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_reponse_controller_php_index') }}">back to list</a>
+
+    <a href="{{ path('app_reponse_controller_php_edit', {'id': reponse.id}) }}">edit</a>
+
+    {{ include('reponse_controller_php/_delete_form.html.twig') }}
+{% endblock %}

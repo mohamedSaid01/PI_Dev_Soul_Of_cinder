@@ -1,0 +1,132 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Reclamation index{% endblock %}
+{% block stylesheets %}
+    <style>
+        .table-container {
+            margin: 50px auto;
+            max-width: 1200px;
+        }
+        .table {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+            padding: 15px;
+        }
+        td {
+            padding: 12px;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        
+        .btn {
+            border-radius: 8px; /* Coins arrondis */
+            padding: 6px 12px; /* Espace interne */
+            font-weight: bold;
+            text-transform: uppercase; /* Majuscules */
+        }
+        .btn:hover {
+            border-radius: 8px; /* Coins arrondis */
+            padding: 6px 12px; /* Espace interne */
+            font-weight: bold;
+            text-transform: uppercase; /* Majuscules */
+        }
+        .btn-primaryy {
+      background-color: #00B4D8;
+      border: none;
+      color: white;
+      }
+
+  .btn-primaryy:hover {
+      background-color: white;
+      border: 1px solid #00B4D8;
+      color: #00B4D8;
+  }
+
+        .btn-warning {
+            background-color: #00B4D8;
+            border: none;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.8;
+            background-color: white;
+            border: 1px solid #00B4D8;
+            color: #00B4D8;
+        }
+.button-group .btn {
+    background-color: #00B4D8;
+    border: 1px solid #00B4D8;
+    color: white;
+    padding: 12px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 100%;
+    transition: all 0.3s ease;
+    height: 50px;
+  }
+  .btn {
+    background-color: #00B4D8;
+    color: white;
+    border: 1px solid #00B4D8;
+  }
+
+  .button-group .btn:hover {
+    background-color: white;
+    color: #00B4D8;
+  }
+
+
+    </style>
+{% endblock %}
+{% block body %}
+<div class="container table-container">
+    <h1 class="text-center text-primary mb-4">Reclamation index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Medcein</th>
+                <th>Typereclamation</th>
+                <th>Photo</th>
+                <th>Date_reclamation</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for reclamation in reclamations %}
+            <tr>
+                <td>{{ reclamation.description }}</td>
+                <td>{{ reclamation.medcein }}</td>
+                  <td>
+                    {% if reclamation.photo %}
+                        <img style="width: 100px; height: 50px;" src="{{ asset('upload/images/' ~ reclamation.photo) }}" alt="Photo de la réclamation">
+                    {% else %}
+                        Aucune photo disponible
+                    {% endif %}
+                </td>
+                <td>{{ reclamation.dateReclamation ? reclamation.dateReclamation|date('Y-m-d H:i:s') : '' }}</td>
+
+                <td>
+                    <a href="{{ path('app_reclamation_controller_php_showcopy', {'id': reclamation.id}) }}" class="button-group btn">show</a>
+                    <a href="{{ path('app_reclamation_controller_php_editcopy', {'id': reclamation.id}) }}"class="button-group btn">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_reclamation_controller_php_newcopy') }}"class="button-group btn">Create new</a>
+{% endblock %}

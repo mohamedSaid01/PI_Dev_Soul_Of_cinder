@@ -1,0 +1,203 @@
+{{ form_start(form) }}
+ <script>
+    // document.addEventListener("DOMContentLoaded", function () {
+    //     // Gestion de la case à cocher "Ajouter une photo ?"
+    //     let photoCheckbox = document.querySelector("#{{ form.addPhoto.vars.id }}");
+    //     let photoInput = document.querySelector(".photo-input");
+
+    //     if (photoCheckbox && photoInput) {
+    //         photoCheckbox.addEventListener("change", function () {
+    //             if (photoCheckbox.checked) {
+    //                 photoInput.style.display = "block";
+    //             } else {
+    //                 photoInput.style.display = "none";
+    //             }
+    //         });
+    //     }
+
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    let photoCheckbox = document.querySelector("#{{ form.addPhoto.vars.id }}");
+    let photoNameInput = document.querySelector(".photo-input");
+
+    if (photoCheckbox && photoNameInput) {
+        photoCheckbox.addEventListener("change", function () {
+            if (photoCheckbox.checked) {
+                photoNameInput.style.display = "block"; // Afficher le champ "nom du médecin"
+            } else {
+                photoNameInput.style.display = "none"; // Masquer le champ "nom du médecin"
+            }
+        });
+        
+
+        // Initialiser l'état du champ "nom du médecin" au chargement de la page
+        photoNameInput.style.display = photoCheckbox.checked ? "block" : "none";
+    }
+
+
+
+    // Gestion de la case à cocher "Médecin ?"
+    let medecinCheckbox = document.querySelector("#{{ form.addidmedcein.vars.id }}");
+    let medecinNameInput = document.querySelector(".medcein-name-input");
+
+    if (medecinCheckbox && medecinNameInput) {
+        medecinCheckbox.addEventListener("change", function () {
+            if (medecinCheckbox.checked) {
+                medecinNameInput.style.display = "block"; // Afficher le champ "nom du médecin"
+            } else {
+                medecinNameInput.style.display = "none"; // Masquer le champ "nom du médecin"
+            }
+        });
+
+        // Initialiser l'état du champ "nom du médecin" au chargement de la page
+        medecinNameInput.style.display = medecinCheckbox.checked ? "block" : "none";
+    }
+});</script>
+<style>
+  .form-container {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 25px;
+    max-width: 600px;
+    margin: 40px auto;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-container h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 24px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #555;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #333;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    border-color: #00B4D8;
+    outline: none;
+    background-color: #fff;
+  }
+
+  .form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  .checkbox-group {
+    margin-bottom: 20px;
+  }
+
+  .checkbox-group label {
+    font-weight: normal;
+    margin-left: 8px;
+  }
+
+  .btn-custom {
+    background-color: #00B4D8;
+    border: none;
+    color: white;
+    padding: 12px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 100%;
+    transition: background-color 0.3s ease;
+  }
+
+  .btn-custom:hover {
+    background-color: #0099b3;
+  }
+
+  .photo-preview {
+    margin-top: 10px;
+  }
+
+  .photo-preview img {
+    max-width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+  }
+
+  .photo-preview p {
+    color: #888;
+    font-style: italic;
+  }
+</style>
+{# <div class="form-container">
+    <h2>Réclamation de type :</h2>
+    {{ form_start(form) }} #}
+
+<div class="form-container">
+    <h2>Réclamation de type :</h2>
+
+    <div class="form-group">
+    
+        {{ form_label(form.description) }}
+        {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+    </div>
+    
+
+    <div class="checkbox-group">
+        {{ form_widget(form.addidmedcein) }}
+        {{ form_label(form.addidmedcein) }}
+    </div>
+
+    <div class="form-group medcein-name-input" style="display: none;">
+        {{ form_label(form.idmedecin) }}
+        {{ form_widget(form.idmedecin, {'attr': {'class': 'form-control'}}) }}
+    </div>
+
+    <div class="form-group">
+        {{ form_label(form.date_reclamation) }}
+        {{ form_widget(form.date_reclamation, {'attr': {'class': 'form-control'}}) }}
+    </div>
+
+    <div class="checkbox-group">
+        {{ form_widget(form.addPhoto) }}
+        {{ form_label(form.addPhoto) }}
+    </div>
+
+    <div class="form-group photo-input" style="display: none;">
+        {{ form_label(form.photo) }}
+        {{ form_widget(form.photo, {'attr': {'class': 'form-control'}}) }}
+
+        {# Afficher un aperçu de la photo si elle existe #}
+        {% if reclamation.photo %}
+            <div class="photo-preview">
+                <img src="{{ asset('upload/images/' ~ reclamation.photo) }}" alt="Photo">
+            </div>
+        {% else %}
+            <div class="photo-preview">
+                <p>Aucune photo disponible</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <button class="btn btn-custom">{{ button_label|default('Enregistrer') }}</button>
+</div>
+{{ form_end(form) }}
