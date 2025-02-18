@@ -78,22 +78,25 @@ final class TypeReclamationControllerPhpController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_type_reclamation_controller_php_delete', methods: ['POST'])]
-public function delete(Request $request, TypeReclamation $typeReclamation, EntityManagerInterface $entityManager): Response
-{
-    // Récupérer le token CSRF depuis la requête JSON
-    $data = json_decode($request->getContent(), true);
-    $csrfToken = $data['_token'] ?? '';
-
-    if ($this->isCsrfTokenValid('delete' . $typeReclamation->getId(), $csrfToken)) {
-        $entityManager->remove($typeReclamation);
-        $entityManager->flush();
-
-        // Retourner une réponse JSON pour l'AJAX
-        return $this->json(['success' => true, 'message' => 'Type de réclamation supprimé avec succès']);
+    public function delete(Request $request, TypeReclamation $typeReclamation, EntityManagerInterface $entityManager): Response
+    {
+        // Vérifier si la requête est bien AJAX
+        if (!$request->isXmlHttpRequest()) {
+            return $this->json(['success' => false, 'message' => 'Requête invalide'], Response::HTTP_BAD_REQUEST);
+        }
+    
+        // Récupérer le token CSRF depuis la requête JSON
+        $data = json_decode($request->getContent(), true);
+        $csrfToken = $data['_token'] ?? '';
+    
+        if ($this->isCsrfTokenValid('delete' . $typeReclamation->getId(), $csrfToken)) {
+            $entityManager->remove($typeReclamation);
+            $entityManager->flush();
+    
+            return $this->json(['success' => true, 'message' => 'Type de réclamation supprimé avec succès']);
+        }
+    
+        return $this->json(['success' => false, 'message' => 'Token CSRF invalide'], Response::HTTP_FORBIDDEN);
     }
-
-    return $this->json(['success' => false, 'message' => 'Token CSRF invalide'], Response::HTTP_FORBIDDEN);
-}
-
 
 }

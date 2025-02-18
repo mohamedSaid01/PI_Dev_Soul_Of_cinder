@@ -9,10 +9,8 @@
 
     <a href="{{ path('app_type_reclamation_controller_php_index') }}">back to list</a>
 
-<form id="delete-form-{{ type_reclamation.id }}" method="post" action="{{ path('app_type_reclamation_controller_php_delete', {'id': type_reclamation.id}) }}">
-    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ type_reclamation.id) }}">
-    <button class="btn btn-danger btn-sm delete-typeRec" data-id="{{ type_reclamation.id }}">
-        <i class="bi bi-trash"></i>supprimer
+    <button  class="btn btn-danger btn-sm delete-typeRec" data-id="{{ type_reclamation.id }}">
+        <i class="bi bi-trash"></i> Supprimer
     </button>
 </form>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -22,7 +20,6 @@
             event.preventDefault(); // Empêcher le rechargement du formulaire
 
             const id = this.getAttribute('data-id');
-            const csrfToken = document.querySelector(#delete-form-${id} input[name="_token"]).value; // ✅ Correction ici
 
             Swal.fire({
                 title: 'Confirmer la suppression',
@@ -35,7 +32,7 @@
                 cancelButtonText: 'Annuler'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    fetch(/type/reclamation/controller/php/${id}, { // ✅ Correction ici
+                    fetch('/type/reclamation/controller/php/${id}', { // ✅ Correction ici
                         method: 'POST',
                         headers: {
                             'X-Requested-With': 'XMLHttpRequest',
