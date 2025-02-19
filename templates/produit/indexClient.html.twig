@@ -76,6 +76,55 @@
       background-color: #007bff;
       color: #fff;
     }
+
+    /* Styles for Comments Section */
+    .comments-section {
+      margin-top: 1rem;
+    }
+
+    .comment-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .comment-list li {
+      background: #f8f9fa;
+      padding: 0.75rem;
+      margin-bottom: 0.5rem;
+      border-radius: 5px;
+      border: 1px solid #e9ecef;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .comment-actions button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      margin-left: 10px;
+      color: #dc3545;
+      transition: color 0.3s ease;
+    }
+
+    .comment-actions button:hover {
+      color: #a71d2a;
+    }
+
+    .btn-delete-all {
+      margin-top: 10px;
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-delete-all:hover {
+      background-color: #a71d2a;
+    }
   </style>
   {% endblock %}
 
@@ -205,25 +254,24 @@
   {% block body %}
   <section id="products" class="py-5">
     <div class="container">
-              <!-- Filter by Category -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <form method="get" action="{{ path('front_list') }}" class="d-flex">
-                <select name="category" class="form-select me-2">
-                    <option value="">All Categories</option>
-                    {% for category in categories %}
-                        <option value="{{ category.id }}" {{ selectedCategory == category.id ? 'selected' : '' }}>
-                            {{ category.name }}
-                        </option>
-                    {% endfor %}
-                </select>
-                <button type="submit" class="btn btn-secondary btn-sm">Filter</button>
-            </form>
-
-        </div>
+      <!-- Filter by Category -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <form method="get" action="{{ path('front_list') }}" class="d-flex">
+          <select name="category" class="form-select me-2">
+            <option value="">All Categories</option>
+            {% for category in categories %}
+              <option value="{{ category.id }}" {{ selectedCategory == category.id ? 'selected' : '' }}>
+                {{ category.name }}
+              </option>
+            {% endfor %}
+          </select>
+          <button type="submit" class="btn btn-secondary btn-sm">Filter</button>
+        </form>
+      </div>
       <div class="row">
         {% for produit in produits %}
         <div class="col-md-4 mb-4">
-          <div class="card h-100">
+          <div class="card h-100" data-product-id="{{ produit.id }}">
             <img src="{{ asset('uploads/images/' ~ produit.image) }}" class="card-img-top" alt="{{ produit.name }}">
             <div class="card-body">
               <h5 class="card-title">{{ produit.name }}</h5>
@@ -234,6 +282,20 @@
               <p class="card-text text-warning"><strong>Alert: This product may be out of stock soon!</strong></p>
               {% endif %}
               <a href="#" class="btn btn-outline-primary">Add to Cart</a>
+            </div>
+            <!-- Comment Section -->
+            <div class="card-footer bg-transparent">
+              <div class="mb-3">
+                <textarea class="form-control comment-input" rows="2" placeholder="Add a comment..." required></textarea>
+              </div>
+              <button class="btn btn-primary btn-sm submit-comment">Submit</button>
+            </div>
+            <!-- Display Comments -->
+            <div class="comments-section mt-3">
+              <h6>Comments:</h6>
+              <ul class="list-group comment-list">
+                <!-- Comments will be dynamically added here -->
+              </ul>
             </div>
           </div>
         </div>
@@ -250,6 +312,75 @@
   {% block footer %}
   <!-- Your existing footer -->
   {% endblock %}
+
+  <!-- JavaScript for Comments -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Load comments for each product
+      document.querySelectorAll('.card').forEach(card => {
+        const productId = card.dataset.productId;
+        const commentList = card.querySelector('.comment-list');
+        const comments = JSON.parse(localStorage.getItem(`product_${productId}_comments`)) || [];
+
+        // Display existing comments
+        comments.forEach((comment, index) => {
+          addCommentToDOM(commentList, comment, index, productId);
+        });
+
+        // Handle comment submission
+        const submitButton = card.querySelector('.submit-comment');
+        submitButton.addEventListener('click', function () {
+          const commentInput = card.querySelector('.comment-input');
+          const commentText = commentInput.value.trim();
+
+          if (commentText) {
+            // Save comment to localStorage
+            const comments = JSON.parse(localStorage.getItem(`product_${productId}_comments`)) || [];
+            comments.push(commentText);
+            localStorage.setItem(`product_${productId}_comments`, JSON.stringify(comments));
+
+            // Add comment to the DOM
+            addCommentToDOM(commentList, commentText, comments.length - 1, productId);
+
+            // Clear the input
+            commentInput.value = '';
+          }
+        });
+
+        // Handle "Delete All Comments" button
+         /*
+        deleteAllButton.addEventListener('click', function () {
+          if (confirm('Are you sure you want to delete all comments?')) {
+            localStorage.removeItem(`product_${productId}_comments`);
+            commentList.innerHTML = ''; // Clear the comment list in the DOM
+          }
+          
+        });
+        */
+      });
+
+      // Function to add a comment to the DOM
+      function addCommentToDOM(commentList, commentText, index, productId) {
+        const commentItem = document.createElement('li');
+        commentItem.className = 'list-group-item';
+        commentItem.innerHTML = `
+          <span>${commentText}</span>
+          <div class="comment-actions">
+            <button class="delete" onclick="deleteComment(${productId}, ${index})">🗑️ Delete</button>
+          </div>
+        `;
+        commentList.appendChild(commentItem);
+      }
+    });
+
+    // Function to delete a comment
+    function deleteComment(productId, index) {
+      const comments = JSON.parse(localStorage.getItem(`product_${productId}_comments`)) || [];
+      comments.splice(index, 1); // Remove the comment
+      localStorage.setItem(`product_${productId}_comments`, JSON.stringify(comments));
+      location.reload(); // Refresh to show updated comments
+    }
+  </script>
 </body>
 
 </html>

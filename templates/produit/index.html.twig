@@ -24,7 +24,7 @@
                             <td>{{ produit.id }}</td>
                             <td>{{ produit.name }}</td>
                             <td>{{ produit.desciption }}</td>
-                            <td>${{ produit.price|number_format(2) }}</td>
+                            <td>{{ produit.price|number_format(2) }}DT</td>
                             <td>
                                 <img src="{{ asset('uploads/images/' ~ produit.image) }}" alt="Product Image" class="img-fluid rounded" style="max-width: 100px;">
                             </td>
