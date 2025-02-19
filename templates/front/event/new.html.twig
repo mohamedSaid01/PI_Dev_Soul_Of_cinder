@@ -1,0 +1,47 @@
+{% extends 'front/base.html.twig' %}
+
+{% block title %}Créer un nouvel événement{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <h1 class="h3 mb-4 text-gray-800">Créer un nouvel événement</h1>
+
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                {{ form_start(form) }}
+                <div class="mb-3">
+                    {{ form_label(form.title) }}
+                    {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(form.description) }}
+                    {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(form.startDate) }}
+                    {{ form_widget(form.startDate, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(form.endDate) }}
+                    {{ form_widget(form.endDate, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(form.location) }}
+                    {{ form_widget(form.location, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(form.afficheFile) }}
+                    {{ form_widget(form.afficheFile, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+
+        <a href="{{ path('front_medecin_event_index') }}" class="btn btn-secondary">Retour à la liste</a>
+    </div>
+
+    <script src="{{ asset('js/custom-file-input.js') }}"></script>
+{% endblock %}

@@ -40,8 +40,12 @@
                                     <td>{{ categorie.nom }}</td>
                                     <td>{{ categorie.description }}</td>
                                     <td>
-                                        <a href="{{ path('categorie_event_edit', {'id': categorie.id}) }}" class="btn btn-warning">Modifier</a>
-                                        <button class="btn btn-danger delete-category" data-id="{{ categorie.id }}">Supprimer</button>
+                                        <a href="{{ path('categorie_event_edit', {'id': categorie.id}) }}" class="btn btn-warning btn-sm">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button class="btn btn-danger btn-sm delete-category" data-id="{{ categorie.id }}">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
                                     </td>
                                 </tr>
                             {% endfor %}

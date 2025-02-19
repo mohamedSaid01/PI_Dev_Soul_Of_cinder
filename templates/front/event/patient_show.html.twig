@@ -1,0 +1,46 @@
+{% extends 'front/base.html.twig' %}
+
+{% block title %}SAHATECH - Événements{% endblock %}
+
+{% block body %}
+    <!-- Section Détails de l'Événement -->
+    <section id="event-details" class="event-details section">
+
+        <div class="container">
+
+            <div class="row gy-4">
+
+                <div class="col-lg-8" data-aos="fade-up" data-aos-delay="100">
+                    <div class="event-details-content">
+                        <h1>{{ event.title }}</h1>
+                        <p class="event-meta">
+                            <strong>Date de début :</strong> {{ event.startDate|date('d/m/Y H:i') }}<br>
+                            <strong>Date de fin :</strong> {{ event.endDate|date('d/m/Y H:i') }}<br>
+                            <strong>Lieu :</strong> {{ event.location }}
+                        </p>
+                        <div class="event-description">
+                            <p>{{ event.description }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="event-image">
+                        {% if event.affiche %}
+                            <img src="{{ asset('uploads/affiches/' ~ event.affiche) }}" alt="Affiche de {{ event.title }}" class="img-fluid rounded">
+                        {% else %}
+                            <img src="{{ asset('assets/img/default-event.jpg') }}" alt="Affiche par défaut" class="img-fluid rounded">
+                        {% endif %}
+                    </div>
+                    <div class="text-center mt-3">
+                        <a href="{{ path('front_participant_new', {'id': event.id}) }}" class="btn btn-primary">Participer</a>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+    <!-- /Section Détails de l'Événement -->
+{% endblock %}

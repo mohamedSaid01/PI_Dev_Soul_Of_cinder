@@ -8,6 +8,10 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use App\Repository\EventRepository;
 use Symfony\Component\Validator\Constraints as Assert;
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use App\Entity\Inscription;
+
 #[ORM\Entity(repositoryClass: EventRepository::class)]
 #[Vich\Uploadable]
 class Event
@@ -32,6 +36,7 @@ class Event
     #[ORM\Column(type: 'datetime')]
     #[Assert\NotBlank(message: "La date de début ne doit pas être vide.")]
     #[Assert\Type("\DateTimeInterface")]
+    #[Assert\GreaterThanOrEqual("today", message: "La date de début ne peut pas être dans le passé.")]
     private ?\DateTimeInterface $startDate = null;
 
     #[ORM\Column(type: 'datetime')]
@@ -74,10 +79,19 @@ class Event
     #[ORM\Column(type: 'float', nullable: true)]
     private ?float $longitude = null;
 
+    #[ORM\OneToMany(mappedBy: 'event', targetEntity: Inscription::class, cascade: ['remove'])]
+    private Collection $inscriptions;
+    #[ORM\Column(type: 'integer')]
+    #[Assert\NotBlank(message: "Le nombre des places ne doit pas être vide.")]
+    #[Assert\PositiveOrZero(message: "Le nombre de places doit être positif.")]
+    private ?int $placesDisponibles = null;
+
     public function __construct()
     {
         $this->startDate = new \DateTime(); // Définit la date actuelle par défaut
         $this->endDate = new \DateTime('+1 day'); // Définit la date de fin à demain par défaut
+        $this->inscriptions = new ArrayCollection();
+
     }
 
     public function isExpired(): bool
@@ -242,6 +256,56 @@ class Event
     {
         $this->longitude = $longitude;
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Inscription>
+     */
+    public function getInscriptions(): Collection
+    {
+        return $this->inscriptions;
+    }
+    public function addInscription(Inscription $inscription): self
+    {
+        if (!$this->inscriptions->contains($inscription)) {
+            $this->inscriptions->add($inscription);
+            $inscription->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInscription(Inscription $inscription): self
+    {
+        if ($this->inscriptions->removeElement($inscription)) {
+            if ($inscription->getEvent() === $this) {
+                $inscription->setEvent(null);
+            }
+        }
+
+        return $this;
+    }
+    public function getPlacesDisponibles(): ?int
+    {
+        return $this->placesDisponibles;
+    }
+
+    public function setPlacesDisponibles(?int $placesDisponibles): self
+    {
+        $this->placesDisponibles = $placesDisponibles;
+        return $this;
+    }
+
+    public function decrementPlaces(): void
+    {
+        if ($this->placesDisponibles > 0) {
+            $this->placesDisponibles--;
+        }
+    }
+
+    public function incrementPlaces(): void
+    {
+        $this->placesDisponibles++;
     }
     
 }

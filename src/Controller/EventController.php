@@ -142,39 +142,50 @@ class EventController extends AbstractController
     // BACK-OFFICE: Créer un nouvel événement
     // src/Controller/EventController.php
 
-#[Route('/back/new', name: 'back_event_new', methods: ['GET', 'POST'])]
-public function backNew(Request $request, EntityManagerInterface $entityManager): Response
-{
-    $event = new Event();
-    $form = $this->createForm(EventType::class, $event);
-    $form->handleRequest($request);
+    #[Route('/back/new', name: 'back_event_new', methods: ['GET', 'POST'])]
+    public function backNew(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $event = new Event();
+        $form = $this->createForm(EventType::class, $event);
+        $form->handleRequest($request);
 
-    if ($form->isSubmitted() && $form->isValid()) {
-        // 🔥 Gérer l'upload de l'affiche
-        $afficheFile = $form->get('afficheFile')->getData();
-        if ($afficheFile) {
-            $newFilename = uniqid() . '.' . $afficheFile->guessExtension();
-            $afficheFile->move($this->getParameter('affiches_directory'), $newFilename);
-            $event->setAffiche($newFilename);
-        } else {
-            // 🚨 Si aucun fichier n'est uploadé, retourne une erreur
-            $this->addFlash('error', 'Veuillez ajouter une affiche.');
-            return $this->render('back/event/new.html.twig', [
-                'form' => $form->createView(),
-            ]);
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                // Gestion de l'upload de l'affiche
+                $afficheFile = $form->get('afficheFile')->getData();
+                if ($afficheFile) {
+                    $newFilename = uniqid() . '.' . $afficheFile->guessExtension();
+                    $afficheFile->move($this->getParameter('affiches_directory'), $newFilename);
+                    $event->setAffiche($newFilename);
+                }
+
+                $entityManager->persist($event);
+                $entityManager->flush();
+
+                // Ajout du message de succès
+                $this->addFlash('success', 'Événement ajouté avec succès.');
+
+                return $this->redirectToRoute('back_event_index');
+            } else {
+                // 🚨 Gérer les erreurs en JSON pour SweetAlert
+                $errors = [];
+                foreach ($form->getErrors(true) as $error) {
+                    $errors[] = $error->getMessage();
+                }
+
+                return $this->render('back/event/new.html.twig', [
+                    'form' => $form->createView(),
+                    'errors' => $errors, // Passer les erreurs à Twig pour SweetAlert
+                ]);
+            }
         }
 
-        $entityManager->persist($event);
-        $entityManager->flush();
-
-        $this->addFlash('success', 'Événement ajouté avec succès.');
-        return $this->redirectToRoute('back_event_index');
+        return $this->render('back/event/new.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 
-    return $this->render('back/event/new.html.twig', [
-        'form' => $form->createView(),
-    ]);
-}
+
 
 
 

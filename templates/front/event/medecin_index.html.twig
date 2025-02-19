@@ -95,12 +95,13 @@
                 <div class="tab-pane fade" id="archived-events">
                     <div class="post-grid d-flex flex-wrap mt-4">
                         {% for event in events_archived %}
+                            {% if event.isExpired %}
                             <div class="col-lg-4 col-md-6 col-sm-12 mb-5">
                                 <div class="card-item pe-3">
                                     <div class="card border-0 bg-transparent">
                                         <div class="card-image position-relative">
-                                            <img src="{{ event.affiche ? asset('uploads/affiches/' ~ event.affiche) : asset('images/default-event.png') }}" 
-                                                 alt="{{ 'Affiche de'|trans }} {{ event.title }}" 
+                                            <img src="{{ event.affiche ? asset('uploads/affiches/' ~ event.affiche) : asset('images/default-event.png') }}"
+                                                 alt="{{ 'Affiche de'|trans }} {{ event.title }}"
                                                  class="event-image">
                                             <span class="bg-secondary text-light position-absolute text-uppercase text-capitalize">
                                                 {{ event.categorie.nom }}
@@ -125,6 +126,7 @@
                                     </div>
                                 </div>
                             </div>
+                            {% endif %}
                         {% else %}
                             <div class="col-12">
                                 <p>{{ 'Aucun événement archivé disponible.'|trans }}</p>
