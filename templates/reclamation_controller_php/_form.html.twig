@@ -1,19 +1,19 @@
 {{ form_start(form) }}
- <script>
-    // document.addEventListener("DOMContentLoaded", function () {
-    //     // Gestion de la case à cocher "Ajouter une photo ?"
-    //     let photoCheckbox = document.querySelector("#{{ form.addPhoto.vars.id }}");
-    //     let photoInput = document.querySelector(".photo-input");
+  <script>
+//     // document.addEventListener("DOMContentLoaded", function () {
+//     //     // Gestion de la case à cocher "Ajouter une photo ?"
+//     //     let photoCheckbox = document.querySelector("#{{ form.addPhoto.vars.id }}");
+//     //     let photoInput = document.querySelector(".photo-input");
 
-    //     if (photoCheckbox && photoInput) {
-    //         photoCheckbox.addEventListener("change", function () {
-    //             if (photoCheckbox.checked) {
-    //                 photoInput.style.display = "block";
-    //             } else {
-    //                 photoInput.style.display = "none";
-    //             }
-    //         });
-    //     }
+//     //     if (photoCheckbox && photoInput) {
+//     //         photoCheckbox.addEventListener("change", function () {
+//     //             if (photoCheckbox.checked) {
+//     //                 photoInput.style.display = "block";
+//     //             } else {
+//     //                 photoInput.style.display = "none";
+//     //             }
+//     //         });
+//     //     }
 
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -54,150 +54,202 @@ document.addEventListener("DOMContentLoaded", function () {
         medecinNameInput.style.display = medecinCheckbox.checked ? "block" : "none";
     }
 });</script>
+
 <style>
-  .form-container {
+  .tt {
     background-color: #ffffff;
-    border-radius: 10px;
-    padding: 25px;
-    max-width: 600px;
+    border-radius: 12px;
+    padding: 30px;
+    max-width: 700px;
     margin: 40px auto;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
   }
 
-  .form-container h2 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 20px;
-    font-size: 24px;
+  .group1 {
+    margin-bottom: 25px;
   }
 
-  .form-group {
-    margin-bottom: 20px;
-  }
-
-  .form-group label {
+  .group1 label {
     display: block;
-    font-weight: bold;
-    margin-bottom: 8px;
-    color: #555;
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: #34495e;
+    font-size: 16px;
   }
 
-  .form-group input,
-  .form-group select,
-  .form-group textarea {
+  .group1 input,
+  .group1 select,
+  .group1 textarea {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     border: 1px solid #ddd;
-    border-radius: 5px;
+    border-radius: 8px;
     font-size: 16px;
     color: #333;
     background-color: #f9f9f9;
-    transition: border-color 0.3s ease;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
   }
 
-  .form-group input:focus,
-  .form-group select:focus,
-  .form-group textarea:focus {
+  .group1 input:focus,
+  .group1 select:focus,
+  .group1 textarea:focus {
     border-color: #00B4D8;
     outline: none;
     background-color: #fff;
+    box-shadow: 0 0 8px rgba(0, 180, 216, 0.2);
   }
 
-  .form-group textarea {
+  .group1 textarea {
     resize: vertical;
-    min-height: 100px;
+    min-height: 120px;
   }
 
-  .checkbox-group {
+  .custom-checkbox-group {
     margin-bottom: 20px;
+    display: flex;
+    align-items: center;
   }
 
-  .checkbox-group label {
-    font-weight: normal;
-    margin-left: 8px;
+  .custom-checkbox-group input[type="checkbox"] {
+    margin-right: 10px;
+    transform: scale(1.2);
   }
 
-  .btn-custom {
+  .custom-checkbox-group label {
+    font-weight: 400;
+    color: #555;
+    font-size: 16px;
+  }
+
+  .ccct {
     background-color: #00B4D8;
     border: none;
     color: white;
-    padding: 12px 20px;
-    font-size: 16px;
+    padding: 14px 24px;
+    font-size: 18px;
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 8px;
     width: 100%;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease;
   }
 
-  .btn-custom:hover {
+  .ccct:hover {
     background-color: #0099b3;
+    transform: translateY(-2px);
   }
 
-  .photo-preview {
+  .ccustomm {
+    margin-top: 15px;
+    text-align: center;
+  }
+
+  .ccustomm img {
+    max-width: 100%;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .ccustomm p {
+    color: #888;
+    font-style: italic;
     margin-top: 10px;
   }
 
-  .photo-preview img {
-    max-width: 100%;
-    border-radius: 5px;
-    border: 1px solid #ddd;
+  .medecin,
+  .input {
+    display: none;
+    margin-top: 15px;
   }
 
-  .photo-preview p {
-    color: #888;
-    font-style: italic;
+  .medecin.active,
+  .input.active {
+    display: block;
   }
 </style>
 {# <div class="form-container">
     <h2>Réclamation de type :</h2>
     {{ form_start(form) }} #}
 
-<div class="form-container">
+{{ form_start(form) }}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Gestion de la case à cocher "Ajouter une photo ?"
+        let photoCheckbox = document.querySelector("#{{ form.addPhoto.vars.id }}");
+        let photoInput = document.querySelector(".photo-input");
+
+        if (photoCheckbox && photoInput) {
+            photoCheckbox.addEventListener("change", function () {
+                photoInput.classList.toggle("active", photoCheckbox.checked);
+            });
+
+            // Initialiser l'état du champ "photo" au chargement de la page
+            photoInput.classList.toggle("active", photoCheckbox.checked);
+        }
+
+        // Gestion de la case à cocher "Médecin ?"
+        let medecinCheckbox = document.querySelector("#{{ form.addidmedcein.vars.id }}");
+        let medecinNameInput = document.querySelector(".medcein-name-input");
+
+        if (medecinCheckbox && medecinNameInput) {
+            medecinCheckbox.addEventListener("change", function () {
+                medecinNameInput.classList.toggle("active", medecinCheckbox.checked);
+            });
+
+            // Initialiser l'état du champ "nom du médecin" au chargement de la page
+            medecinNameInput.classList.toggle("active", medecinCheckbox.checked);
+        }
+    });
+</script>
+<div class="tt">
     <h2>Réclamation de type :</h2>
 
-    <div class="form-group">
-    
+    <div class="group1">
         {{ form_label(form.description) }}
         {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
     </div>
-    
 
-    <div class="checkbox-group">
+    <div class="custom-checkbox-group">
         {{ form_widget(form.addidmedcein) }}
         {{ form_label(form.addidmedcein) }}
     </div>
 
-    <div class="form-group medcein-name-input" style="display: none;">
+    <div class="group1 medecin medcein-name-input">
         {{ form_label(form.idmedecin) }}
         {{ form_widget(form.idmedecin, {'attr': {'class': 'form-control'}}) }}
     </div>
 
-    <div class="form-group">
+    <div class="group1">
         {{ form_label(form.date_reclamation) }}
         {{ form_widget(form.date_reclamation, {'attr': {'class': 'form-control'}}) }}
     </div>
 
-    <div class="checkbox-group">
+    <div class="custom-checkbox-group">
         {{ form_widget(form.addPhoto) }}
         {{ form_label(form.addPhoto) }}
     </div>
 
-    <div class="form-group photo-input" style="display: none;">
+    <div class="group1 input photo-input">
         {{ form_label(form.photo) }}
         {{ form_widget(form.photo, {'attr': {'class': 'form-control'}}) }}
 
         {# Afficher un aperçu de la photo si elle existe #}
         {% if reclamation.photo %}
-            <div class="photo-preview">
+            <div class="ccustomm ">
                 <img src="{{ asset('upload/images/' ~ reclamation.photo) }}" alt="Photo">
             </div>
         {% else %}
-            <div class="photo-preview">
+            <div class="ccustomm">
                 <p>Aucune photo disponible</p>
             </div>
         {% endif %}
     </div>
 
-    <button class="btn btn-custom">{{ button_label|default('Enregistrer') }}</button>
+    <div class="group1">
+        {{ form_label(form.typeReclamation) }}
+        {{ form_widget(form.typeReclamation, {'attr': {'class': 'form-control'}}) }}
+    </div>
+
+    <button class="ccct">{{ button_label|default('Enregistrer') }}</button>
 </div>
 {{ form_end(form) }}

@@ -14,12 +14,11 @@ class ReponseType extends AbstractType
     {
         $builder
             ->add('contenu')
-            
             ->add('date_reponse', DateTimeType::class, [
                 'widget' => 'single_text',
                 'label' => 'Date de reclamation',
                 'disabled' => true, // Empêche la modification de la date
-            ])
+            ])     
         ;
     }
 

@@ -33,13 +33,13 @@ final class TypeReclamationControllerPhpController extends AbstractController
 
             $entityManager->persist($typeReclamation);
             $entityManager->flush();
-            if ($typeReclamation->getTypeReclamation() === 'rendez_vous') {
-                return $this->redirectToRoute('app_reclamation_controller_php_new', [], Response::HTTP_SEE_OTHER);
-            } elseif ($typeReclamation->getTypeReclamation() === 'produit') {
-                return $this->redirectToRoute('app_reclamation_controller_php_new', [], Response::HTTP_SEE_OTHER);
-            } elseif ($typeReclamation->getTypeReclamation() === 'autre') { // Correction ici
-                return $this->redirectToRoute('app_reclamation_controller_php_new', [], Response::HTTP_SEE_OTHER);
-            }
+            // if ($typeReclamation->getTypeReclamation() === 'rendez_vous') {
+            //     return $this->redirectToRoute('app_reclamation_controller_php_new', [], Response::HTTP_SEE_OTHER);
+            // } elseif ($typeReclamation->getTypeReclamation() === 'produit') {
+            //     return $this->redirectToRoute('app_reclamation_controller_php_new', [], Response::HTTP_SEE_OTHER);
+            // } elseif ($typeReclamation->getTypeReclamation() === 'autre') { // Correction ici
+            //     return $this->redirectToRoute('app_reclamation_controller_php_new', [], Response::HTTP_SEE_OTHER);
+            // }
             
             return $this->redirectToRoute('app_type_reclamation_controller_php_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -76,7 +76,7 @@ final class TypeReclamationControllerPhpController extends AbstractController
             'form' => $form,
         ]);
     }
-
+    
     #[Route('/{id}', name: 'app_type_reclamation_controller_php_delete', methods: ['POST'])]
     public function delete(Request $request, TypeReclamation $typeReclamation, EntityManagerInterface $entityManager): Response
     {
@@ -89,14 +89,15 @@ final class TypeReclamationControllerPhpController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $csrfToken = $data['_token'] ?? '';
     
-        if ($this->isCsrfTokenValid('delete' . $typeReclamation->getId(), $csrfToken)) {
-            $entityManager->remove($typeReclamation);
-            $entityManager->flush();
-    
-            return $this->json(['success' => true, 'message' => 'Type de réclamation supprimé avec succès']);
+        // Valider le token CSRF
+        if (!$this->isCsrfTokenValid('delete' . $typeReclamation->getId(), $csrfToken)) {
+            return $this->json(['success' => false, 'message' => 'Token CSRF invalide'], Response::HTTP_FORBIDDEN);
         }
     
-        return $this->json(['success' => false, 'message' => 'Token CSRF invalide'], Response::HTTP_FORBIDDEN);
+        // Supprimer l'entité
+        $entityManager->remove($typeReclamation);
+        $entityManager->flush();
+    
+        return $this->json(['success' => true, 'message' => 'Type de réclamation supprimé avec succès']);
     }
-
 }

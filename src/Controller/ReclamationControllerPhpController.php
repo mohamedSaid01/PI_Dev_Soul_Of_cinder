@@ -15,14 +15,23 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/reclamation/controller/php')]
 final class ReclamationControllerPhpController extends AbstractController
 {
-    #[Route(name: 'app_reclamation_controller_php_index', methods: ['GET'])]
-    public function index(ReclamationRepository $reclamationRepository): Response
-    {
-        return $this->render('reclamation_controller_php/index.html.twig', [
-            'reclamations' => $reclamationRepository->findAll(),
-        ]);
-    }
-    
+
+    #[Route('/reclamations', name: 'app_reclamation_controller_php_index', methods: ['GET'])]
+public function index(ReclamationRepository $reclamationRepository): Response
+{
+    return $this->render('reclamation_controller_php/index.html.twig', [
+        'reclamations' => $reclamationRepository->findAll(),
+    ]);
+}
+
+#[Route('/reclamations/back', name: 'app_reclamation_controller_php_copy', methods: ['GET'])]
+public function indexcopy(ReclamationRepository $reclamationRepository): Response
+{
+    return $this->render('reclamation_controller_php/back.html.twig', [
+        'reclamations' => $reclamationRepository->findAll(),
+    ]);
+}
+  
     
 //     public function new(Request $request, EntityManagerInterface $entityManager): Response
 // {
@@ -134,16 +143,34 @@ public function new(Request $request, EntityManagerInterface $entityManager): Re
             'form' => $form,
         ]);
     }
-   
+    
 
     #[Route('/{id}', name: 'app_reclamation_controller_php_delete', methods: ['POST'])]
     public function delete(Request $request, Reclamation $reclamation, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$reclamation->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($reclamation);
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('app_reclamation_controller_php_index', [], Response::HTTP_SEE_OTHER);
+{
+    // Vérifier si la requête est bien AJAX
+    if (!$request->isXmlHttpRequest()) {
+        return $this->json(['success' => false, 'message' => 'Requête invalide'], Response::HTTP_BAD_REQUEST);
     }
+
+    // Récupérer le token CSRF depuis la requête JSON
+    $data = json_decode($request->getContent(), true);
+    $csrfToken = $data['_token'] ?? '';
+
+    // // Valider le token CSRF
+    // if (!$this->isCsrfTokenValid('delete' . $reclamation->getId(), $csrfToken)) {
+    //     return $this->json(['success' => false, 'message' => 'Token CSRF invalide'], Response::HTTP_FORBIDDEN);
+    // }
+    if ($this->isCsrfTokenValid('delete'.$reclamation->getId(), $request->getPayload()->getString('_token'))) {
+        $entityManager->remove($reclamation);
+        $entityManager->flush();
+    }
+
+    // Supprimer l'entité
+    $entityManager->remove($reclamation);
+    $entityManager->flush();
+
+    return $this->json(['success' => true, 'message' => 'Réclamation supprimée avec succès']);
+}
+
 }

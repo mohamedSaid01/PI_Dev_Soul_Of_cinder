@@ -1,4 +1,120 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
-{{ form_end(form) }}
+{% extends 'baseBackOffice.html.twig' %}
+
+
+{% block stylesheets %}
+<style>
+/* Conteneur principal du formulaire */
+.tt {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 30px;
+    max-width: 700px;
+    margin: 40px auto;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Groupe de champs de formulaire */
+.group1 {
+    margin-bottom: 25px;
+}
+
+/* Labels des champs */
+.group1 label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: #34495e;
+    font-size: 16px;
+}
+
+/* Champs de texte, textarea et select */
+.group1 input,
+.group1 select,
+.group1 textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    color: #333;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Effet focus sur les champs */
+.group1 input:focus,
+.group1 select:focus,
+.group1 textarea:focus {
+    border-color: #00B4D8;
+    outline: none;
+    background-color: #fff;
+    box-shadow: 0 0 8px rgba(0, 180, 216, 0.2);
+}
+
+/* Stylisation de textarea */
+.group1 textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+/* Bouton principal */
+.ccct {
+    background-color: #00B4D8;
+    border: none;
+    color: white;
+    padding: 14px 24px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 8px;
+    width: 100%;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Effet hover sur le bouton */
+.ccct:hover {
+    background-color: #0099b3;
+    transform: translateY(-2px);
+}
+
+/* Message personnalisé sous le formulaire */
+.ccustomm {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.ccustomm p {
+    color: #888;
+    font-style: italic;
+    margin-top: 10px;
+}
+
+</style>
+
+{% endblock %}
+
+
+{% block body %}
+    <div class="tt">
+        <h2 class="text-center" style="color: #00B4D8; margin-bottom: 20px;">Répondre à la Réclamation</h2>
+        
+        {{ form_start(form, {'attr': {'class': 'needs-validation'}}) }}
+        
+        <div class="group1">
+            {{ form_label(form.contenu, 'Votre réponse') }}
+            {{ form_widget(form.contenu, {'attr': {'class': 'form-control', 'placeholder': 'Tapez votre réponse ici...'}}) }}
+        </div>
+
+        <div class="group1">
+            {{ form_label(form.date_reponse, 'Date de réclamation') }}
+            {{ form_widget(form.date_reponse, {'attr': {'class': 'form-control', }}) }}
+        </div>
+
+        <button type="submit" class="ccct">Envoyer</button>
+        
+        {{ form_end(form) }}
+
+        <div class="ccustomm">
+            <p>Merci de bien vérifier votre réponse avant de l'envoyer.</p>
+        </div>
+    </div>
+{% endblock %}

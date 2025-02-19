@@ -1,4 +1,81 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
-{{ form_end(form) }}
+{% block body %}
+  <div class="form-container">
+    <h1>Type de Réclamation</h1>
+
+    {{ form_start(form) }}
+      <div class="form-group">
+        {{ form_label(form.type_reclamation) }}
+        {{ form_widget(form.type_reclamation, {'attr': {'class': 'form-control'}}) }}
+      </div>
+
+      <button class="btn-custom">{{ button_label|default('Enregistrer') }}</button>
+    {{ form_end(form) }}
+  </div>
+{% endblock %}
+
+<style>
+  .form-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-group {
+    margin-bottom: 25px;
+  }
+
+  .form-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: #34495e;
+    font-size: 16px;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    color: #333;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    border-color: #00B4D8;
+    outline: none;
+    background-color: #fff;
+    box-shadow: 0 0 8px rgba(0, 180, 216, 0.2);
+  }
+
+  .form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+
+  .btn-custom {
+    background-color: #00B4D8;
+    border: none;
+    color: white;
+    padding: 14px 24px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 8px;
+    width: 100%;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+
+  .btn-custom:hover {
+    background-color: #0099b3;
+    transform: translateY(-2px);
+  }
+</style>

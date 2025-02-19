@@ -42,7 +42,7 @@ class Reclamation1Type extends AbstractType
                 'class' => TypeReclamation::class,
                 'choice_label' => 'type_reclamation',
                 'placeholder' => 'Sélectionnez un type de réclamation',
-                'required' => true,
+                'required' => false,
             ])
 
             

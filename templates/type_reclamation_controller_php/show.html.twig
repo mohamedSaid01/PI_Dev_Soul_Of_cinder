@@ -1,26 +1,119 @@
-{% extends 'base.html.twig' %}
+{% extends 'baseBackOffice.html.twig' %}
 
 {% block title %}TypeReclamation{% endblock %}
 
+
+
 {% block body %}
-    <h1>TypeReclamation</h1>
+  <div class="type-reclamation-details-container">
+    <h1>TypeReclamation Details</h1>
 
     <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ type_reclamation.id }}</td>
-            </tr>
-            <tr>
-                <th>Type_reclamation</th>
-                <td>{{ type_reclamation.typeReclamation }}</td>
-            </tr>
-        </tbody>
+      <tbody>
+        <tr>
+          <th>Id</th>
+          <td>{{ type_reclamation.id }}</td>
+        </tr>
+        <tr>
+          <th>Type_reclamation</th>
+          <td>{{ type_reclamation.typeReclamation }}</td>
+        </tr>
+      </tbody>
     </table>
 
-    <a href="{{ path('app_type_reclamation_controller_php_index') }}">back to list</a>
+    <div class="actions">
+      <a href="{{ path('app_type_reclamation_controller_php_index') }}" class="btn-back">Back to list</a>
+      <a href="{{ path('app_type_reclamation_controller_php_edit', {'id': type_reclamation.id}) }}" class="btn-edit">Edit</a>
+    </div>
 
-    <a href="{{ path('app_type_reclamation_controller_php_edit', {'id': type_reclamation.id}) }}">edit</a>
+    <div class="delete-form">
+      {{ include('type_reclamation_controller_php/_delete_form.html.twig') }}
+    </div>
+  </div>
+{% endblock %}
 
-    {{ include('type_reclamation_controller_php/_delete_form.html.twig') }}
+
+{% block stylesheets %}
+<style>
+  .type-reclamation-details-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .type-reclamation-details-container h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    font-size: 28px;
+    font-weight: 600;
+  }
+
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+  }
+
+  .table th,
+  .table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .table th {
+    background-color: #00B4D8;
+    color: white;
+    font-weight: 500;
+  }
+
+  .table tr:hover {
+    background-color: #f9f9f9;
+  }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .actions a {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: white;
+    background-color: #00B4D8;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+
+  .actions a:hover {
+    background-color: #0099b3;
+    transform: translateY(-2px);
+  }
+
+  .delete-form {
+    margin-top: 20px;
+  }
+
+  .delete-form button {
+    background-color: #e74c3c;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+
+  .delete-form button:hover {
+    background-color: #c0392b;
+    transform: translateY(-2px);
+  }
+</style>
 {% endblock %}

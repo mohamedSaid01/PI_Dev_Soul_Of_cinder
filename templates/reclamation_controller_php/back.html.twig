@@ -1,19 +1,19 @@
 {% extends 'baseBackOffice.html.twig' %}
 
-{% block title %}TypeReclamation index{% endblock %}
+{% block title %}Reclamation index{% endblock %}
+
 {% block stylesheets %}
 <style>
-  .type-reclamation-container {
+  .reclamation-index-container {
     max-width: 1200px;
     margin: 40px auto;
     padding: 20px;
     background-color: #ffffff;
     border-radius: 12px;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-    margin-top: 100px;
   }
 
-  .type-reclamation-container h1 {
+  .reclamation-index-container h1 {
     text-align: center;
     color: #2c3e50;
     margin-bottom: 30px;
@@ -24,7 +24,7 @@
   .table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 100px;
+    margin-bottom: 30px;
   }
 
   .table th,
@@ -42,6 +42,11 @@
 
   .table tr:hover {
     background-color: #f9f9f9;
+  }
+
+  .table td img {
+    max-width: 100px;
+    border-radius: 5px;
   }
 
   .actions a {
@@ -85,35 +90,47 @@
 </style>
 {% endblock %}
 {% block body %}
-  <div class="type-reclamation-container">
-    <h1>TypeReclamation index</h1>
+  <div class="reclamation-index-container">
+    <h1>Reclamation index</h1>
 
     <table class="table">
       <thead>
         <tr>
-          <th>Id</th>
-          <th>Type_reclamation</th>
-          <th>Actions</th>
+          <th>Description</th>
+          <th>Date reclamation</th>
+          <th>Idmedecin</th>
+          <th>Photo</th>
+          <th>Type Reclamation</th>
         </tr>
       </thead>
       <tbody>
-        {% for type_reclamation in type_reclamations %}
+        {% for reclamation in reclamations %}
           <tr>
-            <td>{{ type_reclamation.id }}</td>
-            <td>{{ type_reclamation.typeReclamation }}</td>
-            <td class="actions">
-              <a href="{{ path('app_type_reclamation_controller_php_show', {'id': type_reclamation.id}) }}">Show</a>
-              <a href="{{ path('app_type_reclamation_controller_php_edit', {'id': type_reclamation.id}) }}">Edit</a>
+            <td>{{ reclamation.description }}</td>
+            <td>{{ reclamation.dateReclamation ? reclamation.dateReclamation|date('Y-m-d H:i:s') : '' }}</td>
+            <td>{{ reclamation.idmedecin }}</td>
+            <td>
+              {% if reclamation.photo %}
+                <img src="{{ asset('upload/images/' ~ reclamation.photo) }}" alt="Photo">
+              {% else %}
+                N/A
+              {% endif %}
             </td>
+            <td>{{ reclamation.typeReclamation ? reclamation.typeReclamation.typeReclamation : 'N/A' }}</td>
+            {# <td class="actions">
+              <a href="{{ path('app_reclamation_controller_php_show', {'id': reclamation.id}) }}">Show</a>
+              <a href="{{ path('app_reclamation_controller_php_edit', {'id': reclamation.id}) }}">Edit</a>
+            </td> #}
           </tr>
         {% else %}
           <tr>
-            <td colspan="3" class="no-records">No records found</td>
+            <td colspan="6" class="no-records">No records found</td>
           </tr>
         {% endfor %}
       </tbody>
     </table>
 
-    <a href="{{ path('app_type_reclamation_controller_php_new') }}" class="create-new-link">Create new</a>
+    {# <a href="{{ path('app_reclamation_controller_php_new') }}" class="create-new-link">Create new</a> #}
   </div>
 {% endblock %}
+
