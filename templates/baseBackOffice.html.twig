@@ -53,12 +53,7 @@
       <i class="bi bi-list toggle-sidebar-btn"></i>
     </div><!-- End Logo -->
 
-    <div class="search-bar">
-      <form class="search-form d-flex align-items-center" method="POST" action="#">
-        <input type="text" name="query" placeholder="Search" title="Enter search keyword">
-        <button type="submit" title="Search"><i class="bi bi-search"></i></button>
-      </form>
-    </div><!-- End Search Bar -->
+
 
     <nav class="header-nav ms-auto">
       <ul class="d-flex align-items-center">
@@ -169,34 +164,7 @@
 
       <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-journal-text"></i><span>Gestion Produit</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-            <li>
-            
-   <a href="{{ path('app_produit_new') }}">
-    <i class="bi bi-circle"></i><span>Add Product</span>
-</a>
-    
 
-          </li>
-          <li> 
-       <a href="{{ path('app_produit_index') }}">
-    <i class="bi bi-circle"></i><span>Show Product</span>
-</a>
-
-          </li>
-          <li>
-             <a href="{{ path('app_category_index') }}">
-    <i class="bi bi-circle"></i><span>Add Category</span>
-</a>
-          </li>
-          <li>
-             <a href="{{ path('app_produit_show') }}">
-    <i class="bi bi-circle"></i><span>View Products in Front</span>
-</a>
-
-          </li>
         </ul>
       </li><!-- End Forms Nav -->
 
@@ -207,7 +175,6 @@
   {% endblock %}
            
 {% block body %}
-
 
 {% endblock %}
 
@@ -225,6 +192,7 @@
     
     </div>
   </footer><!-- End Footer -->
+
 {% endblock %}
  
     </body>
