@@ -1,0 +1,39 @@
+{# templates/medecin/rendez_vous_demandes.html.twig #}
+{% extends 'baseBackOffice.html.twig' %}
+
+{% block title %}Rendez-Vous Demandés{% endblock %}
+
+{% block body %}
+<main id="main" class="main">
+    <div class="container my-5">
+        <h2>Rendez-Vous Demandés</h2>
+
+        {% if rendezVousDemandes is empty %}
+            <div class="alert alert-info">
+                Aucun rendez-vous demandé pour le moment.
+            </div>
+        {% else %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Patient</th>
+                        <th>Date/Heure</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rendezVous in rendezVousDemandes %}
+                        <tr>
+                            <td>{{ rendezVous.patient.user.nom }} {{ rendezVous.patient.user.prenom }}</td>
+                            <td>{{ rendezVous.dateHeure|date('d/m/Y H:i') }}</td>
+                            <td>
+                                <a href="{{ path('medecin_modifier_etat_rdv', {'id': rendezVous.id}) }}" class="btn btn-primary btn-sm">Modifier</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+</main>
+{% endblock %}

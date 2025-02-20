@@ -1,0 +1,34 @@
+<?php
+// src/Form/MedecinPreferencesType.php
+namespace App\Form;
+
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+class MedecinPreferencesType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder
+            ->add('typesRendezVous', ChoiceType::class, [
+                'label' => 'Types de rendez-vous acceptés',
+                'choices' => [
+                    'En ligne' => 'enligne',
+                    'Présentiel' => 'presentiel',
+                    'Hybride' => 'hybride',
+                ],
+                'expanded' => true, // Afficher les choix sous forme de cases à cocher
+                'multiple' => true, // Permettre la sélection de plusieurs options
+                'attr' => ['class' => 'form-check'],
+            ]);
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => null, // Pas besoin d'une entité spécifique ici
+        ]);
+    }
+}

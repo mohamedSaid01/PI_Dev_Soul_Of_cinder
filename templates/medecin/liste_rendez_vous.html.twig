@@ -1,0 +1,86 @@
+{# templates/medecin/liste_rendez_vous.html.twig #}
+{% extends 'baseBackOffice.html.twig' %}
+
+{% block title %}Mes Rendez-Vous{% endblock %}
+
+{% block body %}
+<main id="main" class="main">
+   
+        <h2>Mes Rendez-Vous</h2>
+        
+        {% if rendezVous|length > 0 %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Patient</th>
+                        <th>Date</th>
+                        <th>Heure</th>
+                        <th>État Actuel</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rdv in rendezVous %}
+                        <tr>
+                            <td>{{ rdv.getPatient().getUser().getNom() }} {{ rdv.getPatient().getUser().getPrenom() }}</td>
+                            <td> <strong>Date :</strong> {{ rdv.getDate()|date('d/m/Y') }}<br> </td>
+                                {# Afficher l'heure séparément #}
+                                <td> <strong>Heure :</strong> {{ rdv.getHeure()|date('H:i') }}    </td>
+                        
+                            <td>{{ rdv.getEtat() }}</td>
+                         
+                                {# Boutons pour les rendez-vous en attente #}
+                                <td>
+                                    {% if rdv.isAnnule() %}
+                                        Annulé
+                                    {% else %}
+                                        {{ rdv.getStatut() ? 'Accepté' : 'En attente' }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {# Boutons pour les rendez-vous en attente #}
+                                    {% if not rdv.getStatut() %}
+                                        {# Bouton Accepter #}
+                                        <form action="{{ path('accepter_rendez_vous', {'id': rdv.id}) }}" method="POST" class="d-inline">
+                                            <button type="submit" class="btn btn-success btn-sm">Accepter</button>
+                                        </form>
+    
+                                        {# Bouton Refuser #}
+                                        <form action="{{ path('refuser_rendez_vous', {'id': rdv.id}) }}" method="POST" class="d-inline">
+                                            <button type="submit" class="btn btn-danger btn-sm">Refuser</button>
+                                        </form>
+                                    {% else %}
+                                        {# Boutons pour les rendez-vous acceptés #}
+                                        {% if not rdv.isAnnule() %}
+                                            {# Bouton Modifier #}
+                                            <a href="{{ path('modifier_date_rendez_vous', {'id': rdv.id}) }}" class="btn btn-warning btn-sm">Modifier</a>
+    
+                                            {# Bouton Annuler #}
+                                            <form action="{{ path('annuler_rendez_vous', {'id': rdv.id}) }}" method="POST" class="d-inline">
+                                                <button type="submit" class="btn btn-danger btn-sm">Annuler</button>
+                                            </form>
+                                        {% else %}
+                                            {# Bouton Supprimer pour les rendez-vous annulés #}
+                                            <form action="{{ path('refuser_rendez_vous', {'id': rdv.id}) }}" method="POST" class="d-inline">
+                                                <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                                            </form>
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                           
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>Aucun rendez-vous planifié pour le moment.</p>
+        {% endif %}
+    </div>
+
+
+
+    <div class="container my-5">
+      
+</main>
+{% endblock %}
