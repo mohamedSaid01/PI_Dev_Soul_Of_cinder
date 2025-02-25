@@ -10,6 +10,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use App\Enum\Gender;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Enum\Specialite;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
@@ -42,6 +44,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
+    // #[Assert\NotBlank(message: 'Veuillez entrer votre mot de passe.', groups: ['RegistrationUser', 'RegistrationMedecin'])]
+    // #[Assert\Length(
+    //     min: 8,
+    //     minMessage: "Le mot de passe doit contenir au moins {{ limit }} caractères.",
+    //     max: 4096,
+    //     groups: ['RegistrationUser', 'RegistrationMedecin']
+    // )]
+    // #[Assert\Regex(
+    //     pattern: "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\d\s]).{8,}$/",
+    //     message: "Le mot de passe doit contenir au moins une lettre minuscule, une lettre majuscule, un chiffre et un caractère spécial.",
+    //     groups: ['RegistrationUser', 'RegistrationMedecin']
+    // )]
+    // #[Assert\NotCompromisedPassword(
+    //     message: "Ce mot de passe a été compromis dans une fuite de données. Veuillez en choisir un autre.",
+    //     groups: ['RegistrationUser', 'RegistrationMedecin']
+    // )]
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
@@ -143,6 +161,12 @@ private ?string $confirmPassword = null;
 
 #[ORM\Column(type: 'string', nullable: true)]
 private $medicalFile;
+
+#[ORM\Column(type: 'boolean')]
+private $isVerified = false;
+
+#[ORM\Column(type: 'string', length:255 ,nullable: true)]
+private $verificationToken;
     
     
     public function getId(): ?int
@@ -361,5 +385,148 @@ public function setMedicalFile(?string $medicalFile): self
 
     return $this;
 }
+
+
+public function getIsVerified(): bool
+{
+    return $this->isVerified;
+}
+
+public function setIsVerified(bool $isVerified): self
+{
+    $this->isVerified = $isVerified;
+    return $this;
+}
+
+public function getVerificationToken(): ?string
+{
+    return $this->verificationToken;
+}
+
+public function setVerificationToken(?string $verificationToken): self
+{
+    $this->verificationToken = $verificationToken;
+    return $this;
+}
+
+
+
+#[ORM\OneToMany(mappedBy: 'user', targetEntity: Inscription::class, cascade: ['remove'])]
+    private Collection $inscriptions;
+
+    public function __construct()
+    {
+        $this->inscriptions = new ArrayCollection();
+        $this->posts = new ArrayCollection();
+    }
+    /**
+     * @return Collection<int, Inscription>
+     */
+    public function getInscriptions(): Collection
+    {
+        return $this->inscriptions;
+    }
+
+    public function addInscription(Inscription $inscription): self
+    {
+        if (!$this->inscriptions->contains($inscription)) {
+            $this->inscriptions->add($inscription);
+            $inscription->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInscription(Inscription $inscription): self
+    {
+        if ($this->inscriptions->removeElement($inscription)) {
+            if ($inscription->getUser() === $this) {
+                $inscription->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+
+    
+
+
+
+    #[ORM\OneToOne(targetEntity: Medecin::class, mappedBy: 'user', cascade: ['persist', 'remove'])]
+    private $medecin;
+
+    #[ORM\OneToOne(targetEntity: Patient::class, mappedBy: 'user', cascade: ['persist', 'remove'])]
+    private $patient;
+
+    /**
+     * @var Collection<int, Post>
+     */
+    #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'author')]
+    private Collection $posts;
+ public function getPatient(): ?Patient
+                      {
+                          return $this->patient;
+                      }
+   
+       // Méthode pour associer un Patient à cet Utilisateur
+       public function setPatient(?Patient $patient): self
+       {
+           $this->patient = $patient;
+   
+           if ($patient !== null) {
+               $patient->setUser($this); // Synchroniser la relation inverse
+           }
+   
+           return $this;
+       }
+
+           // Méthode pour récupérer le Médecin associé
+    public function getMedecin(): ?Medecin
+    {
+        return $this->medecin;
+    }
+
+    // Méthode pour associer un Médecin à cet Utilisateur
+    public function setMedecin(?Medecin $medecin): self
+    {
+        $this->medecin = $medecin;
+
+        if ($medecin !== null) {
+            $medecin->setUser($this); // Synchroniser la relation inverse
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Post>
+     */
+    public function getPosts(): Collection
+    {
+        return $this->posts;
+    }
+
+    public function addPost(Post $post): static
+    {
+        if (!$this->posts->contains($post)) {
+            $this->posts->add($post);
+            $post->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removePost(Post $post): static
+    {
+        if ($this->posts->removeElement($post)) {
+            // set the owning side to null (unless already changed)
+            if ($post->getAuthor() === $this) {
+                $post->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
 
 }

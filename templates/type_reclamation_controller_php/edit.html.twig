@@ -1,0 +1,206 @@
+{% extends 'baseBackOffice.html.twig' %}
+
+{% block title %}Edit TypeReclamation{% endblock %}
+
+
+
+ {% block body %}
+  <div class="edit-type-reclamation-container">
+ 
+
+    {{ include('type_reclamation_controller_php/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_type_reclamation_controller_php_index') }}" class="back-link">← Back to list</a>
+
+    <div class="delete-form">
+      {{ include('type_reclamation_controller_php/_delete_form.html.twig') }}
+    </div>
+  </div>
+
+  <form method="post" action="{{ path('app_type_reclamation_controller_php_delete', {'id': type_reclamation.id}) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ type_reclamation.id) }}">
+    <button class="btn btn-danger btn-sm delete-typeRec" data-id="{{ type_reclamation.id }}">
+        <i class="bi bi-trash"></i> Supprimer
+    </button>
+</form>
+
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.querySelectorAll('.delete-typeRec').forEach(button => {
+        button.addEventListener('click', function (event) {
+            event.preventDefault(); // Empêcher le rechargement du formulaire
+
+            const id = this.getAttribute('data-id');
+            const form = this.closest('form'); // Récupérer le formulaire parent
+            const csrfToken = form.querySelector('input[name="_token"]').value; // Récupérer le token CSRF
+
+            Swal.fire({
+                title: 'Confirmer la suppression',
+                text: 'Êtes-vous sûr de vouloir supprimer ce type ? Cette action est irréversible.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Oui, supprimer',
+                cancelButtonText: 'Annuler'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(form.action, { // Utiliser l'action du formulaire
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            _token: csrfToken // Envoyer le token CSRF
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire(
+                                'Supprimé !',
+                                'Le type de réclamation a été supprimé avec succès.',
+                                'success'
+                            ).then(() => {
+                                window.location.href = "{{ path('app_type_reclamation_controller_php_index') }}";
+                            });
+                        } else {
+                            Swal.fire(
+                                'Erreur',
+                                data.message || 'Une erreur est survenue.',
+                                'error'
+                            );
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la suppression :', error);
+                        Swal.fire(
+                            'Erreur',
+                            'Une erreur est survenue. Veuillez réessayer.',
+                            'error'
+                        );
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}                          
+
+{% block stylesheets %}
+  {{ parent() }}
+  <style>
+    .edit-type-reclamation-container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 30px;
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .edit-type-reclamation-container h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+      font-size: 28px;
+      font-weight: 600;
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 10px;
+      color: #34495e;
+      font-size: 16px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      color: #333;
+      background-color: #f9f9f9;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: #00B4D8;
+      outline: none;
+      background-color: #fff;
+      box-shadow: 0 0 8px rgba(0, 180, 216, 0.2);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .btn-custom {
+      background-color: #00B4D8;
+      border: none;
+      color: white;
+      padding: 14px 24px;
+      font-size: 18px;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn-custom:hover {
+      background-color: #0099b3;
+      transform: translateY(-2px);
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 20px;
+      color: #00B4D8;
+      text-decoration: none;
+      font-size: 16px;
+      transition: color 0.3s ease;
+    }
+
+    .back-link:hover {
+      color: #0099b3;
+    }
+
+    .delete-form {
+      margin-top: 30px;
+      text-align: center;
+    }
+
+    .delete-form .btn-danger {
+      background-color: #e74c3c;
+      border: none;
+      color: white;
+      padding: 12px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .delete-form .btn-danger:hover {
+      background-color: #c0392b;
+      transform: translateY(-2px);
+    }
+  </style>
+{% endblock %}
+

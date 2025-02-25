@@ -140,15 +140,10 @@
           </div>
           <div class="col-lg-4 col-md-4 d-md-block d-sm-none">
             <ul class="contact-list d-flex justify-content-lg-end flex-wrap list-unstyled m-0">
-              <li class="pe-5 pe-lg-0 pe-xxl-5 pb-3 pb-lg-0">
-                <svg class="location primary-color" width="24" height="24">
-                  <use xlink:href="#location"></use>
-                </svg>123 Arling, Miola, NY
-              </li>
               <li class="ps-xl-3">
                 <svg class="phone primary-color" width="24" height="24">
                   <use xlink:href="#phone"></use>
-                </svg>(+487) 384 9452
+                </svg>70 685 685
               </li>
             </ul>
           </div>
@@ -172,9 +167,6 @@
             <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                 <li class="dropdown-header">
                     <h6>{{ app.user.firstName }} {{ app.user.lastName }}</h6>
-                    <span>
-                            Patient
-                    </span>
                 </li>
                 <li>
                     <hr class="dropdown-divider">
@@ -183,7 +175,7 @@
                 <li>
                     <a class="dropdown-item d-flex align-items-center" href="{{ path('profile_patient') }}">
                         <i class="bi bi-person"></i>
-                        <span>Mon Profil</span>
+                        <span>My Profile</span>
                     </a>
                 </li>
                 <li>
@@ -193,7 +185,7 @@
                 <li>
                     <a class="dropdown-item d-flex align-items-center" href="{{ path('profile_patient') }}">
                         <i class="bi bi-gear"></i>
-                        <span>Paramètres du compte</span>
+                        <span>Account Settings</span>
                     </a>
                 </li>
                 <li>
@@ -203,7 +195,7 @@
                 <li>
                     <a class="dropdown-item d-flex align-items-center" href="{{ path('app_logout') }}">
                         <i class="bi bi-box-arrow-right"></i>
-                        <span>Déconnexion</span>
+                        <span>Sign Out</span>
                     </a>
                 </li>
             </ul><!-- End Profile Dropdown Items -->
@@ -228,59 +220,33 @@
               <a class="nav-link text-dark active p-0 mt-3 mt-lg-0" aria-current="page" href="#intro">Home</a>
             </li>
             <li class="nav-item ps-4 pe-4 border-right">
-              <a class="nav-link text-dark p-0" href="#about-us">About</a>
+              <a class="nav-link text-dark p-0" href="{{ path('app_produit_show') }}">Products</a>
+            </li>
+            {% if app.user is not null %}
+            <li class="nav-item ps-4 pe-4 border-right">
+              <a class="nav-link text-dark p-0" href="{{path('mes_consultations')}}">Consultations</a> 
             </li>
             <li class="nav-item ps-4 pe-4 border-right">
-              <a class="nav-link text-dark p-0" href="#our-services">Services</a>
+              <a href="{{ path('liste_medecins') }}" class="nav-link text-dark p-0" >Liste des Médecins</a>
+            </li>
+            {% endif %}
+<li class="nav-item ps-4 pe-4 border-right">
+              <a href="{{ path('front_medecin_event_index') }}">Events</a>
             </li>
             <li class="nav-item ps-4 pe-4 border-right">
-              <a class="nav-link text-dark p-0" href="#book-appointment">Booking</a>
+              <a class="nav-link text-dark p-0" href="{{ path('app_front_list') }}">Posts</a>
             </li>
+            {% if app.user is not null %}
             <li class="nav-item ps-4 pe-4 border-right">
-              <a class="nav-link text-dark p-0" href="#our-team">Team</a>
+              <a class="nav-link text-dark p-0" href="{{ path('app_reclamation_controller_php_index') }}">Reclamations</a>
             </li>
-            <li class="nav-item ps-4 pe-4 border-right">
-              <a class="nav-link text-dark p-0" href="#faqs">Faqs</a>
-            </li>
+            {% endif %}
 {% if app.user is not null %}
     <!-- Afficher le lien "Profil" si l'utilisateur est connecté -->
     <li class="nav-item ps-4 pe-4 border-right">
-        <a class="nav-link text-dark p-0" href="{{ path('profile_patient') }}">Profil</a>
+        <a class="nav-link text-dark p-0" href="{{ path('profile_patient') }}">My profile</a>
     </li>
 {% endif %}
-            <li class="nav-item ps-4 pe-3 dropdown border-right">
-              <a class="nav-link text-dark p-0 dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
-                aria-expanded="false">Pages <iconify-icon icon="iconamoon:arrow-down-2-fill"></iconify-icon> </a>
-              <ul class="dropdown-menu">
-                <li class="py-1"><a href="about.html" class="dropdown-item text-uppercase">About <span
-                      class="badge bg-secondary">Pro</span></a></li>
-                <li class="py-1"><a href="blog.html" class="dropdown-item text-uppercase">Blog <span
-                      class="badge bg-secondary">Pro</span></a></li>
-                <li class="py-1"><a href="blog-single.html" class="dropdown-item text-uppercase">Blog-Single <span
-                      class="badge bg-secondary">Pro</span></a></li>
-                <li class="py-1"><a href="booking.html" class="dropdown-item text-uppercase">Booking <span
-                      class="badge bg-secondary">Pro</span></a></li>
-                <li class="py-1"><a href="services.html" class="dropdown-item text-uppercase">Services <span
-                      class="badge bg-secondary">Pro</span></a></li>
-                <li class="py-1"><a href="departments.html" class="dropdown-item text-uppercase">Departments
-                    <span class="badge bg-secondary">Pro</span></a></li>
-                <li class="py-1"><a href="gallery.html" class="dropdown-item text-uppercase">Gallery <span
-                      class="badge bg-secondary">Pro</span></a></li>
-                <li class="py-1"><a href="pricing.html" class="dropdown-item text-uppercase">Pricing <span
-                      class="badge bg-secondary">Pro</span></a></li>
-                <li class="py-1"><a href="contact.html" class="dropdown-item text-uppercase">Contact <span
-                      class="badge bg-secondary">Pro</span></a></li>
-                <li class="py-1"><a href="team.html" class="dropdown-item text-uppercase">Our Team <span
-                      class="badge bg-secondary">Pro</span></a></li>
-                <li class="py-1"><a href="review.html" class="dropdown-item text-uppercase">Reviews <span
-                      class="badge bg-secondary">Pro</span></a></li>
-                <li class="py-1"><a href="faq.html" class="dropdown-item text-uppercase">FAQs <span
-                      class="badge bg-secondary">Pro</span></a></li>
-              </ul>
-            </li>
-            <li class="nav-item ps-4 pe-4 ">
-              <a class="nav-link get-pro text-dark fw-bold p-0" href="https://templatesjungle.gumroad.com/l/free-insove-medical-healthcare-bootstrap-5-html-website-template">GET PRO</a>
-            </li>
           </ul>
           <form class="search-form mb-3 mb-lg-0" role="search">
             <svg class="search primary-color position-absolute" width="18" height="18">
@@ -1055,25 +1021,25 @@
         <div class="col-lg-4 col-md-6 col-sm-6 pb-3">
           <div class="footer-menu">
             <img src={{ asset('assetsFrontOffice/images/logo.svg')}} alt="logo"  width="150">
-            <p>Elit adipi massa diam in dignissim. Sagittis pulvinar ut dis venenatis nunc nunc.</p>
+            <p>Our application is designed to simplify the management of your categories and products, offering an intuitive interface and powerful features for an optimal user experience.</p>
             <div class="contact-item">
               <p>
                 <svg class="location primary-color" width="25" height="25">
                   <use xlink:href="#location"></use>
                 </svg>
-                <span>123 Arling, Miola, NY</span>
+                <span>Pôle Technologique El Ghazela, Ariana, Tunisia</span>
               </p>
               <p>
                 <svg class="email primary-color" width="25" height="25">
                   <use xlink:href="#email"></use>
                 </svg>
-                <a href="mailto:">Info@yourinfo.com</a>
+                <a href="mailto:">sahateck@gmail.com</a>
               </p>
               <p>
                 <svg class="phone primary-color" width="25" height="25">
                   <use xlink:href="#phone"></use>
                 </svg>
-                <span>(+487) 384 9452</span>
+                <span>70 685 685</span>
               </p>
               <ul class="social-links list-unstyled d-flex mt-3">
                 <li>
@@ -1116,7 +1082,7 @@
             </div>
           </div>
         </div>
-        <div class="col-lg-4 col-md-6 col-sm-6 pb-3">
+        {# <div class="col-lg-4 col-md-6 col-sm-6 pb-3">
           <div class="footer-menu">
             <h5 class="widget-title pb-2 fw-semibold">Quick Links</h5>
             <ul class="menu-list list-unstyled">
@@ -1149,7 +1115,7 @@
               </li>
             </ul>
           </div>
-        </div>
+        </div> #}
         <div class="col-lg-4 col-md-6 col-sm-6 pb-3">
           <div class="footer-menu">
             <h5 class="widget-title fw-semibold">Opening Hours</h5>
@@ -1175,8 +1141,7 @@
         </div>
       </div>
       <div class="d-md-flex text-center justify-content-between border-top mt-5 py-4">
-        <p>© 2023 Insove - All rights reserved</p>
-        <p>Free HTML Templates by: <a href="https://templatesjungle.com/" class="fw-semibold"> TemplatesJungle</a></p>
+        <p>&copy; {{ "now"|date("Y") }} <strong><span>SAHATECK</span></strong>. - All rights reserved</p>
       </div>
     </div>
   </footer>

@@ -24,6 +24,7 @@ use Symfony\Component\Validator\Constraints\Range;
 
 class RegistrationFormType extends AbstractType
 {
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder

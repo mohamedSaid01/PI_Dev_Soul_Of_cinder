@@ -5,6 +5,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\Patient;
 use App\Form\PatientType;
 use App\Service\PasswordGenerator; // Importez le service PasswordGenerator
 use Doctrine\ORM\EntityManagerInterface;
@@ -20,19 +21,16 @@ use App\Form\MedicalFileType;
 use App\Service\FileUploader;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use App\Service\ZeroBounceEmailValidator;
 
 
 class PatientController extends AbstractController
 {
-    #[Route('/admin/patients', name: 'app_patient_index', methods: ['GET'])]
-    public function index(UserRepository $userRepository): Response
-    {
-        // Récupérer uniquement les utilisateurs avec le rôle ROLE_PATIENT
-        $patients = $userRepository->findByRole('ROLE_USER');
+    private ZeroBounceEmailValidator $emailValidator;
 
-        return $this->render('patient/index.html.twig', [
-            'patients' => $patients,
-        ]);
+    public function __construct(ZeroBounceEmailValidator $emailValidator)
+    {
+        $this->emailValidator = $emailValidator;
     }
 
     #[Route('/admin/register/patient', name: 'app_patient_new', methods: ['GET', 'POST'])]
@@ -42,7 +40,8 @@ class PatientController extends AbstractController
         UserPasswordHasherInterface $passwordHasher,
         PasswordGenerator $passwordGenerator, // Injectez le service PasswordGenerator
         MailerInterface $mailer, // Injectez MailerInterface
-        UserRepository $userRepository // Injectez UserRepository
+        UserRepository $userRepository, // Injectez UserRepository
+        ZeroBounceEmailValidator $emailValidator
     ): Response {
         $user = new User();
         $form = $this->createForm(PatientType::class, $user);
@@ -57,6 +56,12 @@ class PatientController extends AbstractController
                 return $this->redirectToRoute('app_patient_new');
             }
 
+            // // Vérifier si l'email est valide et existe sur le serveur de messagerie
+            //  if (!$emailValidator->isValid($user->getEmail())) {
+            // $this->addFlash('error', 'L\'email n\'est pas valide ou n\'existe pas.');
+            // return $this->redirectToRoute('app_patient_new');
+            // }
+
             // Générer un mot de passe aléatoire
             $plainPassword = $passwordGenerator->generateRandomPassword();
 
@@ -67,8 +72,15 @@ class PatientController extends AbstractController
             // Attribuer le rôle ROLE_PATIENT
             $user->setRoles(['ROLE_USER']);
 
+            // Définir isVerified à true (1) pour ce patient
+            $user->setIsVerified(true);
+
+            $patient = new Patient();
+            $patient->setUser($user); // 🔗 Lier le patient à l'utilisateur
+
             // Enregistrer l'utilisateur en base de données
             $entityManager->persist($user);
+            $entityManager->persist($patient);
             $entityManager->flush();
 
             // Envoyer un email avec les informations de connexion
@@ -96,6 +108,19 @@ class PatientController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
+
+    #[Route('/admin/patients', name: 'app_patient_index', methods: ['GET'])]
+    public function index(UserRepository $userRepository): Response
+    {
+        // Récupérer uniquement les utilisateurs avec le rôle ROLE_PATIENT
+        $patients = $userRepository->findByRole('ROLE_USER');
+
+        return $this->render('patient/index.html.twig', [
+            'patients' => $patients,
+        ]);
+    }
+
 
     #[Route('/admin/patient/{id}', name: 'app_patient_show', methods: ['GET'])]
     public function show(User $patient): Response

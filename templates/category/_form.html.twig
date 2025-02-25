@@ -1,0 +1,79 @@
+{{ form_start(form) }}
+    <h2 class="form-title">Formulaire</h2>
+    {{ form_widget(form) }}
+    <button class="btn">{{ button_label|default('Save') }}</button>
+{{ form_end(form) }}
+
+<style>
+    body {
+        background-color: #eef3f7;
+        font-family: 'Poppins', Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    form {
+        max-width: 500px;
+        padding: 25px;
+        border-radius: 12px;
+        background: white;
+        box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    form:hover {
+        transform: scale(1.02);
+    }
+
+    .form-title {
+        font-size: 22px;
+        font-weight: 600;
+        color: #4a4a4a;
+        margin-bottom: 20px;
+    }
+
+    .btn {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(135deg, rgb(78, 148, 223), rgb(140, 180, 223));
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .btn:hover {
+        background: linear-gradient(135deg, rgb(140, 180, 223), rgb(78, 148, 223));
+        transform: translateY(-2px);
+        box-shadow: 0px 4px 10px rgba(78, 148, 223, 0.3);
+    }
+
+    .btn:active {
+        transform: scale(0.98);
+    }
+
+    input, select, textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 14px;
+        background: #f8f9fa;
+        transition: border 0.3s ease-in-out;
+    }
+
+    input:focus, select:focus, textarea:focus {
+        border-color: #4e94df;
+        outline: none;
+        box-shadow: 0px 0px 5px rgba(78, 148, 223, 0.3);
+    }
+</style>

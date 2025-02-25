@@ -1,0 +1,62 @@
+{% extends 'baseBackOffice.html.twig' %}
+
+{% block title %}New Category{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="form-container">
+        <h1 class="title">Create New Category</h1>
+
+        <div class="form-content">
+            {{ include('category/_form.html.twig') }}
+        </div>
+
+        <a href="{{ path('app_category_index') }}" class="back-link">← Back to list</a>
+    </div>
+</div>
+
+<style>
+    .container {
+        display: flex;
+        justify-content: flex-end; /* Aligner à droite */
+        align-items: center;
+        height: 100vh;
+        padding-right: 10%; /* Ajustement pour pousser à droite */
+    }
+
+    .form-container {
+        width: 40%; /* Réduire la largeur pour mieux s'adapter */
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .title {
+        text-align: center;
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .form-content {
+        width: 90%;
+        margin: 0 auto;
+    }
+
+    .back-link {
+        display: block;
+        text-align: center;
+        margin-top: 15px;
+        font-weight: bold;
+        color: #007bff;
+        text-decoration: none;
+        font-size: 14px;
+        transition: color 0.3s ease;
+    }
+
+    .back-link:hover {
+        color: #0056b3;
+    }
+</style>
+{% endblock %}

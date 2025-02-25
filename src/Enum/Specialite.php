@@ -30,4 +30,10 @@ enum Specialite: string
     case ALLERGOLOGIE = 'Allergologie';
     case INFECTIOLOGIE = 'Infectiologie';
     case GERIATRIE = 'Gériatrie';
+
+    public static function getChoices(): array
+    {
+        return array_map(fn(self $specialite) => $specialite->value, self::cases());
+    }
+    
 }

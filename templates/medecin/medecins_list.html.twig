@@ -6,7 +6,7 @@
     {{ parent() }}
     <style>
         .table th {
-            color:rgb(31, 31, 34);
+            color: rgb(31, 31, 34);
             font-weight: 600;
             font-size: 15px;
         }
@@ -83,19 +83,17 @@
               <h5 class="card-title">Liste des Médecins</h5>
               <p>Retrouvez ici la liste complète des médecins enregistrés dans notre système. Vous pouvez consulter leurs informations, les modifier ou les supprimer si nécessaire.</p>
 
-              <!-- Ajout du bouton Ajouter un médecin -->
+              <!-- Formulaire de recherche -->
               <div class="d-flex justify-content-between mb-4">
-                <!-- Formulaire de recherche -->
-                <div class="search-bar">
-                    <input type="text" name="search" class="form-control" placeholder="Rechercher un médecin" value="{{ app.request.get('search') }}">
-                    <i class="bi bi-search"></i>
-                </div>
+                {{ form_start(form, {'attr': {'class': 'search-bar'}}) }}
+                    {{ form_widget(form.specialite, {'attr': {'class': 'form-control'}}) }}
+                {{ form_end(form) }}
                 <a href="{{ path('app_new_register_medecin') }}" class="btn btn-success btn-sm btn-add">
                     + Ajouter un Médecin
                 </a>
               </div>
 
-              <!-- Table with stripped rows -->
+              <!-- Tableau des médecins -->
               <div class="container-fluid mt-4">
                 <div class="table-responsive">
                     <table class="table">

@@ -1,4 +1,5 @@
 <?php
+
 // src/Entity/RendezVous.php
 namespace App\Entity;
 
@@ -12,33 +13,89 @@ class RendezVous
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'rendezVous')]
-    private $user;
+    #[ORM\ManyToOne(targetEntity: Medecin::class, inversedBy: 'rendezVous', cascade: ['remove'])]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    private $medecin;
 
-    #[ORM\Column(type: 'datetime')]
-    private $dateHeure;
+    #[ORM\ManyToOne(targetEntity: Patient::class, inversedBy: 'rendezVous', cascade: ['remove'])]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    private $patient;
+    #[ORM\Column(type: 'date')]
+    private $date;
 
-    #[ORM\ManyToOne(targetEntity: EtatRendezVous::class)]
-    private $etat;
-    #[ORM\Column(type: 'boolean')]
-    private $statut;
+    #[ORM\Column(type: 'time')]
+    private $heure;
+
+#[ORM\ManyToOne(targetEntity: EtatRendezVous::class)]
+private $etat;
+#[ORM\Column(type: 'boolean')]
+private $statut=false;
+#[ORM\Column(type: 'boolean')]
+private $annule = false; // Valeur par défaut à false (non annulé)
+public function getDate(): ?\DateTimeInterface
+{
+    return $this->date;
+}
+
+public function setDate(\DateTimeInterface $date): self
+{
+    $this->date = $date;
+    return $this;
+}
+
+public function getHeure(): ?\DateTimeInterface
+{
+    return $this->heure;
+}
+
+public function setHeure(\DateTimeInterface $heure): self
+{
+    $this->heure = $heure;
+    return $this;
+}
+
+// Méthode pour combiner la date et l'heure en un objet DateTime
+
+public function isAnnule(): bool
+{
+    return $this->annule;
+}
+
+public function setAnnule(bool $annule): self
+{
+    $this->annule = $annule;
+
+    return $this;
+}
+   
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getUser(): ?User
+    public function getMedecin(): ?Medecin
     {
-        return $this->user;
+        return $this->medecin;
     }
 
-    public function setUser(?User $user): self
+    public function setMedecin(?Medecin $medecin): self
     {
-        $this->user = $user;
+        $this->medecin = $medecin;
 
         return $this;
     }
 
+    public function getPatient(): ?Patient
+    {
+        return $this->patient;
+    }
+
+    public function setPatient(?Patient $patient): self
+    {
+        $this->patient = $patient;
+
+        return $this;
+    }
 public function getStatut(): ?bool
 {
     return $this->statut;
@@ -50,18 +107,8 @@ public function setStatut(bool $statut): self
 
     return $this;
 }
-    public function getDateHeure(): ?\DateTimeInterface
-    {
-        return $this->dateHeure;
-    }
 
-    public function setDateHeure(\DateTimeInterface $dateHeure): self
-    {
-        $this->dateHeure = $dateHeure;
-
-        return $this;
-    }
-
+ 
     public function getEtat(): ?EtatRendezVous
     {
         return $this->etat;

@@ -1,11 +1,11 @@
 {# templates/emails/patient_registration.html.twig #}
 
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vos informations de connexion - SAHATECK</title>
+    <title>Your Login Information - SAHATECK</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -49,23 +49,23 @@
 </head>
 <body>
     <div class="container">
-        <h1>Bienvenue sur SAHATECK</h1>
-        <p>Bonjour <strong>{{ firstName }} {{ lastName }}</strong>,</p>
-        <p>Votre compte patient a été créé avec succès sur notre plateforme <strong>SAHATECK</strong>.</p>
-        <p>Voici vos informations de connexion :</p>
+        <h1>Welcome to SAHATECK</h1>
+        <p>Hello <strong>{{ firstName }} {{ lastName }}</strong>,</p>
+        <p>Your patient account has been successfully created on our platform <strong>SAHATECK</strong>.</p>
+        <p>Here are your login details:</p>
         <ul>
-            <li><strong>Email :</strong> {{ email }}</li>
-            <li><strong>Mot de passe :</strong> {{ password }}</li>
+            <li><strong>Email:</strong> {{ email }}</li>
+            <li><strong>Password:</strong> {{ password }}</li>
         </ul>
-        <p>Pour des raisons de sécurité, nous vous recommandons de changer votre mot de passe après votre première connexion.</p>
-        <p>Cliquez sur le lien ci-dessous pour accéder à votre compte :</p>
-        <p><a href="https://127.0.0.1:8001/login" style="color: #0056b3; text-decoration: none;">Se connecter à SAHATECK</a></p>
-        <p>Cordialement,</p>
-        <p><strong>L'équipe SAHATECK</strong></p>
+        <p>For security reasons, we recommend changing your password after your first login.</p>
+        <p>Click the link below to access your account:</p>
+        <p><a href="https://127.0.0.1:8001/login" style="color: #0056b3; text-decoration: none;">Log in to SAHATECK</a></p>
+        <p>Best regards,</p>
+        <p><strong>The SAHATECK Team</strong></p>
     </div>
     <div class="footer">
-        <p>Si vous n'avez pas créé ce compte, veuillez nous contacter immédiatement à <a href="mailto:support@sahateck.com">support@sahateck.com</a>.</p>
-        <p>&copy; {{ "now"|date("Y") }} SAHATECK. Tous droits réservés.</p>
+        <p>If you did not create this account, please contact us immediately at <a href="mailto:support@sahateck.com">support@sahateck.com</a>.</p>
+        <p>&copy; {{ "now"|date("Y") }} SAHATECK. All rights reserved.</p>
     </div>
 </body>
 </html>

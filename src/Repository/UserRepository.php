@@ -68,7 +68,32 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         return $this->createQueryBuilder('u')
             ->andWhere('u.roles LIKE :role')
+            ->andWhere('u.isVerified = :isVerified')
             ->setParameter('role', '%"' . $role . '"%')
+            ->setParameter('isVerified', true)
+            ->getQuery()
+            ->getResult();
+    }
+
+
+    public function countUserInscriptions(User $user): int
+    {
+        return $this->createQueryBuilder('i')
+            ->select('COUNT(i.id)')
+            ->where('i.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+
+    public function findBySpecialite(string $specialite): array
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.roles LIKE :role') // Filtre par rôle médecin
+            ->andWhere('u.specialite = :specialite') // Filtre par spécialité
+            ->setParameter('role', '%"ROLE_MEDECIN"%')
+            ->setParameter('specialite', $specialite)
             ->getQuery()
             ->getResult();
     }

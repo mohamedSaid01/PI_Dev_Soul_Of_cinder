@@ -48,26 +48,26 @@
                     <div class="p-3 p-md-4 p-xl-5">
                         <div class="d-flex flex-column align-items-center">
                             <img class="img-fluid rounded" loading="lazy" src="{{ asset('assetsBackOffice/img/logo.png') }}" width="100" height="80" alt="Logo">
-                            <h3>Reset your password</h3>
+                            <h3>Forgot password?</h3>
                         </div>
                         {% for flash_error in app.flashes('reset_password_error') %}
                             <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
                         {% endfor %}
-                        {{ form_start(requestForm, {'attr': {'class': 'row gy-3 gy-md-4 overflow-hidden', novalidate: 'novalidate'}}) }}
+                        {{ form_start(form, {'attr': {'class': 'row gy-3 gy-md-4 overflow-hidden', novalidate: 'novalidate'}}) }}
                             <div class="col-12">
                                 <label>Email</label>
-                                {{ form_widget(requestForm.email, {'attr': {'class': 'form-control'}}) }}
-                                {{ form_errors(requestForm.email) }}
+                                {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(form.email) }}
                                 <small class="text-muted">
-                                    Enter your email address, and we will send you a link to reset your password.
+                                    Enter your email address, and we will send you a code to reset your password.
                                 </small>
                             </div>
                             <div class="col-12">
                                 <div class="d-grid">
-                                    <button type="submit" class="btn bsb-btn-xl text-white" style="background-color: #00B4D8; border-color: #00B4D8; padding: 8px 16px; font-size: 14px;">Send password reset email</button>
+                                    <button type="submit" class="btn bsb-btn-xl text-white" style="background-color: #00B4D8; border-color: #00B4D8; padding: 8px 16px; font-size: 14px;">Send reset instruction</button>
                                 </div>
                             </div>
-                        {{ form_end(requestForm) }}
+                        {{ form_end(form) }}
                         <div class="row">
                             <div class="col-12">
                                 <hr class="border-secondary-subtle">
@@ -82,3 +82,4 @@
         </div>
     </section>
 {% endblock %}
+

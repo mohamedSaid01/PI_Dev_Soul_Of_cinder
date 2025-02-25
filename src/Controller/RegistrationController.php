@@ -14,7 +14,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use App\Entity\Patient;
 
+use App\Entity\Medecin;
 class RegistrationController extends AbstractController
 {
     // src/Controller/RegistrationController.php
@@ -26,7 +31,7 @@ public function choixInscription(): Response
 }
 
     #[Route('/register/patient', name: 'app_register_patient')]
-    public function registerPatient(Request $request, UserPasswordHasherInterface $userPasswordHasher, Security $security, EntityManagerInterface $entityManager): Response
+    public function registerPatient(Request $request, UserPasswordHasherInterface $userPasswordHasher, Security $security, EntityManagerInterface $entityManager, MailerInterface $mailer,): Response
     {
         // Rediriger l'utilisateur s'il est déjà connecté
         if ($this->getUser()) {
@@ -49,12 +54,37 @@ public function choixInscription(): Response
             // Attribuer le rôle "ROLE_PATIENT" par défaut
             $user->setRoles(['ROLE_USER']);
 
-            // Enregistrer l'utilisateur en base de données
-            $entityManager->persist($user);
-            $entityManager->flush();
 
-            // Connecter l'utilisateur automatiquement après l'inscription
-            $security->login($user, SecurityAuthenticator::class, 'main');
+            // Générer un token de vérification
+            $verificationToken = bin2hex(random_bytes(32));
+            $user->setVerificationToken($verificationToken);
+
+   // Créer une nouvelle instance de Patient et l'associer à l'utilisateur
+   $patient = new Patient();
+   $patient->setUser($user);
+
+   // Enregistrer l'utilisateur et le patient en base de données
+   $entityManager->persist($user);
+   $entityManager->persist($patient);
+   $entityManager->flush();
+          
+            // Enregistrer l'utilisateur en base de données
+           
+            // // Connecter l'utilisateur automatiquement après l'inscription
+            // $security->login($user, SecurityAuthenticator::class, 'main');
+
+                         // Envoyer l'email de vérification
+                         $email = (new TemplatedEmail())
+                         ->from('mohamedsaidboubaker10@gmail.com')
+                         ->to($user->getEmail())
+                         ->subject('Vérification de votre compte')
+                         ->htmlTemplate('emails/verification.html.twig')
+                         ->context([
+                             'user' => $user,
+                             'token' => $verificationToken,
+                         ]);
+            
+                     $mailer->send($email);
 
             // Rediriger vers la page de connexion ou une autre page
             return $this->redirectToRoute('app_login');
@@ -69,7 +99,7 @@ public function choixInscription(): Response
     // src/Controller/RegistrationController.php
 
     #[Route('/register/medecin', name: 'app_register_medecin')]
-    public function registerMedecin(Request $request, UserPasswordHasherInterface $userPasswordHasher, Security $security, EntityManagerInterface $entityManager): Response
+    public function registerMedecin(Request $request, UserPasswordHasherInterface $userPasswordHasher, Security $security, EntityManagerInterface $entityManager, MailerInterface $mailer,): Response
     {
         // Rediriger l'utilisateur s'il est déjà connecté
         if ($this->getUser()) {
@@ -92,12 +122,34 @@ public function choixInscription(): Response
             // Attribuer le rôle "ROLE_MEDECIN" par défaut
             $user->setRoles(['ROLE_MEDECIN']);
 
-            // Enregistrer l'utilisateur en base de données
-            $entityManager->persist($user);
-            $entityManager->flush();
+            // Générer un token de vérification
+            $verificationToken = bin2hex(random_bytes(32));
+            $user->setVerificationToken($verificationToken);
+   // Créer une nouvelle instance de Patient et l'associer à l'utilisateur
+   $medecin = new Medecin();
+   $medecin->setUser($user);
 
-            // Connecter l'utilisateur automatiquement après l'inscription
-            $security->login($user, SecurityAuthenticator::class, 'main');
+   // Enregistrer l'utilisateur et le patient en base de données
+   $entityManager->persist($user);
+   $entityManager->persist($medecin);
+   $entityManager->flush();
+            
+
+            // // Connecter l'utilisateur automatiquement après l'inscription
+            // $security->login($user, SecurityAuthenticator::class, 'main');
+
+             // Envoyer l'email de vérification
+             $email = (new TemplatedEmail())
+             ->from('mohamedsaidboubaker10@gmail.com')
+             ->to($user->getEmail())
+             ->subject('Vérification de votre compte')
+             ->htmlTemplate('emails/verification.html.twig')
+             ->context([
+                 'user' => $user,
+                 'token' => $verificationToken,
+             ]);
+
+         $mailer->send($email);
 
             // Rediriger vers la page de connexion ou une autre page
             return $this->redirectToRoute('app_login');
@@ -108,4 +160,23 @@ public function choixInscription(): Response
             'registrationForm' => $form->createView(),
         ]);
     }
+
+// src/Controller/RegistrationController.php
+#[Route('/verify-email/{token}', name: 'app_verify_email')]
+public function verifyEmail(string $token, EntityManagerInterface $entityManager): Response
+{
+    $user = $entityManager->getRepository(User::class)->findOneBy(['verificationToken' => $token]);
+
+    if (!$user) {
+        throw $this->createNotFoundException('Token invalide.');
+    }
+
+    // Activer le compte
+    $user->setIsVerified(true);
+    $user->setVerificationToken(null); // Supprimer le token après vérification
+    $entityManager->flush();
+
+    $this->addFlash('success', 'Votre compte a été vérifié avec succès.');
+    return $this->redirectToRoute('app_login');
+}
 }

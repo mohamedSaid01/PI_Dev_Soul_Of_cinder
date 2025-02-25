@@ -10,21 +10,25 @@ use SymfonyCasts\Bundle\ResetPassword\Model\ResetPasswordRequestTrait;
 #[ORM\Entity(repositoryClass: ResetPasswordRequestRepository::class)]
 class ResetPasswordRequest implements ResetPasswordRequestInterface
 {
-    use ResetPasswordRequestTrait;
+    use ResetPasswordRequestTrait; // Utilise le trait
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(type: 'integer')]
+    private $id;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    private $user;
 
-    public function __construct(User $user, \DateTimeInterface $expiresAt, string $selector, string $hashedToken)
+    #[ORM\Column(type: 'string', length: 6)]
+    private $code;
+
+    public function __construct(object $user, \DateTimeInterface $expiresAt, string $code, string $selector)
     {
         $this->user = $user;
-        $this->initialize($expiresAt, $selector, $hashedToken);
+        $this->code = $code;
+        $this->initialize($expiresAt, $selector, $code); // Initialise les propriétés du trait
     }
 
     public function getId(): ?int
@@ -32,8 +36,13 @@ class ResetPasswordRequest implements ResetPasswordRequestInterface
         return $this->id;
     }
 
-    public function getUser(): User
+    public function getUser(): object
     {
         return $this->user;
+    }
+
+    public function getCode(): string
+    {
+        return $this->code;
     }
 }

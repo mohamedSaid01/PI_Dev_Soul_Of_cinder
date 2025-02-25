@@ -1,0 +1,117 @@
+{% extends 'baseFrontOffice.html.twig' %}
+
+{% block stylesheets %}
+  {{ parent() }} {# Hérite des stylesheets du template parent #}
+  <style>
+    /* Custom Styles for Product Cards */
+    .card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: none;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-img-top {
+      width: 100%;
+      height: 100%;
+      border: 5px solid #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-body {
+      padding: 1.5rem;
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: #333;
+    }
+
+    .card-text {
+      font-size: 0.9rem;
+      color: #555;
+      margin-bottom: 0.5rem;
+    }
+
+    .text-warning {
+      color: #ffc107 !important;
+      font-weight: 500;
+    }
+
+    .btn-outline-primary {
+      border-color: #007bff;
+      color: #007bff;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      font-weight: 500;
+    }
+
+    .btn-outline-primary:hover {
+      background-color: #007bff;
+      color: #fff;
+    }
+  </style>
+{% endblock %}
+
+{% block body %}
+
+{% if app.user %}
+ <section id="products" class="py-5">
+    <div class="container">
+      <!-- Filter by Category -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <form method="get" action="{{ path('front_list') }}" class="d-flex">
+          <select name="category" class="form-select me-2">
+            <option value="">All Categories</option>
+            {% for category in categories %}
+              <option value="{{ category.id }}" {{ selectedCategory == category.id ? 'selected' : '' }}>
+                {{ category.name }}
+              </option>
+            {% endfor %}
+          </select>
+          <button type="submit" class="btn btn-secondary btn-sm">Filter</button>
+        </form>
+      </div>
+{% endif %}
+
+  <section id="products" class="py-5">
+    <div class="container">
+      <div class="row">
+        {% for produit in produits %}
+          <div class="col-md-4 mb-4">
+            <div class="card h-100">
+              <img src="{{ asset('uploads/images/' ~ produit.image) }}" class="card-img-top" alt="{{ produit.name }}">
+              <div class="card-body">
+                <h5 class="card-title">{{ produit.name }}</h5>
+                <p class="card-text">{{ produit.desciption }}</p>
+
+                <p class="card-text"><strong>Price:</strong> {{ produit.price }} Dt</p>
+                <p class="card-text"><strong>Stock:</strong> {{ produit.quantity }}</p>
+                {% if produit.quantity < 3 %}
+                  <p class="card-text text-warning"><strong>Alert: This product may be out of stock soon!</strong></p>
+                {% endif %}
+                {% if app.user %}
+                   <a href="#" class="btn btn-outline-primary">Add to Cart</a>
+               {% endif %}
+
+              </div>
+            </div>
+          </div>
+        {% else %}
+          <div class="col-12">
+            <p class="text-center">No products found</p>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endblock %}
