@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Reclamation;
 use App\Entity\Reponse;
+use App\Entity\Medecin;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 //use Symfony\Component\DomCrawler\Image;
 use Symfony\Component\Form\AbstractType;
@@ -85,8 +86,10 @@ class ReclamationType extends AbstractType
             ->add('date_reclamation', DateTimeType::class, [
                 'label' => 'Date de réclamation',
             ])
-            ->add('medcein', TextType::class, [
-                'label' => 'Nom du médecin',
+            ->add('medecin', EntityType::class, [ // Use 'medecin' instead of 'medecin_id'
+                'class' => Medecin::class,
+                'choice_label' => 'nom',
+                'placeholder' => 'Select a medecin',
                 'required' => false,
             ])
             ->add('photo', FileType::class, [

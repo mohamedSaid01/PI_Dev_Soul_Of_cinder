@@ -29,22 +29,25 @@ final class ReclamationControllerPhpController extends AbstractController
 #[Route('/reclamations', name: 'app_reclamation_controller_php_index', methods: ['GET'])]
 public function index(Request $request, ReclamationRepository $reclamationRepository, TypeReclamationRepository $typeReclamationRepository): Response
 {
-    // Récupérer les paramètres de filtrage
-    $description = $request->query->get('description');
-    $medecin = $request->query->get('medecin');
-    $typeReclamation = $request->query->get('typeReclamation');
+    $typeReclamationId = $request->query->get('typeReclamation');
 
-    // Récupérer tous les types de réclamation pour la liste déroulante
+    // Récupérer tous les types de réclamation pour le filtre
     $typesReclamation = $typeReclamationRepository->findAll();
 
-    // Utiliser le repository pour filtrer les réclamations
-    $reclamations = $reclamationRepository->findByFilters($description, $medecin, $typeReclamation);
+    if ($typeReclamationId) {
+        $typeReclamation = $typeReclamationRepository->find($typeReclamationId);
+        $reclamations = $reclamationRepository->findBy(['typeReclamation' => $typeReclamation]);
+    } else {
+        $reclamations = $reclamationRepository->findAll();
+    }
 
-    return $this->render('reclamation/index.html.twig', [
+    return $this->render('reclamation_controller_php/index.html.twig', [
         'reclamations' => $reclamations,
-        'typesReclamation' => $typesReclamation, // Passer les types de réclamation au template
+        'typesReclamation' => $typesReclamation,
+        'selectedType' => $typeReclamationId
     ]);
 }
+
 
 #[Route('/reclamations/back', name: 'app_reclamation_controller_php_copy', methods: ['GET'])]
 public function indexcopy(ReclamationRepository $reclamationRepository): Response
@@ -115,12 +118,12 @@ public function new(Request $request, EntityManagerInterface $entityManager): Re
             $reclamation->setPhoto(''); // Définir photo à NULL si aucun fichier n'est téléversé
         }
 
-        // Gestion de idmedecin
-        $idmedecin = $form->get('idmedecin')->getData();
-        if (empty($idmedecin)) {
-            $reclamation->setmedecin(null); // Définir idmedecin à NULL si vide
+        // Gestion de 
+        $medecin = $form->get('medecin')->getData();
+        if (empty($medecin)) {
+            $reclamation->setMedecin(null); // Définir  à NULL si vide
         } else {
-            $reclamation->setmedecin($idmedecin); // Sinon, enregistrer la valeur
+            $reclamation->setMedecin($medecin); // Sinon, enregistrer la valeur
         }
 
         // Enregistrer la réclamation en base de données

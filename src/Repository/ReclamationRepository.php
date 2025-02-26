@@ -19,17 +19,32 @@ class ReclamationRepository extends ServiceEntityRepository
     // src/Repository/ReclamationRepository.php
 // src/Repository/ReclamationRepository.php
 // src/Repository/ReclamationRepository.php
-public function searchReclamations(string $query, ?int $limit = null, ?int $offset = null): array
+// ReclamationRepository.php
+
+public function searchReclamations(?string $description, ?string $date, ?string $medecin): array
 {
-    return $this->createQueryBuilder('r')
-        ->leftJoin('r.medecin', 'm') // Ensure "medecin" matches the property name in Reclamation
-        ->where('r.description LIKE :query')
-        ->orWhere('m.nom LIKE :query') // Ensure "m" is the alias for Medecin
-        ->setParameter('query', '%' . $query . '%')
-        ->setMaxResults($limit)
-        ->setFirstResult($offset)
-        ->getQuery()
-        ->getResult();
+    $qb = $this->createQueryBuilder('r');
+
+    // Recherche par description (si fournie)
+    if ($description) {
+        $qb->andWhere('r.description LIKE :description')
+           ->setParameter('description', '%' . $description . '%');
+    }
+
+    // Recherche par date (si fournie)
+    if ($date) {
+        $qb->andWhere('r.date = :date')
+           ->setParameter('date', $date);
+    }
+
+    // Recherche par nom de médecin (si fournie)
+    if ($medecin) {
+        $qb->join('r.medecin', 'm') // Supposons que 'medecin' est une relation dans l'entité Reclamation
+           ->andWhere('m.nom LIKE :medecin')
+           ->setParameter('medecin', '%' . $medecin . '%');
+    }
+
+    return $qb->getQuery()->getResult();
 }
 
 public function findByType(string $typeReclamation): array
@@ -42,7 +57,7 @@ public function findByType(string $typeReclamation): array
 }
 
 
-public function findByFilters(?string $description, ?string $medecin, ?int $typeReclamationId): array
+public function findByFilters(?string $description, ?string $medecin_id, ?int $typeReclamationId): array
 {
     $qb = $this->createQueryBuilder('r');
 
@@ -51,10 +66,10 @@ public function findByFilters(?string $description, ?string $medecin, ?int $type
            ->setParameter('description', '%' . $description . '%');
     }
 
-    if ($medecin) {
-        $qb->join('r.medecin', 'm')
-           ->andWhere('m.nom LIKE :medecin')
-           ->setParameter('medecin', '%' . $medecin . '%');
+    if ($medecin_id) {
+        $qb->join('r.Medecin', 'm')
+           ->andWhere('m.nom LIKE :Medecin')
+           ->setParameter('Medecin', '%' . $medecin_id . '%');
     }
 
     if ($typeReclamationId) {

@@ -6,7 +6,7 @@ use App\Repository\MedecinRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MedecinRepository::class)]
-class Medecin
+class Medecin // Ensure the class name is capitalized correctly
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

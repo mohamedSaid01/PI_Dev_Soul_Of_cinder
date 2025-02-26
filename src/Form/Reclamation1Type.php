@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Medecin;
 use App\Entity\Reclamation;
 use App\Entity\TypeReclamation;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -32,10 +33,11 @@ class Reclamation1Type extends AbstractType
                             'label' => 'Médecin ?',
                             'attr' => ['id' => 'addMedecinCheckbox'], // Ajouter un ID pour le JavaScript
                         ])
-                        ->add('idmedecin', TextType::class, [
-                            'label' => 'Nom du médecin',
-                            'required' => false, // Rendre ce champ facultatif
-                            //'attr' => ['class' => 'medcein-name-input', 'style' => 'display: none;'], // Masqué par défaut
+                        ->add('medecin', EntityType::class, [ // Use 'medecin' instead of 'medecin_id'
+                            'class' => Medecin::class,
+                            'choice_label' => 'nom',
+                            'placeholder' => 'Select a medecin',
+                            'required' => false,
                         ])
             //->add('photo')
             ->add('typeReclamation', EntityType::class, [

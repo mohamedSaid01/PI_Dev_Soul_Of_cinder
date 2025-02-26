@@ -20,10 +20,9 @@ class Reclamation
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $date_reclamation = null;
 
-
-    #[ORM\ManyToOne(targetEntity: Medecin::class)] // Ensure "Medecin" is capitalized
-    #[ORM\JoinColumn(nullable: true)]
-    private ?Medecin $medecin = null;
+    #[ORM\ManyToOne(targetEntity: Medecin::class)]
+    #[ORM\JoinColumn(name: 'medecin_id', referencedColumnName: 'id', nullable: true)]
+    private ?Medecin $medecin = null; // Use camelCase for property names
 
     // Getter and Setter for medecin
     public function getMedecin(): ?Medecin
@@ -37,8 +36,9 @@ class Reclamation
         return $this;
     }
 
+
 //     #[ORM\Column(length: 255, nullable: true)] // nullable: true permet NULL
-// private ?string $idmedecin = null;
+// private ?string  = null;
 
 //    // src/Entity/YourEntity.php
 

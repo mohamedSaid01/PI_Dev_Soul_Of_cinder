@@ -86,44 +86,39 @@
 </style>
 {% endblock %}
 {% block body %}
-  <div class="reclamation-details-container">
-    <h1>Reclamation Details</h1>
+<div class="reclamation-details-container">
+    <h1>Détails de la Réclamation</h1>
 
     <table class="table">
-      <tbody>
-    
-        <tr>
-          <th>Description</th>
-          <td>{{ reclamation.description }}</td>
-        </tr>
-        <tr>
-          <th>Date Reclamation</th>
-          <td>{{ reclamation.dateReclamation ? reclamation.dateReclamation|date('Y-m-d H:i:s') : '' }}</td>
-        </tr>
-        <tr>
-          <th>Idmedecin</th>
-          <td>{{ reclamation.idmedecin }}</td>
-        </tr>
-        <tr>
-          <th>Photo</th>
-          <td>
-            {% if reclamation.photo %}
-              <img src="{{ asset('upload/images/' ~ reclamation.photo) }}" alt="Photo" style="max-width: 100px; border-radius: 5px;">
-            {% else %}
-              N/A
-            {% endif %}
-          </td>
-        </tr>
-      </tbody>
+        <tbody>
+            <tr>
+                <th>Description</th>
+                <td>{{ reclamation.description }}</td>
+            </tr>
+            <tr>
+                <th>Date Réclamation</th>
+                <td>{{ reclamation.dateReclamation ? reclamation.dateReclamation|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Médecin</th>
+                <td>{{ reclamation.medecin ? reclamation.medecin.nom : 'N/A' }}</td> {# Utilisation de medecin.nom #}
+            </tr>
+            <tr>
+                <th>Photo</th>
+                <td>
+                    {% if reclamation.photo %}
+                        <img src="{{ asset('upload/images/' ~ reclamation.photo) }}" alt="Photo" style="max-width: 100px;">
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </td>
+            </tr>
+        </tbody>
     </table>
 
     <div class="actions">
-      <a href="{{ path('app_reclamation_controller_php_index') }}" class="btn-back">Back to List</a>
-      <a href="{{ path('app_reclamation_controller_php_edit', {'id': reclamation.id}) }}" class="btn-edit">Edit</a>
+        <a href="{{ path('app_reclamation_controller_php_index') }}" class="btn-back">Retour à la liste</a>
+        <a href="{{ path('app_reclamation_controller_php_edit', {'id': reclamation.id}) }}" class="btn-edit">Modifier</a>
     </div>
-
-    {# <div class="delete-form">
-      {{ include('reclamation_controller_php/_delete_form.html.twig') }}
-    </div> #}
-  </div>
+</div>
 {% endblock %}

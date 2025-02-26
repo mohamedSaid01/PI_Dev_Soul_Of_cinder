@@ -189,7 +189,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Gestion de la case à cocher "Médecin ?"
         let medecinCheckbox = document.querySelector("#{{ form.addidmedcein.vars.id }}");
-        let medecinNameInput = document.querySelector(".medcein-name-input");
+        let medecinNameInput = document.querySelector(".medecin-name-input");
 
         if (medecinCheckbox && medecinNameInput) {
             medecinCheckbox.addEventListener("change", function () {
@@ -214,9 +214,9 @@ document.addEventListener("DOMContentLoaded", function () {
         {{ form_label(form.addidmedcein) }}
     </div>
 
-    <div class="group1 medecin medcein-name-input">
-        {{ form_label(form.idmedecin) }}
-        {{ form_widget(form.idmedecin, {'attr': {'class': 'form-control'}}) }}
+    <div class="group1 medecin medecin-name-input">
+        {{ form_label(form.medecin) }} {# Utilisation de medecin au lieu de medecin_id #}
+        {{ form_widget(form.medecin, {'attr': {'class': 'form-control'}}) }}
     </div>
 
     <div class="group1">
@@ -235,7 +235,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         {# Afficher un aperçu de la photo si elle existe #}
         {% if reclamation.photo %}
-            <div class="ccustomm ">
+            <div class="ccustomm">
                 <img src="{{ asset('upload/images/' ~ reclamation.photo) }}" alt="Photo">
             </div>
         {% else %}

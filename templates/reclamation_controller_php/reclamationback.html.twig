@@ -91,14 +91,14 @@
 {% endblock %}
 {% block body %}
   <div class="reclamation-index-container">
-    <h1>Reclamation index</h1>
+    <h1>Reclamation</h1>
 
     <table class="table">
       <thead>
         <tr>
           <th>Description</th>
           <th>Date reclamation</th>
-          <th>Idmedecin</th>
+          <th>medecin</th>
           <th>Photo</th>
           <th>Type Reclamation</th>
         </tr>
@@ -108,7 +108,7 @@
     <tr>
         <td>{{ reclamation.description }}</td>
         <td>{{ reclamation.dateReclamation ? reclamation.dateReclamation|date('Y-m-d H:i:s') : '' }}</td>
-        <td>{{ reclamation.idmedecin }}</td>
+        <td>{{ reclamation.Medecin }}</td>
         <td>
             {% if reclamation.photo %}
                 <img src="{{ asset('upload/images/' ~ reclamation.photo) }}" alt="Photo">

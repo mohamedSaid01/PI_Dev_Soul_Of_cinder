@@ -85,12 +85,17 @@
     font-style: italic;
     padding: 20px;
   }
+  
 </style>
 {% endblock %}
 
 {% block body %}
 <div class="reclamation-index-container">
     <h1>Reclamation </h1>
+
+    <a href="{{ path('app_reclamation_controller_php_index') }}" class="actions back-link">
+      ← Back to list
+    </a>
     {% if reclamations is not empty %}
         <table class="table">
             <thead>
@@ -108,7 +113,7 @@
                     <tr>
                         <td>{{ reclamation.description }}</td>
                         <td>{{ reclamation.dateReclamation ? reclamation.dateReclamation|date('Y-m-d H:i:s') : '' }}</td>
-                        <td>{{ reclamation.medecin ? reclamation.medecin.nom : 'N/A' }}</td>
+                        <td>{{ reclamation.medecin ? reclamation.medecin.id : 'N/A' }}</td>
                         <td>
                             {% if reclamation.photo %}
                                 <img src="{{ asset('upload/images/' ~ reclamation.photo) }}" alt="Photo">
