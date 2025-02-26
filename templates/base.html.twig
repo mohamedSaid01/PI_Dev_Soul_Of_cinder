@@ -13,6 +13,47 @@
         {% block stylesheets %}{% endblock %}
 
         {% block javascripts %}
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('search-input').addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            let query = this.value;
+
+            fetch('/reclamation/controller/php/reclamations/search?q=' + query, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('search-results').innerHTML = data;
+            });
+        }
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('search-by-type').addEventListener('click', function() {
+        const type = document.getElementById('type-select').value;
+
+        if (type) {
+            fetch(`/reclamations/type/${type}`, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('reclamations-table').innerHTML = data;
+            });
+        } else {
+            alert('Veuillez sélectionner un type de réclamation.');
+        }
+    });
+});
+</script>
             {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
     </head>
@@ -43,6 +84,7 @@
       background-color: #ccc; /* Couleur de la ligne */
   }
 </style>
+
     <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
       <symbol xmlns="http://www.w3.org/2000/svg" id="location" viewBox="0 0 512 512">
         <circle cx="256" cy="192" r="32" fill="currentColor" />
@@ -111,20 +153,29 @@
                             <li class="nav-item"><a class="nav-link text-dark" href="#about-us">About</a></li>
                             <li class="nav-item"><a class="nav-link text-dark" href="#our-services" >Services</a></li>
                             <li class="nav-item"><a class="nav-link text-dark" href="#book-appointment" >Booking</a></li>
-                            <li class="nav-item"><a class="nav-link text-dark" href="{{ path('app_type_reclamation_controller_php_new') }}">Reclamation</a></li>
+                            <li class="nav-item"><a class="nav-link text-dark" href="{{ path('app_reclamation_controller_php_index') }}">Reclamation</a></li>
                         </ul>
-                        <form class="search-form mb-3 mb-lg-0" role="search">
-            <svg class="search primary-color position-absolute" width="18" height="18">
-              <use xlink:href="#search"></use>
-            </svg>
-            <input class="form-control border-0 ps-4 position-relative" type="search" placeholder="Search.."
-              aria-label="Search">
-          </form>
+                      <form class="search-form mb-3 mb-lg-0" role="search" action="{{ path('reclamation_search') }}" method="GET">
+                      <svg class="search primary-color position-absolute" width="18" height="18">
+              <use xlink:href="#search"></use> </svg>
+                          <input class="form-control border-0 ps-4 position-relative" 
+                                type="search" 
+                                placeholder="Search.." 
+                                aria-label="Search"
+                                id="search-input"
+                                name="q">
+                      </form>
+                      
                     </div>
                 </div>
             </nav>
         </header>
-        
+    </div>
+</div>
+
+<div id="reclamations-table" class="container mt-4">
+    <!-- Les résultats seront affichés ici -->
+</div>
         <main>
             {% block body %}{% endblock %}
         </main>

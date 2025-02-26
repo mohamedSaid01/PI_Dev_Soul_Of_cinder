@@ -1,0 +1,134 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+<style>
+  .reclamation-index-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .reclamation-index-container h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    font-size: 28px;
+    font-weight: 600;
+  }
+
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+  }
+
+  .table th,
+  .table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .table th {
+    background-color: #00B4D8;
+    color: white;
+    font-weight: 500;
+  }
+
+  .table tr:hover {
+    background-color: #f9f9f9;
+  }
+
+  .table td img {
+    max-width: 100px;
+    border-radius: 5px;
+  }
+
+  .actions a {
+    display: inline-block;
+    margin-right: 10px;
+    padding: 6px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    color: white;
+    background-color: #00B4D8;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+
+  .actions a:hover {
+    background-color: #0099b3;
+    transform: translateY(-2px);
+  }
+
+  .create-new-link {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: #00B4D8;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+
+  .create-new-link:hover {
+    background-color: #0099b3;
+    transform: translateY(-2px);
+  }
+
+  .no-records {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    padding: 20px;
+  }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="reclamation-index-container">
+    <h1>Reclamation </h1>
+    {% if reclamations is not empty %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Date reclamation</th>
+                    <th>Medecin</th>
+                    <th>Photo</th>
+                    <th>Type Reclamation</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reclamation in reclamations %}
+                    <tr>
+                        <td>{{ reclamation.description }}</td>
+                        <td>{{ reclamation.dateReclamation ? reclamation.dateReclamation|date('Y-m-d H:i:s') : '' }}</td>
+                        <td>{{ reclamation.medecin ? reclamation.medecin.nom : 'N/A' }}</td>
+                        <td>
+                            {% if reclamation.photo %}
+                                <img src="{{ asset('upload/images/' ~ reclamation.photo) }}" alt="Photo">
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ reclamation.typeReclamation ? reclamation.typeReclamation.typeReclamation : 'N/A' }}
+                        </td>
+                        <td class="actions">
+                            <a href="{{ path('app_reclamation_controller_php_show', {'id': reclamation.id}) }}">Show</a>
+                            <a href="{{ path('app_reclamation_controller_php_edit', {'id': reclamation.id}) }}">Edit</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="no-records">Aucune réclamation trouvée.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -3,3 +3,13 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+# # config/routes.yaml
+# app_reclamation_controller_php_index:
+#     path: /reclamation/controller/php/reclamations
+#     controller: App\Controller\ReclamationControllerPhpController::index
+#     methods: GET
+
+# reclamation_search:
+#     path: /reclamation/controller/php/reclamations/search
+#     controller: App\Controller\ReclamationControllerPhpController::search
+#     methods: GET

@@ -10,17 +10,39 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Repository\TypeReclamationRepository;
+
 
 
 #[Route('/reclamation/controller/php')]
 final class ReclamationControllerPhpController extends AbstractController
 {
 
-    #[Route('/reclamations', name: 'app_reclamation_controller_php_index', methods: ['GET'])]
-public function index(ReclamationRepository $reclamationRepository): Response
+//     #[Route('/reclamations', name: 'app_reclamation_controller_php_index', methods: ['GET'])]
+// public function index(ReclamationRepository $reclamationRepository): Response
+// {
+//     return $this->render('reclamation_controller_php/index.html.twig', [
+//         'reclamations' => $reclamationRepository->findAll(),
+//     ]);
+// }
+
+#[Route('/reclamations', name: 'app_reclamation_controller_php_index', methods: ['GET'])]
+public function index(Request $request, ReclamationRepository $reclamationRepository, TypeReclamationRepository $typeReclamationRepository): Response
 {
-    return $this->render('reclamation_controller_php/index.html.twig', [
-        'reclamations' => $reclamationRepository->findAll(),
+    // Récupérer les paramètres de filtrage
+    $description = $request->query->get('description');
+    $medecin = $request->query->get('medecin');
+    $typeReclamation = $request->query->get('typeReclamation');
+
+    // Récupérer tous les types de réclamation pour la liste déroulante
+    $typesReclamation = $typeReclamationRepository->findAll();
+
+    // Utiliser le repository pour filtrer les réclamations
+    $reclamations = $reclamationRepository->findByFilters($description, $medecin, $typeReclamation);
+
+    return $this->render('reclamation/index.html.twig', [
+        'reclamations' => $reclamations,
+        'typesReclamation' => $typesReclamation, // Passer les types de réclamation au template
     ]);
 }
 
@@ -96,9 +118,9 @@ public function new(Request $request, EntityManagerInterface $entityManager): Re
         // Gestion de idmedecin
         $idmedecin = $form->get('idmedecin')->getData();
         if (empty($idmedecin)) {
-            $reclamation->setIdmedecin(''); // Définir idmedecin à NULL si vide
+            $reclamation->setmedecin(null); // Définir idmedecin à NULL si vide
         } else {
-            $reclamation->setIdmedecin($idmedecin); // Sinon, enregistrer la valeur
+            $reclamation->setmedecin($idmedecin); // Sinon, enregistrer la valeur
         }
 
         // Enregistrer la réclamation en base de données
@@ -172,5 +194,29 @@ public function new(Request $request, EntityManagerInterface $entityManager): Re
 
     return $this->json(['success' => true, 'message' => 'Réclamation supprimée avec succès']);
 }
+
+#[Route('/reclamations/search', name: 'reclamation_search', methods: ['GET'])]
+public function search(Request $request, ReclamationRepository $reclamationRepository): Response
+{
+    $query = $request->query->get('q');
+    $reclamations = [];
+
+    if ($query) {
+        $reclamations = $reclamationRepository->searchReclamations($query, null, null);
+    }
+
+    // Si c'est une requête Ajax, on renvoie seulement les résultats
+    if ($request->isXmlHttpRequest()) {
+        return $this->render('reclamation_controller_php/search_results.html.twig', [
+            'reclamations' => $reclamations
+        ]);
+    }
+
+    return $this->render('reclamation_controller_php/search.html.twig', [
+        'reclamations' => $reclamations
+    ]);
+}
+
+
 
 }

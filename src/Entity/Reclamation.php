@@ -20,10 +20,27 @@ class Reclamation
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $date_reclamation = null;
 
-    #[ORM\Column(length: 255, nullable: true)] // nullable: true permet NULL
-private ?string $idmedecin = null;
 
-   // src/Entity/YourEntity.php
+    #[ORM\ManyToOne(targetEntity: Medecin::class)] // Ensure "Medecin" is capitalized
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Medecin $medecin = null;
+
+    // Getter and Setter for medecin
+    public function getMedecin(): ?Medecin
+    {
+        return $this->medecin;
+    }
+
+    public function setMedecin(?Medecin $medecin): self
+    {
+        $this->medecin = $medecin;
+        return $this;
+    }
+
+//     #[ORM\Column(length: 255, nullable: true)] // nullable: true permet NULL
+// private ?string $idmedecin = null;
+
+//    // src/Entity/YourEntity.php
 
 #[ORM\Column(type: 'string', length: 255, nullable: true)] // nullable: true permet NULL
 private ?string $photo = null; 
@@ -64,18 +81,6 @@ private ?string $photo = null;
         $this->date_reclamation = $date_reclamation;
         return $this;
     }
-
-    public function getIdmedecin(): ?string
-    {
-        return $this->idmedecin;
-    }
-
-    public function setIdmedecin(string $idmedecin): self
-    {
-        $this->idmedecin = $idmedecin;
-        return $this;
-    }
-
     public function getPhoto(): ?string
     {
         return $this->photo;

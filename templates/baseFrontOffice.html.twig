@@ -20,6 +20,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800;900&amp;display=swap"
     rel="stylesheet">
+
   {% endblock %} {# Fin du bloc stylesheets #}
 
   {% block javascripts %}
@@ -32,6 +33,21 @@
   <script type="text/javascript" src="{{ asset('assetsFrontOffice/js/plugins.js') }}"></script>
   <script type="text/javascript" src="{{ asset('assetsFrontOffice/js/script.js') }}"></script>
   <script src="{{ asset('assetsFrontOffice/js/iconify-icon.min.js') }}"></script>
+  <script>
+document.getElementById('search-input').addEventListener('input', function() {
+    let query = this.value;
+
+    fetch('/reclamation/search?q=' + query, {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.text())
+    .then(data => {
+        document.getElementById('search-results').innerHTML = data;
+    });
+});</script>
   {% endblock %}
 </head>
 
@@ -226,11 +242,14 @@
           </ul>
           <form class="search-form mb-3 mb-lg-0" role="search">
             <svg class="search primary-color position-absolute" width="18" height="18">
-              <use xlink:href="#search"></use>
-            </svg>
-            <input class="form-control border-0 ps-4 position-relative" type="search" placeholder="Search.."
-              aria-label="Search">
+              <use xlink:href="#search"></use> </svg>
+              <input class="form-control border-0 ps-4 position-relative" 
+           type="search" 
+           placeholder="Search.." 
+           aria-label="Search"
+           id="search-input">
           </form>
+          <div id="search-results"></div>
         </div>
       </div>
     </nav>

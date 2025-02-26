@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Reclamation index{% endblock %}
+{% block title %}Reclamation {% endblock %}
 
 {% block stylesheets %}
 <style>
@@ -87,18 +87,86 @@
     font-style: italic;
     padding: 20px;
   }
+
+  .filter-form {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .filter-group {
+    margin-bottom: 10px;
+  }
+
+  .filter-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #2c3e50;
+  }
+
+  .filter-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+
+  .filter-button {
+    padding: 8px 16px;
+    background-color: #00B4D8;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .filter-button:hover {
+    background-color: #0099b3;
+  }
+
+  .reset-button {
+    padding: 8px 16px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    margin-left: 10px;
+    transition: background-color 0.3s ease;
+  }
+
+  .reset-button:hover {
+    background-color: #c0392b;
+  }
+
 </style>
 {% endblock %}
 {% block body %}
   <div class="reclamation-index-container">
-    <h1>Reclamation index</h1>
-
+    <h1>Reclamation </h1>
+<div class="filter-group">
+    <label for="typeReclamation">Type Réclamation:</label>
+    <select name="typeReclamation" id="typeReclamation">
+        <option value="">Tous</option>
+        {% for type in typesReclamation %}
+            <option value="{{ type.id }}" {{ app.request.query.get('typeReclamation') == type.id ? 'selected' : '' }}>
+                {{ type.typeReclamation }}
+            </option>
+        {% endfor %}
+    </select>
+</div>
     <table class="table">
       <thead>
         <tr>
           <th>Description</th>
           <th>Date reclamation</th>
-          <th>Idmedecin</th>
+          <th>medecin</th>
           <th>Photo</th>
           <th>Type Reclamation</th>
           <th>Actions</th>
@@ -109,7 +177,7 @@
           <tr>
             <td>{{ reclamation.description }}</td>
             <td>{{ reclamation.dateReclamation ? reclamation.dateReclamation|date('Y-m-d H:i:s') : '' }}</td>
-            <td>{{ reclamation.idmedecin }}</td>
+            <td>{{ reclamation.Medecin }}</td>
             <td>
               {% if reclamation.photo %}
                 <img src="{{ asset('upload/images/' ~ reclamation.photo) }}" alt="Photo">
