@@ -3,129 +3,304 @@
 {% block title %}SAHATECH - {{ event.title }}{% endblock %}
 
 {% block body %}
-<!-- Intégration des styles Leaflet -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+    <!-- Intégration des styles Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
-<style>
-    /* Conteneur principal */
-    .event-container {
-        display: flex;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        margin-top: 30px;
-    }
+    <style>
+        /* 💡 Conteneur principal */
+        .event-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-top: 30px;
+            gap: 20px;
+        }
 
-    /* Section des détails */
-    .event-details {
-        flex: 1;
-        max-width: 45%;
-        margin-right: 20px;
-        padding: 20px;
-        background-color: #f9f9f9;
-        border-radius: 10px;
-        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    }
+        /* 📌 Section des détails */
+        .event-details {
+            flex: 1;
+            max-width: 50%;
+            padding: 25px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            border-left: 6px solid #007bff;
+            transition: transform 0.2s ease-in-out;
+        }
 
-    .event-details h1 {
-        font-size: 2.5rem;
-        font-weight: bold;
-        margin-bottom: 10px;
-    }
+        .event-details:hover {
+            transform: translateY(-5px);
+        }
 
-    .event-details p {
-        font-size: 1.2rem;
-        color: #555;
-        margin-bottom: 15px;
-    }
+        .event-details h1 {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+        }
 
-    .event-details .btn {
-        margin-top: 15px;
-    }
+        .event-details p {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 12px;
+        }
 
-    /* Conteneur de la carte */
-    #event-map {
-        flex: 1;
-        max-width: 45%;
-        height: 300px;
-        border-radius: 10px;
-        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    }
-</style>
+        .event-details strong {
+            color: #007bff;
+        }
 
-<section class="event-page">
-    <!-- Bannière avec l'affiche -->
-    <div class="event-banner">
-        <img src="{{ asset('uploads/affiches/' ~ event.affiche) }}" alt="Affiche de {{ event.title }}" style="max-height: 400px; width: 100%; object-fit: contain;">
-    </div>
+        /* 📌 Bannière de l'événement */
+        .event-banner {
+            position: relative;
+            text-align: center;
+            overflow: hidden;
+            border-radius: 10px;
+        }
 
-    <!-- Conteneur principal -->
-    <div class="container event-container">
-        <!-- Détails de l'événement -->
-        <div class="event-details">
-            <h1>{{ event.title }}</h1>
-            <p><strong>Date de début :</strong> {{ event.startDate|date('d/m/Y H:i') }}</p>
-            <p><strong>Date de fin :</strong> {{ event.endDate|date('d/m/Y H:i') }}</p>
-            <p><strong>Lieu :</strong> {{ event.location }}</p>
-            <p>{{ event.description }}</p>
-            {% if is_granted('ROLE_USER') %}
-                {% if event.isArchived %}
-                    <button class="btn btn-secondary" disabled>Terminé</button>
-                {% else %}
-                    {% set deja_inscrit = false %}
+        .event-banner img {
+            max-height: 400px;  /* Garde une hauteur maximale */
+            height: auto;        /* Ajuste la hauteur automatiquement */
+            width: 100%;         /* Assure que l’image prend toute la largeur */
+            object-fit: contain; /* Garde l’image entière sans cropper */
+            display: block;      /* Supprime tout espace blanc autour */
+            margin: 0 auto;      /* Centre l’image */
+        }
 
-                    {% for inscription in event.inscriptions %}
-                        {% if inscription.user.id == app.user.id %}
-                            {% set deja_inscrit = true %}
-                        {% endif %}
-                    {% endfor %}
+        .event-banner img:hover {
+            transform: scale(1.05);
+        }
 
-                    {% if deja_inscrit %}
-                        <button class="btn btn-danger desinscrire" data-id="{{ event.id }}" style="display: inline-block;">Se désinscrire</button>
-                        <button class="btn btn-success inscrire" data-id="{{ event.id }}" style="display: none;">S'inscrire</button>
-                    {% else %}
-                        {% if event.placesDisponibles > 0 %}
-                            <button class="btn btn-success inscrire" data-id="{{ event.id }}" style="display: inline-block;">S'inscrire</button>
-                            <button class="btn btn-danger desinscrire" data-id="{{ event.id }}" style="display: none;">Se désinscrire</button>
-                        {% else %}
-                            <button class="btn btn-secondary" disabled>Complet</button>
-                        {% endif %}
-                    {% endif %}
-                {% endif %}
-            {% endif %}
-            <a href="{{ path('front_medecin_event_index') }}" class="btn btn-success">Retour à la liste</a>
+        /* 🏷️ Badge catégorie */
+        .event-category {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background-color: #ff6600;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
 
+        /* 🗺️ Conteneur de la carte */
+        #event-map {
+            flex: 1;
+            max-width: 50%;
+            height: 350px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease-in-out;
+        }
 
+        #event-map:hover {
+            transform: scale(1.02);
+        }
 
+        /* ✅ Style général des boutons */
+        .btn-custom {
+            font-size: 1rem;
+            padding: 12px 18px;
+            border-radius: 8px;
+            transition: all 0.3s ease-in-out;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border-width: 2px;
+        }
 
+        /* 🟢 Bouton "S'inscrire" */
+        .btn-outline-success {
+            color: #28a745;
+            border: 2px solid #28a745;
+            background-color: transparent;
+        }
+
+        .btn-outline-success:hover {
+            background-color: #28a745;
+            color: white;
+        }
+
+        /* 🔴 Bouton "Se désinscrire" */
+        .btn-outline-danger {
+            color: #dc3545;
+            border: 2px solid #dc3545;
+            background-color: transparent;
+        }
+
+        .btn-outline-danger:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        /* ⚠️ Bouton "Complet" */
+        .btn-outline-warning {
+            color: #ffc107;
+            border: 2px solid #ffc107;
+            background-color: transparent;
+            cursor: not-allowed;
+        }
+
+        .btn-outline-warning:hover {
+            background-color: #ffc107;
+            color: white;
+        }
+
+        /* 🎫 Bouton "Événement terminé" */
+        .btn-outline-secondary {
+            color: #6c757d;
+            border: 2px solid #6c757d;
+            background-color: transparent;
+            cursor: not-allowed;
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        /* 🔙 Bouton "Retour à la liste" */
+        .btn-outline-primary {
+            color: #007bff;
+            border: 2px solid #007bff;
+            background-color: transparent;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+        /* 📌 Icônes Bootstrap */
+        .btn-custom i {
+            font-size: 1.2rem;
+        }
+        .stars {
+            display: flex;
+            gap: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .stars .star {
+            font-size: 30px;
+            color: gray;
+            transition: color 0.3s ease-in-out;
+            display: inline-block !important; /* 👈 Ajoute cette ligne */
+            width: auto !important;
+            height: auto !important;
+        }
+
+        .stars .star.text-warning {
+            color: gold;
+        }
+
+    </style>
+
+    <section class="event-page">
+        <!-- 🏆 Bannière de l'événement -->
+        <div class="event-banner">
+            <div class="event-category">{{ event.categorie.nom }}</div>
+            <img src="{{ asset('uploads/affiches/' ~ event.affiche) }}"
+                 alt="Affiche de {{ event.title }}"
+                 class="event-image">
         </div>
 
-        <!-- Carte Leaflet -->
-        <div id="event-map"></div>
-    </div>
+        <!-- 🏆 Conteneur principal -->
+        <div class="container event-container">
+            <!-- 📌 Détails de l'événement -->
+            <div class="event-details">
+                <h1>{{ event.title }}</h1>
+                <p><strong>📅 Date de début :</strong> {{ event.startDate|date('d/m/Y H:i') }}</p>
+                <p><strong>📅 Date de fin :</strong> {{ event.endDate|date('d/m/Y H:i') }}</p>
+                <p><strong>📍 Lieu :</strong> {{ event.location }}</p>
+                <p><strong>👥 Places disponibles :</strong> {{ event.placesDisponibles }}</p>
+                <p>{{ event.description }}</p>
 
-</section>
+                {% if is_granted('ROLE_USER') %}
+                    {% if event.isArchived %}
 
-<!-- Intégration de Leaflet.js -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+                        <button class="btn-custom btn-outline-secondary" disabled>
+                            <i class="bi bi-calendar-x"></i> Événement terminé
+                        </button>
 
-<script>
-    // Initialisation de la carte
-    const eventLatitude = {{ event.latitude|default(0) }}; // Latitude de l'événement
-    const eventLongitude = {{ event.longitude|default(0) }}; // Longitude de l'événement
-    const eventLocation = "{{ event.location }}"; // Lieu de l'événement
+                    {% else %}
+                        {% set deja_inscrit = false %}
+                        {% for inscription in event.inscriptions %}
+                            {% if inscription.user.id == app.user.id and not inscription.hasUnsubscribed %}
+                                {% set deja_inscrit = true %}
+                            {% endif %}
+                        {% endfor %}
 
-    const map = L.map('event-map').setView([eventLatitude, eventLongitude], 13); // Vue initiale de la carte
+                        {% if deja_inscrit %}
+                            <button class="btn-custom btn-outline-danger desinscrire" data-id="{{ event.id }}">
+                                <i class="bi bi-x-circle"></i> Se désinscrire
+                            </button>
+                            <button class="btn-custom btn-outline-success inscrire" data-id="{{ event.id }}" style="display: none;">
+                                <i class="bi bi-check-circle"></i> S'inscrire
+                            </button>
+                        {% else %}
+                            {% if event.placesDisponibles > 0 %}
+                                <button class="btn-custom btn-outline-success inscrire" data-id="{{ event.id }}">
+                                    <i class="bi bi-check-circle"></i> S'inscrire
+                                </button>
+                                <button class="btn-custom btn-outline-danger desinscrire" data-id="{{ event.id }}" style="display: none;">
+                                    <i class="bi bi-x-circle"></i> Se désinscrire
+                                </button>
+                            {% else %}
+                                <button class="btn-custom btn-outline-warning" disabled>
+                                    <i class="bi bi-exclamation-triangle"></i> Complet
+                                </button>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                    {% if event.isArchived and event.endDate < date() %}
+                        <div class="rating-section">
+                            <h5>Noter cet événement :</h5>
+                            <div class="stars" data-event-id="{{ event.id }}">
+                                {% for i in 1..5 %}
+                                    <i class="bi bi-star star {% if userRating and i <= userRating %}text-warning{% endif %}" data-value="{{ i }}"></i>
+                                {% endfor %}
+                            </div>
+                            <p id="rating-message"></p>
+                        </div>
+                    {% else %}
+                        <p style="color: red;">⚠️ La condition pour afficher le rating n'est pas remplie</p>
+                        <p>event.isArchived: {{ event.isArchived ? 'Oui' : 'Non' }}</p>
+                        <p>event.endDate: {{ event.endDate|date('Y-m-d H:i:s') }}</p>
+                        <p>Date actuelle: {{ "now"|date("Y-m-d H:i:s") }}</p>
+                    {% endif %}
 
-    // Chargement de la couche de tuiles (OpenStreetMap)
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
+                {% endif %}
 
-    // Ajout d'un marqueur
-    L.marker([eventLatitude, eventLongitude]).addTo(map)
-        .bindPopup(`<strong>${eventLocation}</strong>`)
-        .openPopup();
-</script>
+
+            </div>
+
+            <!-- 🗺️ Carte Leaflet -->
+            <div id="event-map"></div>
+        </div>
+    </section>
+
+    <!-- 🔹 Leaflet.js -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <script>
+        const eventLatitude = {{ event.latitude|default(0) }};
+        const eventLongitude = {{ event.longitude|default(0) }};
+        const eventLocation = "{{ event.location }}";
+
+        const map = L.map('event-map').setView([eventLatitude, eventLongitude], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        L.marker([eventLatitude, eventLongitude]).addTo(map)
+            .bindPopup(`<strong>${eventLocation}</strong>`)
+            .openPopup();
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -148,12 +323,17 @@
                             })
                                 .then(response => response.json())
                                 .then(data => {
+                                    console.log("Réponse JSON de l'API :", data); // ✅ Debugging pour vérifier `ticket_id`
+
                                     if (data.success) {
                                         Swal.fire("Succès!", "Inscription réussie!", "success");
 
-                                        // ✅ Mise à jour de l'affichage des boutons
+                                        // ✅ Mettre à jour les boutons
                                         button.style.display = "none";
                                         document.querySelector(`.desinscrire[data-id="${eventId}"]`).style.display = "inline-block";
+
+                                        // ✅ Ajouter dynamiquement le bouton "Télécharger en PDF"
+
                                     } else {
                                         Swal.fire("Erreur!", data.message, "error");
                                     }
@@ -163,6 +343,7 @@
                     });
                 });
             });
+
 
             document.querySelectorAll('.desinscrire').forEach(button => {
                 button.addEventListener('click', function () {
@@ -189,6 +370,8 @@
                                         // ✅ Mise à jour de l'affichage des boutons
                                         button.style.display = "none";
                                         document.querySelector(`.inscrire[data-id="${eventId}"]`).style.display = "inline-block";
+
+
                                     } else {
                                         Swal.fire("Erreur!", data.message, "error");
                                     }
@@ -199,9 +382,52 @@
                 });
             });
         });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".stars .star").forEach(star => {
+                star.addEventListener("click", function () {
+                    let rating = this.getAttribute("data-value");
+                    let eventId = this.parentElement.getAttribute("data-event-id");
+
+                    fetch(`/event/rate/${eventId}`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-Requested-With": "XMLHttpRequest"
+                        },
+                        body: JSON.stringify({ rating: rating })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                document.getElementById("rating-message").innerText = data.message;
+                                highlightStars(rating);
+                            } else {
+                                alert("Erreur lors de l'envoi de la note.");
+                            }
+                        });
+                });
+            });
+
+            function highlightStars(rating) {
+                document.querySelectorAll(".stars .star").forEach(star => {
+                    if (parseInt(star.getAttribute("data-value")) <= rating) {
+                        star.classList.add("text-warning");
+                    } else {
+                        star.classList.remove("text-warning");
+                    }
+                });
+            }
+
+            // Marquer la note de l'utilisateur après chargement
+            let userRating = document.querySelector(".stars").getAttribute("data-user-rating");
+            if (userRating) {
+                highlightStars(userRating);
+            }
+        });
+
 
 
     </script>
-
-
 {% endblock %}

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Votre Billet d'Inscription</title>
+</head>
+<body>
+<h2>Bonjour {{ user.firstName }} {{ user.lastName }},</h2>
+<p>Merci de vous être inscrit à l'événement <strong>{{ event.title }}</strong> !</p>
+<p>Vous trouverez en pièce jointe votre billet avec un QR Code pour l'événement.</p>
+<p><strong>Lieu :</strong> {{ event.location }}</p>
+<p><strong>Date :</strong> {{ event.startDate|date('d/m/Y H:i') }} - {{ event.endDate|date('d/m/Y H:i') }}</p>
+<p>À bientôt !</p>
+<hr>
+<p><em>Ceci est un e-mail automatique, merci de ne pas y répondre.</em></p>
+</body>
+</html>

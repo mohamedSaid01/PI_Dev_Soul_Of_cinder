@@ -86,6 +86,7 @@ class Event
     #[Assert\PositiveOrZero(message: "Le nombre de places doit être positif.")]
     private ?int $placesDisponibles = null;
 
+
     public function __construct()
     {
         $this->startDate = new \DateTime(); // Définit la date actuelle par défaut

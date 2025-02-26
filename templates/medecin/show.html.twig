@@ -1,0 +1,27 @@
+{# templates/medecin/show.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails du Médecin - SAHATECK{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1 class="mb-4">Détails du Médecin</h1>
+
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ medecin.firstName }} {{ medecin.lastName }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{ medecin.specialite ? medecin.specialite.value : 'Non spécifié' }}</h6>
+                <p class="card-text">
+                    <strong>Email :</strong> {{ medecin.email }}<br>
+                    <strong>Numéro de Licence :</strong> {{ medecin.numeroLicence }}<br>
+                    <strong>Genre :</strong> {{ medecin.gender ? medecin.gender.value : 'Non spécifié' }}<br>
+                    <strong>Adresse :</strong> {{ medecin.adress }}<br>
+                    <strong>Téléphone :</strong> {{ medecin.phoneNumber }}<br>
+                </p>
+                <a href="{{ path('app_medecins_list') }}" class="btn btn-secondary">Retour à la liste</a>
+                <a href="{{ path('app_medecin_edit', {'id': medecin.id}) }}" class="btn btn-warning">Modifier</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

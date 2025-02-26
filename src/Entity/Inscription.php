@@ -26,6 +26,9 @@ class Inscription
     #[Assert\NotBlank(message: "La date d'inscription est obligatoire.")]
     private ?\DateTimeInterface $dateInscription = null;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $hasUnsubscribed = false;
+
     public function __construct()
     {
         $this->dateInscription = new \DateTime(); // Définit la date actuelle par défaut
@@ -66,6 +69,15 @@ class Inscription
     public function setDateInscription(\DateTimeInterface $dateInscription): self
     {
         $this->dateInscription = $dateInscription;
+        return $this;
+    }
+    public function hasUnsubscribed(): bool
+    {
+        return $this->hasUnsubscribed;
+    }
+    public function setHasUnsubscribed(bool $hasUnsubscribed): self
+    {
+        $this->hasUnsubscribed = $hasUnsubscribed;
         return $this;
     }
 }

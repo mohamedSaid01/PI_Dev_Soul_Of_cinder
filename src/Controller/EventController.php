@@ -3,10 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Event;
+use App\Entity\Rating;
 use App\Entity\Notification;
 use App\Form\EventType;
 use App\Service\EventService;
 use App\Repository\EventRepository;
+use App\Repository\RatingRepository;
+use App\Repository\CategorieEventRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -50,10 +53,21 @@ class EventController extends AbstractController
 
     // FRONT-OFFICE: Afficher un événement pour les médecins
     #[Route('/medecin/{id}', name: 'front_medecin_event_show', methods: ['GET'])]
-    public function medecinShow(Event $event): Response
+    public function showEvent(Event $event, RatingRepository $ratingRepository): Response
     {
+        $user = $this->getUser();
+        $userRating = null;
+
+        if ($user) {
+            $rating = $ratingRepository->findOneBy(['user' => $user, 'event' => $event]);
+            if ($rating) {
+                $userRating = $rating->getRating();
+            }
+        }
+
         return $this->render('front/event/medecin_show.html.twig', [
             'event' => $event,
+            'userRating' => $userRating
         ]);
     }
 
@@ -127,15 +141,19 @@ class EventController extends AbstractController
 
     // BACK-OFFICE: Liste des événements
     #[Route('/back', name: 'back_event_index', methods: ['GET'])]
-    public function index(EventRepository $eventRepository): Response
+    public function index(EventRepository $eventRepository, CategorieEventRepository $categorieEventRepository): Response
     {
         // Récupérer les événements actifs et archivés
         $eventsActive = $eventRepository->findBy(['isArchived' => false]);
         $eventsArchived = $eventRepository->findBy(['isArchived' => true]);
 
+        // Récupérer toutes les catégories d'événements
+        $categories = $categorieEventRepository->findAll();
+
         return $this->render('back/event/index.html.twig', [
             'events_active' => $eventsActive,
             'events_archived' => $eventsArchived,
+            'categories' => $categories, // Ajouter cette ligne pour passer les catégories à Twig
         ]);
     }
 
@@ -295,6 +313,81 @@ public function backEdit(Request $request, Event $event, EntityManagerInterface 
 
         return new Response('Les événements expirés ont été archivés.');
     }
-    
+
+
+    #[Route('/back/search', name: 'back_event_search', methods: ['POST'])]
+    public function search(Request $request, EventRepository $eventRepository): Response
+    {
+        $title = $request->request->get('title');
+        $startDate = $request->request->get('startDate');
+        $categorieId = $request->request->get('categorie');
+        $isArchived = $request->request->get('isArchived') === "true"; // ✅ Vérification correcte
+
+        // ✅ Convertir `categorieId` en `int` ou `null`
+        $categorieId = !empty($categorieId) ? (int) $categorieId : null;
+
+        // ✅ DEBUG: Vérifier les valeurs reçues
+        dump([
+            'title' => $title,
+            'startDate' => $startDate,
+            'categorieId' => $categorieId,
+            'isArchived' => $isArchived
+        ]);
+
+        // 🔎 Effectuer la recherche avec le bon filtre
+        $events = $eventRepository->searchEvents($title, $startDate, $categorieId, $isArchived);
+
+        // ✅ Vérifier si des résultats sont retournés
+        if (empty($events)) {
+            return new Response('');
+        }
+
+        return $this->render('back/event/_event_table.html.twig', [
+            'events' => $events,
+            'isArchived' => $isArchived
+        ]);
+    }
+
+    #[Route('/rate/{id}', name: 'event_rate', methods: ['POST'])]
+    public function rateEvent(Request $request, Event $event, EntityManagerInterface $entityManager, RatingRepository $ratingRepository): JsonResponse
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return new JsonResponse(['success' => false, 'message' => 'Vous devez être connecté pour noter un événement.'], 403);
+        }
+
+        $data = json_decode($request->getContent(), true);
+        $ratingValue = $data['rating'] ?? null;
+
+        if (!$ratingValue || $ratingValue < 1 || $ratingValue > 5) {
+            return new JsonResponse(['success' => false, 'message' => 'La note doit être entre 1 et 5.'], 400);
+        }
+
+        // Vérifie si l'utilisateur a déjà noté cet événement
+        $existingRating = $ratingRepository->findOneBy(['user' => $user, 'event' => $event]);
+
+        if ($existingRating) {
+            $existingRating->setRating($ratingValue);
+        } else {
+            $newRating = new Rating();
+            $newRating->setUser($user);
+            $newRating->setEvent($event);
+            $newRating->setRating($ratingValue);
+            $entityManager->persist($newRating);
+        }
+
+        $entityManager->flush();
+
+        return new JsonResponse(['success' => true, 'message' => 'Votre note a été enregistrée !']);
+    }
+
+
+
+
+
+
+
+
+
 
 }

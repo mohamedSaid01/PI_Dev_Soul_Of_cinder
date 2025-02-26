@@ -1,283 +1,316 @@
 {% extends 'baseBackOffice.html.twig' %}
-{% block title %}Liste des Événements{% endblock %}
+{% block title %}Gestion des Événements{% endblock %}
 {% block body %}
 
-<div class="pagetitle">
-    <h1>Gestion des Événements</h1>
-    <nav>
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="">Accueil</a></li>
-            <li class="breadcrumb-item">Tables</li>
-            <li class="breadcrumb-item active">Événements</li>
-        </ol>
-    </nav>
-</div>
-
-<section class="section">
-    <div class="row">
-        <div class="col-lg-12">
-
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Liste des Événements</h5>
-
-                    <a href="{{ path('back_event_new') }}" class="btn btn-primary mb-3">Créer un nouvel événement</a>
-
-                    <!-- Onglets -->
-                    <ul class="nav nav-tabs" id="eventTabs">
-                        <li class="nav-item">
-                            <a class="nav-link active" id="active-tab" data-bs-toggle="tab" href="#active-events">Événements Actifs</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="archived-tab" data-bs-toggle="tab" href="#archived-events">Événements Archivés</a>
-                        </li>
-                    </ul>
-
-                    <div class="tab-content mt-3">
-                        <!-- Tab des événements actifs -->
-                        <div class="tab-pane fade show active" id="active-events">
-                            <table class="table datatable table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Titre</th>
-                                        <th>Description</th>
-                                        <th>Date de début</th>
-                                        <th>Date de fin</th>
-                                        <th>Lieu</th>
-                                        <th>Places disponibles</th>
-                                        <th>Catégorie</th>
-                                        <th>Affiche</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for event in events_active %}
-                                    <tr>
-                                        <td>{{ event.title }}</td>
-                                        <td>{{ event.description }}</td>
-                                        <td>{{ event.startDate ? event.startDate|date('Y-m-d H:i') : '' }}</td>
-                                        <td>{{ event.endDate ? event.endDate|date('Y-m-d H:i') : '' }}</td>
-                                        <td>{{ event.location }}</td>
-                                        <td>{{ event.placesDisponibles }}</td>
-                                        <td>{{ event.categorie ? event.categorie.nom : 'Aucune catégorie' }}</td>
-                                        <td>
-                                            {% if event.affiche %}
-                                                <img src="{{ asset('uploads/affiches/' ~ event.affiche) }}" alt="Affiche" style="max-width: 50px; max-height: 50px;">
-                                            {% else %}
-                                                Pas d'affiche.
-                                            {% endif %}
-                                        </td>
-                                        <td>
-                                            <a href="{{ path('back_event_edit', {'id': event.id}) }}" class="btn btn-warning btn-sm">
-                                                <i class="bi bi-pencil"></i>
-                                            </a>
-                                            <button class="btn btn-primary btn-sm archive-event" data-id="{{ event.id }}">
-                                                <i class="bi bi-archive"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    {% else %}
-                                    <tr>
-                                        <td colspan="8">Aucun événement actif.</td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <!-- Tab des événements archivés -->
-                        <div class="tab-pane fade" id="archived-events">
-                            <table class="table datatable table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Titre</th>
-                                        <th>Description</th>
-                                        <th>Date de début</th>
-                                        <th>Date de fin</th>
-                                        <th>Lieu</th>
-                                        <th>Catégorie</th>
-                                        <th>Affiche</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for event in events_archived %}
-                                    <tr>
-                                        <td>{{ event.title }}</td>
-                                        <td>{{ event.description }}</td>
-                                        <td>{{ event.startDate ? event.startDate|date('Y-m-d H:i') : '' }}</td>
-                                        <td>{{ event.endDate ? event.endDate|date('Y-m-d H:i') : '' }}</td>
-                                        <td>{{ event.location }}</td>
-                                        <td>{{ event.categorie ? event.categorie.nom : 'Aucune catégorie' }}</td>
-                                        <td>
-                                            {% if event.affiche %}
-                                                <img src="{{ asset('uploads/affiches/' ~ event.affiche) }}" alt="Affiche" style="max-width: 50px; max-height: 50px;">
-                                            {% else %}
-                                                Pas d'affiche.
-                                            {% endif %}
-                                        </td>
-                                        <td>
-                                            {% if not event.isExpired %}
-                                                    <button class="btn btn-success btn-sm unarchive-event" data-id="{{ event.id }}">
-                                                        <i class="bi bi-folder-symlink"></i>
-                                                    </button>
-                                                {% else %}
-                                                    <span class="text-muted">Evenement Expiré</span>
-                                                    <br>
-                                                <button class="btn btn-danger btn-sm delete-event"
-                                                        data-id="{{ event.id }}"
-                                                        data-token="{{ csrf_token('delete' ~ event.id) }}">
-
-                                                    <i class="bi bi-trash"></i>
-                                                </button>                                           
-                                                 {% endif %}                                        
-                                        </td>
-                                    </tr>
-                                    {% else %}
-                                    <tr>
-                                        <td colspan="8">Aucun événement archivé.</td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
+    <div class="pagetitle">
+        <h1><i class="bi bi-calendar-event"></i> Gestion des Événements</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">🏠 Accueil</a></li>
+                <li class="breadcrumb-item">📂 Tables</li>
+                <li class="breadcrumb-item active">📅 Événements</li>
+            </ol>
+        </nav>
     </div>
-</section>
 
-<script>
-    document.querySelectorAll('.archive-event').forEach(button => {
-        button.addEventListener('click', function () {
-            const id = this.getAttribute('data-id');
-            Swal.fire({
-                title: 'Archiver cet événement ?',
-                text: "Vous pourrez le désarchiver plus tard si nécessaire.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Oui, archiver',
-                cancelButtonText: 'Annuler'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch("{{ path('event_archive', {'id': 'ID'}) }}".replace('ID', id), {
-                        method: 'POST',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'Content-Type': 'application/json'
-                        }
-                    })
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-list-task"></i> Liste des Événements</h5>
 
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                Swal.fire('Archivé !', data.message, 'success').then(() => location.reload());
-                            } else {
-                                Swal.fire('Erreur !', 'Une erreur est survenue lors de l’archivage.', 'error');
-                            }
-                        });
-                }
+                        <a href="{{ path('back_event_new') }}" class="btn btn-success mb-3">
+                            <i class="bi bi-plus-circle"></i> Créer un nouvel événement
+                        </a>
+
+
+                        <!-- 🎯 Formulaire de filtrage -->
+                        <form id="search-form" class="mb-3">
+                            <input type="hidden" name="isArchived" id="isArchived" value="false"> <!-- ✅ Identifie si on cherche dans actifs ou archivés -->
+
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <input type="text" class="form-control" name="title" placeholder="Titre">
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="date" class="form-control" name="startDate">
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-control" name="categorie">
+                                        <option value="">Toutes les catégories</option>
+                                        {% for categorie in categories %}
+                                            <option value="{{ categorie.id }}">{{ categorie.nom }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-search"></i> Rechercher
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
+
+                        <!-- 🏷️ Onglets -->
+                        <ul class="nav nav-tabs" id="eventTabs">
+                            <li class="nav-item">
+                                <a class="nav-link active fw-bold" id="active-tab" data-bs-toggle="tab" href="#active-events">
+                                    <i class="bi bi-calendar-check"></i> Événements Actifs
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link fw-bold text-danger" id="archived-tab" data-bs-toggle="tab" href="#archived-events">
+                                    <i class="bi bi-archive-fill"></i> Événements Archivés
+                                </a>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content mt-3">
+                            <!-- ✅ Événements actifs -->
+                            <div class="tab-pane fade show active" id="active-events">
+                                <div id="active-events-container">
+                                    <!-- 🔄 Spinner visible pendant la recherche -->
+                                    <div id="loading-spinner-active" class="text-center my-3 d-none">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Chargement...</span>
+                                        </div>
+                                        <p>Recherche en cours...</p>
+                                    </div>
+
+                                    {{ include('back/event/_event_table.html.twig', {'events': events_active, 'isArchived': false}) }}
+                                </div>
+                            </div>
+
+                            <!-- ❌ Événements archivés -->
+                            <div class="tab-pane fade" id="archived-events">
+                                <div id="archived-events-container">
+                                    <!-- 🔄 Spinner visible pendant la recherche -->
+                                    <div id="loading-spinner-archived" class="text-center my-3 d-none">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Chargement...</span>
+                                        </div>
+                                        <p>Recherche en cours...</p>
+                                    </div>
+
+                                    {{ include('back/event/_event_table.html.twig', {'events': events_archived, 'isArchived': true}) }}
+                                </div>
+                            </div>
+                        </div><!-- /tab-content -->
+                    </div> <!-- /card-body -->
+                </div> <!-- /card -->
+            </div> <!-- /col-lg-12 -->
+        </div> <!-- /row -->
+    </section>
+
+    <!-- 🎯 Script Ajax pour filtrer les événements -->
+    <script>
+        document.querySelectorAll('.nav-tabs .nav-link').forEach(tab => {
+            tab.addEventListener('click', function () {
+                let isArchived = this.getAttribute('id') === "archived-tab";
+                document.getElementById('isArchived').value = isArchived ? "true" : "false";
             });
         });
-    });
 
+        document.getElementById('search-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            let formData = new FormData(this);
+            let isArchived = document.getElementById('isArchived').value === "true";
 
-document.querySelectorAll('.unarchive-event').forEach(button => {
-    button.addEventListener('click', function () {
-        const id = this.getAttribute('data-id');
-        Swal.fire({
-            title: 'Désarchiver cet événement ?',
-            text: "L'événement redeviendra actif.",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Oui, désarchiver',
-            cancelButtonText: 'Annuler'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                fetch("{{ path('event_unarchive', {'id': 'ID'}) }}".replace('ID', id), {
-                    method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Content-Type': 'application/json'
-                    }
-                })
+            let eventsContainerId = isArchived ? 'archived-events-container' : 'active-events-container';
+            let spinnerId = isArchived ? 'loading-spinner-archived' : 'loading-spinner-active';
 
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        Swal.fire('Désarchivé !', data.message, 'success').then(() => location.reload());
-                    } else {
-                        Swal.fire('Erreur !', 'Une erreur est survenue lors du désarchivage.', 'error');
-                    }
-                });
+            let eventsContainer = document.getElementById(eventsContainerId);
+
+            // ✅ Si le container est introuvable, afficher une erreur et arrêter le script
+            if (!eventsContainer) {
+                console.error("❌ Erreur: eventsContainer introuvable !");
+                return;
             }
-        });
-    });
-});
-</script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-document.querySelectorAll('.delete-event').forEach(button => {
-    button.addEventListener('click', function () {
-        const id = this.getAttribute('data-id');
-        const token = this.getAttribute('data-token'); // Récupération du CSRF token
 
-        Swal.fire({
-            title: 'Confirmer la suppression',
-            text: 'Êtes-vous sûr de vouloir supprimer cet événement ? Cette action est irréversible.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Oui, supprimer',
-            cancelButtonText: 'Annuler'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                fetch(`/event/back/delete/${id}`, {
-                    method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: new URLSearchParams({
-                        _token: token // Envoie du token récupéré depuis Twig
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        Swal.fire(
-                            'Supprimé !',
-                            'L\'événement a été supprimé avec succès.',
-                            'success'
-                        ).then(() => location.reload()); // Recharge la page après suppression
-                    } else {
-                        Swal.fire(
-                            'Erreur',
-                            data.message || 'Une erreur est survenue.',
-                            'error'
-                        );
-                    }
+            // ✅ Vérifier si le spinner existe déjà, sinon le recréer
+            let spinner = document.getElementById(spinnerId);
+            if (!spinner) {
+                spinner = document.createElement('div');
+                spinner.id = spinnerId;
+                spinner.className = "text-center my-3";
+                spinner.innerHTML = `
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Chargement...</span>
+            </div>
+            <p>Recherche en cours...</p>
+        `;
+            }
+
+            // ✅ Insérer le spinner avant de vider le contenu
+            eventsContainer.innerHTML = ''; // Vider le conteneur des résultats
+            eventsContainer.appendChild(spinner); // Ajouter le spinner au DOM
+            spinner.classList.remove('d-none'); // Rendre le spinner visible
+
+            // ✅ Envoyer la requête AJAX
+            fetch("{{ path('back_event_search') }}", {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.text())
+                .then(html => {
+                    // ✅ Insérer les nouveaux résultats
+                    eventsContainer.innerHTML = html.trim() !== "" ? html : '<p class="text-center text-muted">Aucun événement trouvé.</p>';
                 })
                 .catch(error => {
-                    console.error('Erreur lors de la suppression :', error);
-                    Swal.fire(
-                        'Erreur',
-                        'Une erreur est survenue. Veuillez réessayer.',
-                        'error'
-                    );
+                    console.error('❌ Erreur de recherche:', error);
+                    eventsContainer.innerHTML = '<p class="text-center text-danger">Erreur lors de la recherche.</p>';
+                })
+                .finally(() => {
+                    // ✅ Masquer le spinner après chargement
+                    spinner.classList.add('d-none');
                 });
-            }
         });
-    });
-});
-</script>
+
+
+
+
+
+
+    </script>
+
+
+
+
+
+
+
+
+    <script>
+        document.querySelectorAll('.archive-event').forEach(button => {
+            button.addEventListener('click', function () {
+                const id = this.getAttribute('data-id');
+                Swal.fire({
+                    title: 'Archiver cet événement ?',
+                    text: "Vous pourrez le désarchiver plus tard si nécessaire.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Oui, archiver',
+                    cancelButtonText: 'Annuler'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch("{{ path('event_archive', {'id': 'ID'}) }}".replace('ID', id), {
+                            method: 'POST',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Content-Type': 'application/json'
+                            }
+                        })
+
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    Swal.fire('Archivé !', data.message, 'success').then(() => location.reload());
+                                } else {
+                                    Swal.fire('Erreur !', 'Une erreur est survenue lors de l’archivage.', 'error');
+                                }
+                            });
+                    }
+                });
+            });
+        });
+
+
+        document.querySelectorAll('.unarchive-event').forEach(button => {
+            button.addEventListener('click', function () {
+                const id = this.getAttribute('data-id');
+                Swal.fire({
+                    title: 'Désarchiver cet événement ?',
+                    text: "L'événement redeviendra actif.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Oui, désarchiver',
+                    cancelButtonText: 'Annuler'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch("{{ path('event_unarchive', {'id': 'ID'}) }}".replace('ID', id), {
+                            method: 'POST',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Content-Type': 'application/json'
+                            }
+                        })
+
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    Swal.fire('Désarchivé !', data.message, 'success').then(() => location.reload());
+                                } else {
+                                    Swal.fire('Erreur !', 'Une erreur est survenue lors du désarchivage.', 'error');
+                                }
+                            });
+                    }
+                });
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.querySelectorAll('.delete-event').forEach(button => {
+            button.addEventListener('click', function () {
+                const id = this.getAttribute('data-id');
+                const token = this.getAttribute('data-token'); // Récupération du CSRF token
+
+                Swal.fire({
+                    title: 'Confirmer la suppression',
+                    text: 'Êtes-vous sûr de vouloir supprimer cet événement ? Cette action est irréversible.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Oui, supprimer',
+                    cancelButtonText: 'Annuler'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch('/event/back/delete/${id}', {
+                            method: 'POST',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: new URLSearchParams({
+                                _token: token // Envoie du token récupéré depuis Twig
+                            })
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    Swal.fire(
+                                        'Supprimé !',
+                                        'L\'événement a été supprimé avec succès.',
+                                        'success'
+                                    ).then(() => location.reload()); // Recharge la page après suppression
+                                } else {
+                                    Swal.fire(
+                                        'Erreur',
+                                        data.message || 'Une erreur est survenue.',
+                                        'error'
+                                    );
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Erreur lors de la suppression :', error);
+                                Swal.fire(
+                                    'Erreur',
+                                    'Une erreur est survenue. Veuillez réessayer.',
+                                    'error'
+                                );
+                            });
+                    }
+                });
+            });
+        });
+    </script>
 
 
 {% endblock %}

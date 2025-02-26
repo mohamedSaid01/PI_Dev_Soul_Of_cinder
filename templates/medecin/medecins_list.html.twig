@@ -1,0 +1,202 @@
+{% extends 'baseBackOffice.html.twig' %}
+
+{% block title %}Liste des Médecins - SAHATECK{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        /* Appliquer la police Poppins aux en-têtes du tableau */
+        .table th {
+            font-weight: 700; /* Poids de la police (medium) */
+            font-size: 14px; /* Taille de la police */
+            color: #333; /* Couleur du texte */
+        }
+
+        .table td {
+            font-weight: 400; /* Poids de la police (medium) */
+            font-size: 13px; /* Taille de la police */
+            color: #333; /* Couleur du texte */
+        }
+
+        /* Optionnel : Appliquer la police Poppins à tout le tableau */
+        .table {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        p {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 200; /* Poids de la police (medium) */
+            font-size: 13px;
+        }
+
+        /* Style du bouton Ajouter Médecin */
+        .btn-add {
+            margin-bottom: 15px;
+            background-color: #00B4D8; /* Fond de couleur #90E0E6 */
+            color: #333; /* Texte en gris foncé */
+            border: none; /* Bordure grise */
+            font-weight: 500;
+            padding: 10px 20px; /* Espacement autour du texte */
+            display: inline-block;
+            text-align: center;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+        }
+
+        /* Centrer le bouton dans la div */
+        .d-flex.justify-content-between {
+            justify-content: center;
+        }
+
+        /* Changement de couleur du bouton au survol */
+        .btn-add:hover {
+            background-color: #90E0E6; /* Couleur de fond au survol */
+            border-color: #90E0E6; /* Bordure de la même couleur que le fond */
+        }
+
+        /* Style du champ de recherche */
+        .search-bar {
+            margin-bottom: 15px;
+            width: 400px; /* Augmenter la largeur du champ de recherche */
+            position: relative;
+        }
+
+        .search-bar input {
+            padding-left: 30px; /* Espacement à gauche pour l'icône */
+            padding-right: 30px; /* Espacement à droite pour l'icône */
+            width: 100%;
+        }
+
+        /* Icône de recherche à droite de l'input */
+        .search-bar .bi-search {
+            position: absolute;
+            right: 10px; /* Positionner l'icône à droite */
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+
+        /* Appliquer la police Poppins au placeholder */
+        .search-bar input::placeholder {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 200; /* Poids léger pour le placeholder */
+            font-size: 13px; /* Taille du placeholder */
+            color: #6c757d; /* Couleur grise pour le texte du placeholder */
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Liste des Médecins</h5>
+              <p>Retrouvez ici la liste complète des médecins enregistrés dans notre système. Vous pouvez consulter leurs informations, les modifier ou les supprimer si nécessaire.</p>
+
+              <!-- Ajout du bouton Ajouter un médecin -->
+              <div class="d-flex justify-content-between mb-4">
+                <!-- Formulaire de recherche -->
+                <div class="search-bar">
+                    <input type="text" name="search" class="form-control" placeholder="Rechercher un médecin" value="{{ app.request.get('search') }}">
+                    <i class="bi bi-search"></i>
+                </div>
+                <a href="{{ path('app_register_medecin') }}" class="btn btn-success btn-sm btn-add">
+                    + Ajouter un Médecin
+                </a>
+              </div>
+
+              <!-- Table with stripped rows -->
+              <div class="container-fluid mt-4">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Prénom</th>
+                                <th>Email</th>
+                                <th>Adresse</th>
+                                <th>Téléphone</th>
+                                <th>Genre</th>
+                                <th>Spécialité</th>
+                                <th>Numéro de Licence</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                    <tbody>
+                        {% for medecin in medecins %}
+                            <tr>
+                                <td>{{ medecin.lastName ? medecin.lastName : 'Non spécifié' }}</td>
+                                <td>{{ medecin.firstName ? medecin.firstName : 'Non spécifié' }}</td>
+                                <td>{{ medecin.email ? medecin.email : 'Non spécifié' }}</td>
+                                <td>{{ medecin.adress ? medecin.adress : 'Non spécifié' }}</td>
+                                <td>{{ medecin.phoneNumber ? medecin.phoneNumber : 'Non spécifié' }}</td>
+                                <td>{{ medecin.gender ? medecin.gender.value : 'Non spécifié' }}</td>
+                                <td>
+                                    {% if medecin.specialite is defined and medecin.specialite is not null %}
+                                        {{ medecin.specialite.value }}
+                                    {% else %}
+                                        Non spécifié
+                                    {% endif %}
+                                </td>
+                                <td>{{ medecin.numeroLicence ? medecin.numeroLicence : 'Non spécifié' }}</td>
+                                <td>
+                                    <a href="{{ path('app_medecin_edit', {'id': medecin.id}) }}" class="btn btn-warning btn-sm">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form method="post" action="{{ path('app_medecin_delete', {'id': medecin.id}) }}" class="delete-form d-inline">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ medecin.id) }}">
+                                        <button type="submit" class="btn btn-danger btn-sm">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="9" class="text-center">Aucun médecin trouvé.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                    </table>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </section>
+
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.delete-form').forEach(form => {
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    Swal.fire({
+                        text: "Êtes-vous sûr de vouloir supprimer ce médecin ?",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#00B4D8',
+                        confirmButtonText: 'Oui, supprimer !',
+                        cancelButtonText: 'Annuler'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+{% endblock %}
+
+

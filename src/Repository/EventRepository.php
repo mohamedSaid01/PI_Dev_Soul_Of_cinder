@@ -43,7 +43,32 @@ class EventRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    
+    public function searchEvents(?string $title, ?string $startDate, ?int $categorieId, bool $isArchived)
+    {
+        $qb = $this->createQueryBuilder('e')
+            ->where('e.isArchived = :isArchived') // ✅ Filtre bien actifs ou archivés
+            ->setParameter('isArchived', $isArchived);
+
+        if ($title) {
+            $qb->andWhere('e.title LIKE :title')
+                ->setParameter('title', '%' . $title . '%');
+        }
+
+        if ($startDate) {
+            $qb->andWhere('e.startDate >= :startDate')
+                ->setParameter('startDate', new \DateTime($startDate));
+        }
+
+        if ($categorieId) {
+            $qb->andWhere('e.categorie = :categorieId')
+                ->setParameter('categorieId', $categorieId);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
+
+
 
     //    /**
     //     * @return Event[] Returns an array of Event objects

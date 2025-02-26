@@ -1,0 +1,67 @@
+<table class="table table-hover table-bordered align-middle">
+    <thead class="table-primary text-center">
+    <tr>
+        <th>#</th>
+        <th>Titre</th>
+        <th>Lieu</th>
+        <th>📆 Début</th>
+        <th>📆 Fin</th>
+        <th>👥 Places</th>
+        <th>📌 Catégorie</th>
+        <th>🖼️ Affiche</th>
+        <th>⚙️ Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for event in events %}
+        <tr>
+            <td class="text-center"><span class="badge bg-primary">#{{ event.id }}</span></td>
+            <td><strong>{{ event.title }}</strong></td>
+            <td>{{ event.location }}</td>
+            <td>{{ event.startDate ? event.startDate|date('d/m/Y H:i') : 'N/A' }}</td>
+            <td>{{ event.endDate ? event.endDate|date('d/m/Y H:i') : 'N/A' }}</td>
+            <td class="text-center">
+                {% if event.placesDisponibles > 0 %}
+                    <span class="badge bg-success">{{ event.placesDisponibles }}</span>
+                {% else %}
+                    <span class="badge bg-danger">Complet</span>
+                {% endif %}
+            </td>
+            <td><span class="badge bg-info text-dark">{{ event.categorie.nom }}</span></td>
+            <td class="text-center">
+                {% if event.affiche %}
+                    <img src="{{ asset('uploads/affiches/' ~ event.affiche) }}" class="img-thumbnail" style="max-width: 60px;">
+                {% else %}
+                    <span class="text-muted">Pas d'affiche</span>
+                {% endif %}
+            </td>
+            <td class="text-center">
+                <a href="{{ path('back_event_edit', {'id': event.id}) }}" class="btn btn-warning btn-sm">
+                    <i class="bi bi-pencil-square"></i>
+                </a>
+
+                {% if isArchived is defined and isArchived %}
+                    <button class="btn btn-success btn-sm unarchive-event" data-id="{{ event.id }}">
+                        <i class="bi bi-arrow-repeat"></i>
+                    </button>
+
+                    {% if event.isExpired %}
+                        <button class="btn btn-danger btn-sm delete-event" data-id="{{ event.id }}" data-token="{{ csrf_token('delete' ~ event.id) }}">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    {% endif %}
+                {% else %}
+                    <button class="btn btn-primary btn-sm archive-event" data-id="{{ event.id }}">
+                        <i class="bi bi-archive-fill"></i>
+                    </button>
+                {% endif %}
+            </td>
+
+        </tr>
+    {% else %}
+        <tr>
+            <td colspan="9" class="text-center text-muted">Aucun événement trouvé.</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

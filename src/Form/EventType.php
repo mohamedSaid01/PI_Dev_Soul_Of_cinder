@@ -64,9 +64,7 @@ class EventType extends AbstractType
                 'mapped' => false, // Ne lie pas directement à l'entité
                 'required' => false,
                 'constraints' => [
-                    new Assert\NotBlank([
-                        'message' => "L'affiche ne doit pas être vide."
-                    ]),
+
                     new File([
                         'maxSize' => '2M',
                         'mimeTypes' => ['image/jpeg', 'image/png'],
