@@ -8,6 +8,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
+use Doctrine\ORM\Query\ResultSetMapping;
 
 /**
  * @extends ServiceEntityRepository<User>
@@ -97,5 +98,50 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getQuery()
             ->getResult();
     }
+
+
+    public function countByRole(string $role): int
+    {
+        return $this->createQueryBuilder('u')
+            ->select('COUNT(u.id)')
+            ->where('u.roles LIKE :role')
+            ->andWhere('u.isVerified = :isVerified') // Ajouter la condition isVerified = 1
+            ->setParameter('role', '%"' . $role . '"%')
+            ->setParameter('isVerified', true) // ou 1, selon le type de votre champ isVerified
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+
+    public function findAgesByRole(string $role): array
+    {
+        $rsm = new ResultSetMapping();
+        $rsm->addScalarResult('age', 'age');
+
+        $query = $this->getEntityManager()->createNativeQuery('
+            SELECT u.age
+            FROM user u
+            WHERE u.roles LIKE :role
+            AND u.is_verified = 1
+        ', $rsm);
+
+        $query->setParameter('role', '%"' . $role . '"%');
+
+        return $query->getResult();
+    }
+
+    public function countByRoleAndGender(string $role, string $gender): int
+{
+    return $this->createQueryBuilder('u')
+        ->select('COUNT(u.id)')
+        ->where('u.roles LIKE :role')
+        ->andWhere('u.isVerified = :isVerified')
+        ->andWhere('u.gender = :gender')
+        ->setParameter('role', '%"' . $role . '"%')
+        ->setParameter('isVerified', true)
+        ->setParameter('gender', $gender)
+        ->getQuery()
+        ->getSingleScalarResult();
+}
 
 }

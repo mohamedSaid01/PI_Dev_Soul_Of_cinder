@@ -167,6 +167,17 @@ private $isVerified = false;
 
 #[ORM\Column(type: 'string', length:255 ,nullable: true)]
 private $verificationToken;
+
+
+#[ORM\Column(type: 'integer', options: ["default" => 0])]
+private int $failedLoginAttempts = 0;
+
+#[ORM\Column(type: 'boolean', options: ["default" => false])]
+private bool $isBlocked = false;
+
+#[ORM\Column(type: 'datetime', nullable: true)]
+private ?\DateTime $blockedUntil = null;
+
     
     
     public function getId(): ?int
@@ -408,6 +419,40 @@ public function setVerificationToken(?string $verificationToken): self
     $this->verificationToken = $verificationToken;
     return $this;
 }
+
+public function getFailedLoginAttempts(): int
+{
+    return $this->failedLoginAttempts;
+}
+
+public function setFailedLoginAttempts(int $failedLoginAttempts): self
+{
+    $this->failedLoginAttempts = $failedLoginAttempts;
+    return $this;
+}
+
+public function getIsBlocked(): bool
+{
+    return $this->isBlocked;
+}
+
+public function setIsBlocked(bool $isBlocked): self
+{
+    $this->isBlocked = $isBlocked;
+    return $this;
+}
+
+public function getBlockedUntil(): ?\DateTime
+{
+    return $this->blockedUntil;
+}
+
+public function setBlockedUntil(?\DateTime $blockedUntil): self
+{
+    $this->blockedUntil = $blockedUntil;
+    return $this;
+}
+
 
 
 
