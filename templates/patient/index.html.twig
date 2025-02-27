@@ -80,8 +80,25 @@
             font-size: 13px;
             color: #6c757d;
         }
+
+    .search-bar button {
+        background-color: white;
+        color: black;
+        border-color: black;
+        font-weight: 350;
+        border-radius: 5px;
+        cursor: pointer;
+        height: 38px
+    }
+    .search-bar button:hover {
+        background-color: #90E0E6;
+        border-color: #90E0E6;
+    }
     </style>
 {% endblock %}
+
+
+{# templates/patient/index.html.twig #}
 
 {% block body %}
     <main id="main" class="main">
@@ -93,18 +110,21 @@
                         Retrouvez ici la liste complète des patients enregistrés dans notre système.
                     </p>
 
-                    <!-- Ajout du bouton Ajouter un patient et de la barre de recherche -->
+                    <!-- Formulaire de recherche -->
                     <div class="d-flex justify-content-between mb-4">
-                        <!-- Formulaire de recherche -->
-                        <div class="search-bar">
-                            <input type="text" name="search" class="form-control" placeholder="Rechercher un patient" value="{{ app.request.get('search') }}">
-                            <i class="bi bi-search"></i>
-                        </div>
+                        <form method="get" action="{{ path('app_patient_index') }}" class="search-bar d-flex align-items-center">
+                            <input type="text" name="search" class="form-control" placeholder="Rechercher un patient" value="{{ search }}">
+                            <button type="submit" class="btn btn-primary ms-2">
+                                Rechercher
+                            </button>
+                        </form>
+
                         <a href="{{ path('app_patient_new') }}" class="btn btn-success btn-sm btn-add">
                             + Ajouter un Patient
                         </a>
                     </div>
 
+                    <!-- Tableau des patients -->
                     <div class="table-responsive">
                         <table class="table">
                             <thead>
@@ -147,6 +167,11 @@
                                 {% endfor %}
                             </tbody>
                         </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="navigation">
+                        {{ knp_pagination_render(patients) }}
                     </div>
                 </div>
             </div>
@@ -193,5 +218,6 @@
                 });
             });
         });
+        
     </script>
 {% endblock %}

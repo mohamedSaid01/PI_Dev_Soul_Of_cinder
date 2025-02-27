@@ -18,6 +18,8 @@ use App\Repository\UserRepository;
 use App\Service\ZeroBounceEmailValidator;
 use App\Form\SearchMedecinType;
 use App\Enum\Specialite;
+use Knp\Component\Pager\PaginatorInterface;
+
 
 class MedecinController extends AbstractController
 {
@@ -113,30 +115,28 @@ class MedecinController extends AbstractController
 
     
     #[Route('/admin/medecins', name: 'app_medecins_list')]
-    public function listMedecins(UserRepository $userRepository, Request $request): Response
+    public function listMedecins(UserRepository $userRepository, Request $request, PaginatorInterface $paginator): Response
     {
-        // Créez le formulaire de recherche
-        $form = $this->createForm(SearchMedecinType::class);
-        $form->handleRequest($request);
-
-        $specialite = null;
-        $medecins = [];
-
-        // Si le formulaire est soumis et valide
-        if ($form->isSubmitted() && $form->isValid()) {
-            $specialite = $form->get('specialite')->getData();
-            // Recherchez les médecins par spécialité
-            $medecins = $userRepository->findBySpecialite($specialite);
-        } else {
-            // Si aucune spécialité n'est sélectionnée, affichez tous les médecins
-            $medecins = $userRepository->findByRole('ROLE_MEDECIN');
-        }
-
+        // Récupérer tous les utilisateurs avec le rôle ROLE_MEDECIN
+        $medecinsQuery = $userRepository->createQueryBuilder('u')
+            ->where('u.roles LIKE :role')
+            ->andWhere('u.isVerified = :isVerified') 
+            ->setParameter('role', '%"ROLE_MEDECIN"%')
+            ->setParameter('isVerified', 1)
+            ->getQuery();
+    
+        // Paginer les résultats
+        $medecins = $paginator->paginate(
+            $medecinsQuery, // Requête à paginer
+            $request->query->getInt('page', 1), // Numéro de la page (par défaut 1)
+            2 // Nombre d'éléments par page
+        );
+    
         return $this->render('medecin/medecins_list.html.twig', [
-            'medecins' => $medecins,
-            'form' => $form->createView(), // Passez le formulaire au template
+            'medecins' => $medecins, // Passer les résultats paginés au template
         ]);
     }
+    
 
     #[Route('/admin/medecin/{id}', name: 'app_medecin_show', methods: ['GET'])]
     public function showMedecin(User $medecin): Response

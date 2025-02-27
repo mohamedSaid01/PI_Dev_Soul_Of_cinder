@@ -22,6 +22,7 @@ use App\Service\FileUploader;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Service\ZeroBounceEmailValidator;
+use Knp\Component\Pager\PaginatorInterface;
 
 
 class PatientController extends AbstractController
@@ -111,13 +112,35 @@ class PatientController extends AbstractController
 
 
     #[Route('/admin/patients', name: 'app_patient_index', methods: ['GET'])]
-    public function index(UserRepository $userRepository): Response
+    public function index(Request $request, UserRepository $userRepository, PaginatorInterface $paginator): Response
     {
-        // Récupérer uniquement les utilisateurs avec le rôle ROLE_PATIENT
-        $patients = $userRepository->findByRole('ROLE_USER');
-
+        // Récupérer le terme de recherche depuis la requête
+        $searchTerm = $request->query->get('search');
+    
+        // Récupérer uniquement les utilisateurs avec le rôle ROLE_USER et isVerified = 1
+        $query = $userRepository->createQueryBuilder('u')
+            ->where('u.roles LIKE :role') // Filtrer par rôle ROLE_USER
+            ->andWhere('u.isVerified = :isVerified') // Filtrer par isVerified = 1
+            ->setParameter('role', '%"ROLE_USER"%')
+            ->setParameter('isVerified', 1);
+    
+        // Filtrer les patients par nom et prénom si un terme de recherche est fourni
+        if ($searchTerm) {
+            $query->andWhere('u.lastName LIKE :searchTerm OR u.firstName LIKE :searchTerm')
+                ->setParameter('searchTerm', '%' . $searchTerm . '%');
+        }
+    
+        // Paginer les résultats
+        $patients = $paginator->paginate(
+            $query->getQuery(), // Requête à paginer
+            $request->query->getInt('page', 1), // Numéro de la page (par défaut 1)
+            2 // Nombre d'éléments par page
+        );
+    
         return $this->render('patient/index.html.twig', [
             'patients' => $patients,
+            'search' => $searchTerm, // Passer le terme de recherche au template
+            'pagination_template' => 'pagination/custom_pagination.html.twig',
         ]);
     }
 

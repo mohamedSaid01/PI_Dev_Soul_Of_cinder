@@ -88,16 +88,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
 
-    public function findBySpecialite(string $specialite): array
-    {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.roles LIKE :role') // Filtre par rôle médecin
-            ->andWhere('u.specialite = :specialite') // Filtre par spécialité
-            ->setParameter('role', '%"ROLE_MEDECIN"%')
-            ->setParameter('specialite', $specialite)
-            ->getQuery()
-            ->getResult();
-    }
 
 
     public function countByRole(string $role): int
@@ -142,6 +132,15 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         ->setParameter('gender', $gender)
         ->getQuery()
         ->getSingleScalarResult();
+}
+
+public function findByNomPrenom(string $searchTerm): array
+{
+    return $this->createQueryBuilder('p')
+        ->where('p.lastName LIKE :searchTerm OR p.firstName LIKE :searchTerm')
+        ->setParameter('searchTerm', '%' . $searchTerm . '%')
+        ->getQuery()
+        ->getResult();
 }
 
 }
