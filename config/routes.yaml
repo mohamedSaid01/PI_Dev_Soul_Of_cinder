@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # config/routes.yaml
 
 # Routes pour le Patient
@@ -75,3 +76,10 @@ mes_consultations:
     path: /mes-consultations
     controller: App\Controller\PatientController::mesConsultations
     methods: GET    
+=======
+controllers:
+    resource:
+        path: ../src/Controller/
+        namespace: App\Controller
+    type: attribute
+>>>>>>> Front_Back_Office

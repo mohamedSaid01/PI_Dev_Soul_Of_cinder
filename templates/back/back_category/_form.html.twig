@@ -1,0 +1,127 @@
+{% form_theme form _self %}
+
+{{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    <h2 class="form-title">Category Form</h2>
+
+    {# Render the name field #}
+    <div class="form-group">
+        {{ form_label(form.name, 'Category Name') }}
+        {{ form_widget(form.name, {
+            'attr': {
+                'class': 'form-control' ~ (form.name.vars.valid ? '' : ' is-invalid'),
+                'placeholder': 'Enter unique category name'
+            }
+        }) }}
+        {% if not form.name.vars.valid %}
+            <div class="invalid-feedback">
+                {{ form_errors(form.name) }}
+            </div>
+        {% endif %}
+    </div>
+
+    {# Render the description field #}
+    <div class="form-group">
+        {{ form_label(form.description, 'Description') }}
+        {{ form_widget(form.description, {
+            'attr': {
+                'class': 'form-control' ~ (form.description.vars.valid ? '' : ' is-invalid'),
+                'placeholder': 'Enter category description'
+            }
+        }) }}
+        {% if not form.description.vars.valid %}
+            <div class="invalid-feedback">
+                {{ form_errors(form.description) }}
+            </div>
+        {% endif %}
+    </div>
+
+    <button class="btn btn-primary">{{ button_label|default('Save') }}</button>
+{{ form_end(form) }}
+
+<style>
+    body {
+        background-color: #eef3f7;
+        font-family: 'Poppins', Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    form {
+        max-width: 500px;
+        padding: 25px;
+        border-radius: 12px;
+        background: white;
+        box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    form:hover {
+        transform: scale(1.02);
+    }
+
+    .form-title {
+        font-size: 22px;
+        font-weight: 600;
+        color: #4a4a4a;
+        margin-bottom: 25px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+        text-align: left;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: #4a90e2;
+        box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+        outline: none;
+    }
+
+    .form-control.is-invalid {
+        border-color: #dc3545;
+    }
+
+    .invalid-feedback {
+        display: block;
+        color: #dc3545;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
+    .btn {
+        background-color: #4a90e2;
+        color: white;
+        padding: 12px 25px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 10px;
+    }
+
+    .btn:hover {
+        background-color: #357abd;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #4a4a4a;
+    }
+</style>
