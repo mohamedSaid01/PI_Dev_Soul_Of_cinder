@@ -13,8 +13,15 @@
   <meta name="description" content="">
 
   {% block stylesheets %}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
   <link rel="stylesheet" type="text/css" href="{{ asset('assetsFrontOffice/css/bootstrap.min.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ asset('assetsFrontOffice/style.css') }}">
+<<<<<<< HEAD
+  <link rel="stylesheet" type="text/css" href="{{ asset('../../cdn.jsdelivr.net/npm/swiper%409/swiper-bundle.min.css') }}">
+
+=======
+>>>>>>> Front_Back_Office
   <link rel="preconnect" href="https://fonts.googleapis.com/">
   <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800;900&amp;display=swap"
@@ -22,6 +29,13 @@
   {% endblock %} {# Fin du bloc stylesheets #}
 
   {% block javascripts %}
+<<<<<<< HEAD
+  <!-- script
+    ================================================== -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script> <!-- Pour la localisation en français -->
+=======
+>>>>>>> Front_Back_Office
   <script src="{{ asset('assetsFrontOffice/js/modernizr.js') }}"></script>
   <script src="{{ asset('assetsFrontOffice/js/jquery-1.11.0.min.js') }}"></script>
   <script type="text/javascript" src="{{ asset('assetsFrontOffice/js/bootstrap.bundle.min.js') }}"></script>
@@ -81,10 +95,10 @@
 
             </li>
             <li class="nav-item ps-4 pe-4 border-right">
-              <a class="nav-link text-dark p-0" href="#our-services">Services</a>
+              <a class="nav-link text-dark p-0" href="{{path('mes_consultations')}}">Mes Consultations</a>
             </li>
             <li class="nav-item ps-4 pe-4 border-right">
-              <a class="nav-link text-dark p-0" href="#book-appointment">Booking</a>
+              <a href="{{ path('liste_medecins') }}" class="nav-link text-dark p-0" >Liste des Médecins</a>
             </li>
             <li class="nav-item ps-4 pe-4 border-right">
               <a class="nav-link text-dark p-0" href="#our-team">Team</a>
@@ -106,7 +120,45 @@
       </div>
     </nav>
   </header>
+<<<<<<< HEAD
+{% endblock %}
+
+  <section id="intro" class="position-relative overflow-hidden">
+    <div class="banner">
+      <img src={{ asset('assetsFrontOffice/images/banner-image.jpg')}} alt="banner" class="img-fluid">
+      <div class="container">
+        <div class="banner-content position-absolute padding-large">
+          <span
+            class="sub-heading bg-light py-2 px-4 mb-4 border-radius-30 text-uppercase d-inline-block text-cadet-blue fw-medium">
+            <svg class="heart primary-color me-2" width="20" height="20">
+              <use xlink:href="#heart" />
+            </svg>Live your life
+          </span>
+          <h1 class="display-3 fw-bold text-dark">We Care About Your Health</h1>
+          <p class="mt-3 mb-4">Vitae aliquam vestibulum elit adipiscing massa diam in dignissim. Risus tellus libero
+            elementum aliquam etiam. Lectus adipiscing est auctor mi quisque nunc non viverra est.</p>
+          <a href="contact.html" class="btn btn-medium btn-primary btn-pill text-uppercase">Contact us</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+ 
+  
+  
+   {# templates/baseFrontOffice.html.twig #}
+ {% if app.request.get('_route') == 'test_session_patient' or app.session.get('role') == 'pat' %}
+ <p>Connecté en tant que patient : {{ app.session.get('id_patient') }} ({{ app.session.get('role') }})</p>
+ 
+{% elseif app.request.get('_route') == 'test_session_medecin' or app.session.get('role') == 'med' %}
+ <p>Connecté en tant que médecin : {{ app.session.get('id_medecin') }} ({{ app.session.get('role') }})</p>
+ <a href="{{ path('medecin_liste_rdv') }}" class="btn btn-primary">Mes Rendez-Vous</a>
+{% endif %}
+
+=======
   {% endblock %}
+>>>>>>> Front_Back_Office
 
   {% block body %}
   {% endblock %}

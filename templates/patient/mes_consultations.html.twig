@@ -1,0 +1,44 @@
+{% extends 'baseFrontOffice.html.twig' %}
+
+{% block title %}Mes Consultations{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <h2>Mes Consultations</h2>
+
+    {% if rendezVous is empty %}
+        <p>Aucune consultation enregistrée pour le moment.</p>
+    {% else %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Heure</th>
+                    <th>Médecin</th>
+                    <th>Statut</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for rdv in rendezVous %}
+                <tr>
+                    <td>{{ rdv.date|date('d/m/Y') }}</td>
+                    <td>{{ rdv.heure|date('H:i') }}</td>
+                    <td>{{ rdv.medecin.getUser().getNom() }} {{ rdv.medecin.getUser().getPrenom() }}</td>
+                    <td>
+                        {% if rdv.annule == 1 %}
+                            <span class="badge bg-danger">Annulé</span>
+                        {% elseif rdv.statut == 0 %}
+                            <span class="badge bg-warning text-dark">En attente</span>
+                        {% elseif rdv.statut == 1 %}
+                            <span class="badge bg-success">Accepté</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Non défini</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+{% endblock %}
