@@ -3,6 +3,8 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+
+# config/routes.yaml
 # # config/routes.yaml
 # app_reclamation_controller_php_index:
 #     path: /reclamation/controller/php/reclamations

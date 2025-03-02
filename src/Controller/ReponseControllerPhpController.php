@@ -4,16 +4,21 @@ namespace App\Controller;
 
 use App\Entity\Reponse;
 use App\Form\ReponseType;
+use App\Entity\Reclamation;
 use App\Repository\ReponseRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Service\NotificationService;
 
 #[Route('/reponse/controller/php')]
 final class ReponseControllerPhpController extends AbstractController
 {
+    
+
+
     #[Route(name: 'app_reponse_controller_php_index', methods: ['GET'])]
     public function index(ReponseRepository $reponseRepository): Response
     {
@@ -26,21 +31,31 @@ final class ReponseControllerPhpController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $reponse = new Reponse();
+        $reponse->setDateReponse(new \DateTime());
         $form = $this->createForm(ReponseType::class, $reponse);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($reponse);
             $entityManager->flush();
+    $reponse->setPatient(empty($patient) ? null : $patient);
+            $this->addFlash('notification', [
+                'description' => $reponse->getContenu(),
+                'date' => $reponse->getDateReponse()->format('Y-m-d H:i:s'),
+            ]);
+
+            $this->addFlash('success', 'Réponse ajoutée avec succès.');
+
 
             return $this->redirectToRoute('app_reponse_controller_php_index', [], Response::HTTP_SEE_OTHER);
         }
-
+    
         return $this->render('reponse_controller_php/new.html.twig', [
             'reponse' => $reponse,
             'form' => $form,
         ]);
     }
+    
 
     #[Route('/{id}', name: 'app_reponse_controller_php_show', methods: ['GET'])]
     public function show(Reponse $reponse): Response
@@ -78,4 +93,5 @@ final class ReponseControllerPhpController extends AbstractController
 
         return $this->redirectToRoute('app_reponse_controller_php_index', [], Response::HTTP_SEE_OTHER);
     }
+
 }

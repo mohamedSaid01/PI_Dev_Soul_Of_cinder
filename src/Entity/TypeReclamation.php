@@ -20,10 +20,17 @@ class TypeReclamation
 
     #[ORM\OneToMany(mappedBy: 'typeReclamation', targetEntity: Reclamation::class, orphanRemoval: false)]
     private Collection $reclamations;
+
+    /**
+     * @var Collection<int, Reponse>
+     */
+    #[ORM\OneToMany(targetEntity: Reponse::class, mappedBy: 'type_recalmation')]
+    private Collection $reponses;
     
     public function __construct()
     {
         $this->reclamations = new ArrayCollection();
+        $this->reponses = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -66,6 +73,36 @@ class TypeReclamation
                 $reclamation->setTypeReclamation(null);
             }
         }
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Reponse>
+     */
+    public function getReponses(): Collection
+    {
+        return $this->reponses;
+    }
+
+    public function addReponse(Reponse $reponse): static
+    {
+        if (!$this->reponses->contains($reponse)) {
+            $this->reponses->add($reponse);
+            $reponse->setTypeRecalmation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReponse(Reponse $reponse): static
+    {
+        if ($this->reponses->removeElement($reponse)) {
+            // set the owning side to null (unless already changed)
+            if ($reponse->getTypeRecalmation() === $this) {
+                $reponse->setTypeRecalmation(null);
+            }
+        }
+
         return $this;
     }
 }

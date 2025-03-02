@@ -23,6 +23,7 @@ class TypeReclamationType extends AbstractType
             'attr' => ['class' => 'form-control'],
             'label' => 'Type de Réclamation',
             ]);
+            
         ;
     }
 

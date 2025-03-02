@@ -83,6 +83,31 @@ document.addEventListener('DOMContentLoaded', function() {
       height: 20px; /* Hauteur de la ligne */
       background-color: #ccc; /* Couleur de la ligne */
   }
+
+  .notifications {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 300px;
+            z-index: 1000;
+        }
+        .notification-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            background-color: #f9f9f9;
+        }
+        .notification-card.unread {
+            background-color: #e3f2fd;
+        }
+        .notification-card .date {
+            font-size: 0.9em;
+            color: #666;
+        }
+        .notification-card .actions {
+            margin-top: 8px;
+        }
 </style>
 
     <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
@@ -172,6 +197,43 @@ document.addEventListener('DOMContentLoaded', function() {
         </header>
     </div>
 </div>
+
+<body style="background-color: white;">
+    {% for message in app.flashes('notification') %}
+            <div class="notification">
+                <p>{{ message.description }}</p>
+                <p class="date">{{ message.date }}</p>
+            </div>
+        {% endfor %}
+
+        <!-- Afficher les autres messages flash (succès, erreur, etc.) -->
+        {% for type, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="flash-{{ type }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+    <style>
+        .notification {
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .notification .date {
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
+
+    <!-- Reste de votre code HTML -->
+    <main>
+        
+    </main>
+</body>
+
 
 <div id="reclamations-table" class="container mt-4">
     <!-- Les résultats seront affichés ici -->

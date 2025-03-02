@@ -15,6 +15,7 @@ class TypeReclamationRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, TypeReclamation::class);
     }
+   
 
     //    /**
     //     * @return Reclamation[] Returns an array of Reclamation objects
