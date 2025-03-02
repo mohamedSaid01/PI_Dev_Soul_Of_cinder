@@ -11,7 +11,26 @@ security:
             security: false
         main:
             lazy: true
+<<<<<<< Updated upstream
             provider: users_in_memory
+=======
+            provider: app_user_provider
+            entry_point: App\Security\GoogleAuthenticator
+            custom_authenticators:
+                - App\Security\SecurityAuthenticator
+                - App\Security\GoogleAuthenticator
+            logout:
+                path: app_logout
+                # where to redirect after logout
+                # target: app_any_route
+
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 604800
+                path: /
+                always_remember_me: true
+            user_checker: App\Security\UserChecker
+>>>>>>> Stashed changes
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -22,8 +41,18 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
+<<<<<<< Updated upstream
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
+=======
+         - { path: ^/admin, roles: ROLE_ADMIN }
+         - { path: ^/medecin, roles: ROLE_MEDECIN }
+         - { path: ^/patient, roles: ROLE_USER }
+         - { path: ^/profile/medecin, roles: ROLE_MEDECIN }
+         - { path: ^/profile/patient, roles: ROLE_USER }
+         - { path: ^/event/back, roles: [ROLE_MEDECIN, ROLE_ADMIN] }
+         - { path: ^/back, roles: [ROLE_MEDECIN, ROLE_ADMIN] }
+>>>>>>> Stashed changes
 
 when@test:
     security:

@@ -40,4 +40,8 @@ class ProduitRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+<<<<<<< Updated upstream
 }
+=======
+}
+>>>>>>> Stashed changes

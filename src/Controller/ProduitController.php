@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+<<<<<<< Updated upstream
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use App\Repository\CategoryRepository;
@@ -38,6 +39,14 @@ class ProduitController extends AbstractController
         ]);
     }
 
+=======
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use App\Repository\CategoryRepository;
+
+#[Route('/produit')]
+final class ProduitController extends AbstractController
+{
+>>>>>>> Stashed changes
     #[Route(name: 'app_produit_index', methods: ['GET'])]
     public function index(ProduitRepository $produitRepository): Response
     {
@@ -46,6 +55,10 @@ class ProduitController extends AbstractController
         ]);
     }
 
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
     #[Route('/new', name: 'app_produit_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -135,7 +148,10 @@ public function show(Produit $produit): Response
         return $this->redirectToRoute('app_produit_index', [], Response::HTTP_SEE_OTHER);
 
     }
+<<<<<<< Updated upstream
     
 
   
+=======
+>>>>>>> Stashed changes
 }

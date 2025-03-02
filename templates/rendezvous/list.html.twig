@@ -1,0 +1,7 @@
+{% for rendezVous in rendezVousList %}
+    <div>
+        <p>Date : {{ rendezVous.date|date('d/m/Y H:i') }}</p>
+        <p>Statut : {{ rendezVous.statut ? 'Accepté' : 'En attente' }}</p>
+        <a href="{{ path('rendez_vous_show', {'id': rendezVous.id}) }}">Voir les détails</a>
+    </div>
+{% endfor %}

@@ -28,6 +28,7 @@
       </div>
     </div>
 
+<<<<<<< Updated upstream
    <div class="mt-4 d-flex justify-content-between">
       <a href="{{ path('app_category_index') }}" class="btn btn-outline-secondary fw-bold">
         <i class="fas fa-arrow-left"></i> Back to List
@@ -37,3 +38,72 @@
   </div>
  
 {% endblock %}
+=======
+    <div class="mt-4 d-flex justify-content-between">
+      <a href="{{ path('app_category_index') }}" class="btn btn-outline-secondary fw-bold">
+        <i class="fas fa-arrow-left"></i> Back to List
+      </a>
+
+      <button class="btn btn-danger delete-category" data-id="{{ category.id }}">Delete</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    document.querySelectorAll('.delete-category').forEach(button => {
+        button.addEventListener('click', function () {
+            const id = this.getAttribute('data-id');
+
+            Swal.fire({
+                title: 'Confirm the deletion',
+                text: 'Are you sure you want to delete this category? This action is irreversible.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch('/category/delete/${id}', {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            _token: '{{ csrf_token("delete" ~ category.id) }}'
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire(
+                                'Deleted !',
+                                'Category was successfully removed.',
+                                'success'
+                            );
+                          button.closest('.container').remove();
+                        } else {
+                            Swal.fire(
+                                'Error',
+                                data.message || 'An Error Occured.',
+                                'error'
+                            );
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error during deletion :', error);
+                        Swal.fire(
+                            'Error',
+                            'An error occurred. Please try again.',
+                            'error'
+                        );
+                    });
+                }
+            });
+        });
+    });
+  </script>
+{% endblock %}
+>>>>>>> Stashed changes

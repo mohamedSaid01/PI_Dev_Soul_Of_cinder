@@ -40,4 +40,36 @@ class UserRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+<<<<<<< Updated upstream
+=======
+
+    /**
+     * Trouve les utilisateurs ayant un rôle spécifique.
+     *
+     * @param string $role
+     * @return User[]
+     */
+    public function findByRole(string $role): array
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.roles LIKE :role')
+            ->andWhere('u.isVerified = :isVerified')
+            ->setParameter('role', '%"' . $role . '"%')
+            ->setParameter('isVerified', true)
+            ->getQuery()
+            ->getResult();
+    }
+
+
+    public function countUserInscriptions(User $user): int
+    {
+        return $this->createQueryBuilder('i')
+            ->select('COUNT(i.id)')
+            ->where('i.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+>>>>>>> Stashed changes
 }

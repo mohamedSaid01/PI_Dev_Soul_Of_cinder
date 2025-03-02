@@ -3,9 +3,16 @@
 {% block title %}Category Index{% endblock %}
 
 {% block body %}
+<<<<<<< Updated upstream
   <div class="container mt-5" style="max-width: 90%;">
     <div class="card shadow-lg border-0 rounded-4">
       <div class="card-body p-4" style="margin-left: auto; margin-right: 0;">
+=======
+<main id="main" class="main">
+  <div class="container-fluid mt-5 px-4"> {# Utilisation de container-fluid pour une largeur totale #}
+    <div class="card shadow-lg border-0 rounded-4">
+      <div class="card-body p-4">
+>>>>>>> Stashed changes
         <h2 class="text-center text-primary fw-bold mb-4">📂 Category List</h2>
 
         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -16,6 +23,7 @@
         </div>
 
         <div class="table-responsive">
+<<<<<<< Updated upstream
           <table class="table table-hover table-striped table-bordered text-center align-middle">
             <thead class="table-dark">
               <tr>
@@ -39,6 +47,28 @@
     </div>
   </div>
                   </a>
+=======
+          <table class="table table-hover table-striped table-bordered text-center align-middle w-100"> {# Ajout de w-100 pour une largeur totale #}
+            <thead class="table-dark">
+              <tr>
+                <th>Category Name</th>
+                <th>Description</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for category in categories %}
+                <tr class="table-row">
+                  <td>{{ category.name }}</td>
+                  <td class="text-truncate">{{ category.description }}</td>
+                  <td>
+                    <a href="{{ path('app_category_edit', {'id': category.id}) }}" class="btn btn-primary btn-sm rounded-3 shadow-sm" style="background-color: #ADD8E6; border-color: #ADD8E6;">
+                      <i class="fas fa-eye"></i> Edit
+                    </a>
+                    <a href="{{ path('app_category_show', {'id': category.id}) }}" class="btn btn-secondary btn-sm rounded-3 shadow-sm" style="background-color: #89CFF0; border-color: #89CFF0;">
+                      <i class="fas fa-edit"></i> View
+                    </a>
+>>>>>>> Stashed changes
                   </td>
                 </tr>
               {% else %}
@@ -72,5 +102,15 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+<<<<<<< Updated upstream
   </style>
+=======
+
+    /* Assurer que la table prend toute la largeur */
+    .table {
+      width: 100% !important;
+    }
+  </style>
+</main>
+>>>>>>> Stashed changes
 {% endblock %}

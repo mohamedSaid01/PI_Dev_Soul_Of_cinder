@@ -3,22 +3,39 @@
 // src/Controller/PatientController.php
 namespace App\Controller;
 
+<<<<<<< Updated upstream
 use App\Entity\Medecin;
 use App\Entity\RendezVous;
 use App\Form\RendezVousType;
 use App\Repository\MedecinRepository;
 use App\Repository\RendezVousRepository;
 use App\Repository\PatientRepository;
+=======
+use App\Entity\User;
+use App\Entity\Patient;
+use App\Form\PatientType;
+use App\Service\PasswordGenerator; // Importez le service PasswordGenerator
+>>>>>>> Stashed changes
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+<<<<<<< Updated upstream
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+=======
+use App\Repository\UserRepository; // Importez UserRepository
+use App\Form\MedicalFileType;
+use App\Service\FileUploader;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use App\Service\ZeroBounceEmailValidator;
+>>>>>>> Stashed changes
 
 use App\Repository\EtatRendezVousRepository;
 
 class PatientController extends AbstractController
 {
+<<<<<<< Updated upstream
     #[Route('/login-patient', name: 'patient_login')]
     public function loginPatient(Request $request): Response
     {
@@ -50,6 +67,13 @@ class PatientController extends AbstractController
             'typeRendezVous' => $typeRendezVous, // Passer la variable à Twig
 
         ]);
+=======
+    private ZeroBounceEmailValidator $emailValidator;
+
+    public function __construct(ZeroBounceEmailValidator $emailValidator)
+    {
+        $this->emailValidator = $emailValidator;
+>>>>>>> Stashed changes
     }
 
     #[Route('/prendre-rendez-vous/{id}', name: 'prendre_rendez_vous')]
@@ -59,8 +83,16 @@ class PatientController extends AbstractController
         MedecinRepository $medecinRepository,
         PatientRepository $patientRepository,
         EntityManagerInterface $entityManager,
+<<<<<<< Updated upstream
         RendezVousRepository $rendezVousRepository,
         EtatRendezVousRepository $etatRendezVousRepository
+=======
+        UserPasswordHasherInterface $passwordHasher,
+        PasswordGenerator $passwordGenerator, // Injectez le service PasswordGenerator
+        MailerInterface $mailer, // Injectez MailerInterface
+        UserRepository $userRepository, // Injectez UserRepository
+        ZeroBounceEmailValidator $emailValidator
+>>>>>>> Stashed changes
     ): Response {
         $session = $request->getSession();
         if (!$session->has('role') || $session->get('role') !== 'pat') {
@@ -94,6 +126,7 @@ class PatientController extends AbstractController
         $form->handleRequest($request);
     
         if ($form->isSubmitted() && $form->isValid()) {
+<<<<<<< Updated upstream
             try {
                 // Récupérer la date et l'heure séparément
                 $date = $rendezVous->getDate();
@@ -110,6 +143,136 @@ class PatientController extends AbstractController
                 return $this->redirectToRoute('liste_medecins');
             } catch (\Exception $e) {
                 $this->addFlash('error', $e->getMessage());
+=======
+            // Vérifier si l'email existe déjà
+            $existingUser = $userRepository->findOneBy(['email' => $user->getEmail()]);
+
+            if ($existingUser) {
+                $this->addFlash('error', 'Un utilisateur avec cet email existe déjà.');
+                return $this->redirectToRoute('app_patient_new');
+            }
+
+            // // Vérifier si l'email est valide et existe sur le serveur de messagerie
+            //  if (!$emailValidator->isValid($user->getEmail())) {
+            // $this->addFlash('error', 'L\'email n\'est pas valide ou n\'existe pas.');
+            // return $this->redirectToRoute('app_patient_new');
+            // }
+
+            // Générer un mot de passe aléatoire
+            $plainPassword = $passwordGenerator->generateRandomPassword();
+
+            // Encoder le mot de passe
+            $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
+            $user->setPassword($hashedPassword);
+
+            // Attribuer le rôle ROLE_PATIENT
+            $user->setRoles(['ROLE_USER']);
+
+            // Définir isVerified à true (1) pour ce patient
+            $user->setIsVerified(true);
+
+            $patient = new Patient();
+            $patient->setUser($user); // 🔗 Lier le patient à l'utilisateur
+
+            // Enregistrer l'utilisateur en base de données
+            $entityManager->persist($user);
+            $entityManager->persist($patient);
+            $entityManager->flush();
+
+            // Envoyer un email avec les informations de connexion
+            $email = (new Email())
+                ->from('mohamedsaidboubaker10@gmail.com') // Adresse expéditeur
+                ->to($user->getEmail()) // Adresse destinataire
+                ->subject('Vos informations de connexion') // Sujet de l'email
+                ->html($this->renderView(
+                    'emails/patient_registration.html.twig', // Template Twig pour l'email
+                    [
+                        'email' => $user->getEmail(),
+                        'password' => $plainPassword,
+                        'firstName' => $user->getFirstName(),
+                        'lastName' => $user->getLastName(),
+                    ]
+                ));
+
+            $mailer->send($email);
+
+            $this->addFlash('success', 'Compte patient créé avec succès. Un email a été envoyé avec les informations de connexion.');
+            return $this->redirectToRoute('app_patient_index');
+        }
+
+        return $this->render('patient/new.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+
+    #[Route('/admin/patients', name: 'app_patient_index', methods: ['GET'])]
+    public function index(UserRepository $userRepository): Response
+    {
+        // Récupérer uniquement les utilisateurs avec le rôle ROLE_PATIENT
+        $patients = $userRepository->findByRole('ROLE_USER');
+
+        return $this->render('patient/index.html.twig', [
+            'patients' => $patients,
+        ]);
+    }
+
+
+    #[Route('/admin/patient/{id}', name: 'app_patient_show', methods: ['GET'])]
+    public function show(User $patient): Response
+    {
+        return $this->render('patient/show.html.twig', [
+            'patient' => $patient,
+        ]);
+    }
+
+    #[Route('admin/patient/{id}/edit', name: 'app_patient_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, User $patient, EntityManagerInterface $entityManager): Response
+    {
+        $form = $this->createForm(PatientType::class, $patient);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Le patient a été modifié avec succès.');
+            return $this->redirectToRoute('app_patient_index');
+        }
+
+        return $this->render('patient/edit.html.twig', [
+            'form' => $form->createView(),
+            'patient' => $patient,
+        ]);
+    }
+
+    #[Route('/admin/patient/{id}/delete', name: 'app_patient_delete', methods: ['POST'])]
+    public function delete(Request $request, User $patient, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$patient->getId(), $request->request->get('_token'))) {
+            $entityManager->remove($patient);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Le patient a été supprimé avec succès.');
+        }
+
+        return $this->redirectToRoute('app_patient_index');
+    }
+
+    #[Route('/download-medical-file/{filename}', name: 'download_medical_file')]
+    public function downloadMedicalFile(string $filename): Response
+    {
+        // Récupérer l'utilisateur connecté
+        $user = $this->getUser();
+        
+        // Debug : Afficher les rôles de l'utilisateur
+        dump($user->getRoles());
+        
+        // Vérifier si l'utilisateur est un administrateur
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            // Si l'utilisateur n'est pas un administrateur, vérifier si le fichier lui appartient
+            if ($user->getMedicalFile() !== $filename) {
+                throw new AccessDeniedException('Vous n\'êtes pas autorisé à télécharger ce fichier.');
+>>>>>>> Stashed changes
             }
         }
     

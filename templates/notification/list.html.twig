@@ -1,0 +1,92 @@
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+{% block stylesheets %}
+<style>
+    .notifications {
+        background-color: #ffffff; /* Couleur de fond blanche */
+        border: 1px solid #e0e0e0; /* Bordure légère */
+        border-radius: 0.5rem; /* Coins arrondis */
+        padding: 1rem; /* Espacement interne */
+        max-width: 400px; /* Largeur maximale */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Ombre légère */
+    }
+    
+    .notifications h3 {
+        font-size: 1.2rem; /* Taille de police pour le titre */
+        margin-bottom: 0.5rem; /* Espacement en bas */
+        color: #333; /* Couleur du texte */
+    }
+    
+    .notifications ul {
+        list-style: none; /* Supprimer les puces */
+        padding: 0; /* Supprimer le padding */
+        margin: 0; /* Supprimer la marge */
+    }
+    
+    .notifications li {
+        display: flex; /* Utiliser flexbox pour aligner les éléments */
+        justify-content: space-between; /* Espacement entre message et bouton */
+        padding: 0.5rem; /* Espacement interne */
+        border-bottom: 1px solid #f0f0f0; /* Ligne de séparation fine */
+        transition: background-color 0.2s; /* Transition pour l'effet de survol */
+        font-size: 0.9rem; /* Taille de police réduite */
+    }
+    
+    .notifications li:last-child {
+        border-bottom: none; /* Supprimer la ligne de séparation du dernier élément */
+    }
+    
+    .notifications li.read {
+        color: #888; /* Couleur pour les notifications lues */
+    }
+    
+    .notifications li.unread {
+        font-weight: normal; /* Normaliser le poids pour les notifications non lues */
+    }
+    
+    .notifications button {
+        background: none; /* Pas de fond */
+        border: none; /* Pas de bordure */
+        cursor: pointer; /* Curseur pointer pour le bouton */
+        font-size: 1rem; /* Taille de police pour le bouton */
+        color: #007bff; /* Couleur du texte */
+    }
+    
+    .notifications button:hover {
+        color: #0056b3; /* Couleur de texte au survol */
+    }
+    
+    /* Limiter le texte à 6 mots par ligne */
+    .notifications li span {
+        display: block; /* Afficher chaque notification sur une nouvelle ligne */
+        max-width: 70%; /* Largeur maximale pour le texte */
+        overflow-wrap: break-word; /* Permettre le retour à la ligne */
+    }
+</style>
+{% endblock %} 
+
+{% block body %}
+<div class="notifications">
+    <h3>Notifications</h3>
+    {% if notifications|length > 0 %}
+        <ul>
+            {% for notification in notifications %}
+                <li class="{{ notification.isRead ? 'read' : 'unread' }}">
+                    <span>{{ notification.message }}</span>
+                    {% if not notification.isRead %}
+                    <form action="{{ path('mark_notification_read', {'id': notification.id}) }}" method="POST" style="display: inline;">
+                        <button type="submit" class="nav-link text-dark p-0">
+                            <i class="fas fa-check-circle" aria-hidden="true"></i> <!-- Icône de coche -->
+                        </button>
+                    </form>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aucune nouvelle notification.</p>
+    {% endif %}
+</div>
+{% endblock %}

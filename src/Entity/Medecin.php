@@ -16,12 +16,15 @@ class Medecin
     #[ORM\Column(type: 'integer')]
     private $id;
 
+<<<<<<< Updated upstream
     #[ORM\Column(type: 'string', length: 255)]
     private $specialite;
 
     #[ORM\Column(type: 'string', length: 20)]
     private $telephone;
 
+=======
+>>>>>>> Stashed changes
     #[ORM\OneToOne(targetEntity: User::class, inversedBy: 'medecin', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private $user;
@@ -32,9 +35,20 @@ class Medecin
     #[ORM\OneToMany(mappedBy: 'medecin', targetEntity: RendezVous::class)]
     private $rendezVous;
 
+<<<<<<< Updated upstream
     public function __construct()
     {
         $this->rendezVous = new ArrayCollection();
+=======
+    #[ORM\OneToMany(mappedBy: 'medecin', targetEntity: Notification::class)]
+    private Collection $notifications;
+
+    public function __construct()
+    {
+        $this->rendezVous = new ArrayCollection();
+        $this->notifications = new ArrayCollection();
+
+>>>>>>> Stashed changes
     }
 
     public function getId(): ?int
@@ -42,6 +56,7 @@ class Medecin
         return $this->id;
     }
 
+<<<<<<< Updated upstream
     public function getSpecialite(): ?string
     {
         return $this->specialite;
@@ -66,6 +81,8 @@ class Medecin
         return $this;
     }
 
+=======
+>>>>>>> Stashed changes
     public function getUser(): ?User
     {
         return $this->user;
@@ -139,4 +156,36 @@ class Medecin
 
         return $this;
     }
+<<<<<<< Updated upstream
+=======
+
+
+
+
+    public function getNotifications(): Collection
+    {
+        return $this->notifications;
+    }
+
+    public function addNotification(Notification $notification): self
+    {
+        if (!$this->notifications->contains($notification)) {
+            $this->notifications->add($notification);
+            $notification->setMedecin($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNotification(Notification $notification): self
+    {
+        if ($this->notifications->removeElement($notification)) {
+            if ($notification->getMedecin() === $this) {
+                $notification->setMedecin(null);
+            }
+        }
+
+        return $this;
+    }
+>>>>>>> Stashed changes
 }

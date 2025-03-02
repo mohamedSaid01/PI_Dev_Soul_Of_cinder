@@ -1,0 +1,106 @@
+{% extends 'baseBackOffice.html.twig' %}
+
+{% block title %}Modifier l'événement{% endblock %}
+
+{% block body %}
+    <main id="main" class="main">
+
+  <div class="pagetitle">
+    <h1>Modifier l'événement</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('back_event_index') }}">Accueil</a></li>
+        <li class="breadcrumb-item">Événements</li>
+        <li class="breadcrumb-item active">Modifier</li>
+      </ol>
+    </nav>
+  </div>
+
+  <section class="section">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+            <div class="form-group">
+                {{ form_label(form.title, 'Titre') }}
+                {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
+                <span class="text-danger">{{ form_errors(form.title) }}</span>
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.description, 'Description') }}
+                {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+                <span class="text-danger">{{ form_errors(form.description) }}</span>
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.startDate, 'Date de début') }}
+                {{ form_widget(form.startDate, {'attr': {'class': 'form-control'}}) }}
+                <span class="text-danger">{{ form_errors(form.startDate) }}</span>
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.endDate, 'Date de fin') }}
+                {{ form_widget(form.endDate, {'attr': {'class': 'form-control'}}) }}
+                <span class="text-danger">{{ form_errors(form.endDate) }}</span>
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.location, 'Lieu') }}
+                {{ form_widget(form.location, {'attr': {'class': 'form-control'}}) }}
+                <span class="text-danger">{{ form_errors(form.location) }}</span>
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.latitude, 'Latitude') }}
+                {{ form_widget(form.latitude, {'attr': {'class': 'form-control'}}) }}
+                <span class="text-danger">{{ form_errors(form.latitude) }}</span>
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.longitude, 'Longitude') }}
+                {{ form_widget(form.longitude, {'attr': {'class': 'form-control'}}) }}
+                <span class="text-danger">{{ form_errors(form.longitude) }}</span>
+            </div>
+
+              <div class="form-group">
+                  {{ form_label(form.placesDisponibles, 'Places disponibles') }}
+                  {{ form_widget(form.placesDisponibles, {'attr': {'class': 'form-control'}}) }}
+                  <span class="text-danger">{{ form_errors(form.placesDisponibles) }}</span>
+              </div>
+
+            <div class="form-group">
+                {{ form_label(form.categorie, 'Catégorie') }}
+                {{ form_widget(form.categorie, {'attr': {'class': 'form-control'}}) }}
+                <span class="text-danger">{{ form_errors(form.categorie) }}</span>
+            </div>
+
+            {% if event.affiche %}
+                <div class="form-group">
+                    <label>Affiche actuelle :</label><br>
+                    <img src="{{ asset('uploads/affiches/' ~ event.affiche) }}" alt="Affiche" width="150">
+                </div>
+            {% else %}
+                <p class="text-warning">Aucune affiche disponible.</p>
+            {% endif %}
+
+            <div class="form-group">
+                {{ form_label(form.afficheFile, 'Nouvelle affiche') }}
+                {{ form_widget(form.afficheFile, {'attr': {'class': 'form-control'}}) }}
+                <span class="text-danger">{{ form_errors(form.afficheFile) }}</span>
+            </div>
+            
+            <br>
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+            <a href="{{ path('back_event_index') }}" class="btn btn-secondary">Retour à la liste</a>
+            {{ form_end(form) }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+</main>
+{% endblock %}

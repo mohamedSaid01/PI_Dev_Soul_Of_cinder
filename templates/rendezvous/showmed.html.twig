@@ -1,0 +1,69 @@
+{% extends 'baseFrontOffice.html.twig' %}
+
+{% block title %}Coordonnées du Patient{% endblock %}
+
+{% block body %}
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <h1 class="text-center mb-4 text-primary">👤 Coordonnées du Patient</h1>
+
+                <div class="card shadow-sm p-4 bg-white">
+                    <div class="card-body">
+                        <h3 class="card-title text-center mb-4">Informations du Patient</h3>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Nom :</strong> {{ patient.user.firstName }} {{ patient.user.lastName }}</p>
+                             
+                            </div>
+                    
+                        </div>
+
+                        <!-- Afficher le fichier médical -->
+                        {% if patient.user.medicalFile %}
+                            <div class="mt-4">
+                                <p><strong>Fichier médical :</strong></p>
+                                <a href="{{ asset('uploads/medical_files/' ~ patient.user.medicalFile) }}" 
+                                   target="_blank" class="btn btn-outline-primary btn-sm">
+                                    📄 Télécharger le fichier médical
+                                </a>
+                            </div>
+                        {% else %}
+                            <div class="mt-4">
+                                <p><strong>Fichier médical :</strong> Aucun fichier disponible.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <a href="{{ path('medecin_rendez_vous_acceptes') }}" class="btn btn-outline-secondary btn-lg">
+                        ↩ Retour aux rendez-vous acceptés
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .card {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .card-title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .btn {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        p {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+    </style>
+
+{% endblock %}

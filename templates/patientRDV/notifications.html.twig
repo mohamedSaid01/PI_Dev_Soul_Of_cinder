@@ -1,0 +1,60 @@
+{# templates/patient/notifications.html.twig #}
+{% block stylesheets %}
+<style>
+    .notifications {
+        max-width: 300px; /* Largeur maximale pour le conteneur des notifications */
+        max-height: 400px; /* Hauteur maximale pour le défilement */
+        overflow-y: auto; /* Active le défilement vertical */
+        overflow-x: hidden; /* Désactive le défilement horizontal */
+        border: 1px solid #e0e0e0; /* Bordure autour des notifications */
+        border-radius: 8px; /* Coins arrondis */
+        background-color: #f8f9fa; /* Couleur de fond douce */
+    }
+
+    .notification-item {
+        padding: 15px; /* Espacement interne pour chaque notification */
+        border-bottom: 1px solid #e0e0e0; /* Ligne de séparation entre les notifications */
+        font-size: 14px; /* Taille de police fine */
+        color: #333; /* Couleur du texte */
+        transition: background-color 0.3s; /* Effet de transition sur le survol */
+    }
+
+    .notification-item:last-child {
+        border-bottom: none; /* Pas de ligne de séparation pour le dernier élément */
+    }
+
+    .notification-item:hover {
+        background-color: #e9ecef; /* Couleur de fond au survol */
+    }
+
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        background-color: rgba(0, 0, 0, 0.5); /* Couleur des flèches */
+    }
+
+    .carousel-item p {
+        text-align: center; /* Centrer le texte pour les notifications vides */
+        font-size: 16px; /* Taille de police pour le message vide */
+        color: #999; /* Couleur du texte pour le message vide */
+    }
+</style>
+
+
+
+{% endblock %}
+{% block body %}
+    <h3>Notifications</h3>
+
+    {% if notifications is empty %}
+        <p>Aucune notification.</p>
+    {% else %}
+        <ul>
+            {% for notification in notifications %}
+                <li>
+                    {{ notification.message }} 
+                    <a href="{{ path('mark_notification_read', { 'id': notification.id }) }}">Marquer comme lu</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

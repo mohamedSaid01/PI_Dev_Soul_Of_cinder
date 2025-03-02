@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 <!DOCTYPE html>
 <html>
 
@@ -19,6 +20,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800;900&amp;display=swap"
     rel="stylesheet">
+=======
+{% extends 'baseFrontOffice.html.twig' %}
+
+{% block stylesheets %}
+  {{ parent() }} {# Hérite des stylesheets du template parent #}
+>>>>>>> Stashed changes
   <style>
     /* Custom Styles for Product Cards */
     .card {
@@ -76,6 +83,7 @@
       background-color: #007bff;
       color: #fff;
     }
+<<<<<<< Updated upstream
 
     /* Styles for Comments Section */
     .comments-section {
@@ -303,10 +311,44 @@
         <div class="col-12">
           <p class="text-center">No products found</p>
         </div>
+=======
+  </style>
+{% endblock %}
+
+{% block body %}
+  <section id="products" class="py-5">
+    <div class="container">
+      <div class="row">
+        {% for produit in produits %}
+          <div class="col-md-4 mb-4">
+            <div class="card h-100">
+              <img src="{{ asset('uploads/images/' ~ produit.image) }}" class="card-img-top" alt="{{ produit.name }}">
+              <div class="card-body">
+                <h5 class="card-title">{{ produit.name }}</h5>
+                <p class="card-text">{{ produit.desciption }}</p>
+
+                <p class="card-text"><strong>Price:</strong> {{ produit.price }} Dt</p>
+                <p class="card-text"><strong>Stock:</strong> {{ produit.quantity }}</p>
+                {% if produit.quantity < 3 %}
+                  <p class="card-text text-warning"><strong>Alert: This product may be out of stock soon!</strong></p>
+                {% endif %}
+                {% if app.user %}
+                   <a href="#" class="btn btn-outline-primary">Add to Cart</a>
+               {% endif %}
+
+              </div>
+            </div>
+          </div>
+        {% else %}
+          <div class="col-12">
+            <p class="text-center">No products found</p>
+          </div>
+>>>>>>> Stashed changes
         {% endfor %}
       </div>
     </div>
   </section>
+<<<<<<< Updated upstream
   {% endblock %}
 
   {% block footer %}
@@ -384,3 +426,6 @@
 </body>
 
 </html>
+=======
+{% endblock %}
+>>>>>>> Stashed changes

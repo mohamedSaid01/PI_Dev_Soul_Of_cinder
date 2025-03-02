@@ -1,0 +1,48 @@
+{% extends 'baseBackOffice.html.twig' %}
+
+{% block title %}Rendez-vous Acceptés{% endblock %}
+
+{% block body %}
+<main id="main" class="main">
+    
+    {% if rendezVous|length > 0 %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Patient</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for rdv in rendezVous %}
+                    <tr>
+                        <td>{{ rdv.date|date('d/m/Y') }} à {{ rdv.heure|date('H:i') }}</td>
+                        <td>{{ rdv.patient.user.firstName }} {{ rdv.patient.user.lastName }}</td>
+                        <td>{{ rdv.statut ? 'Accepté' : 'En attente' }}</td>
+                        <td>
+                            <!--  dossier médical -->
+                            <a href="{{ path('dossier_medical_show', {'id': rdv.patient.id}) }}" class="btn btn-info">
+                                Voir le dossier médical
+                            </a>
+
+                            <!--  lien Jitsi Meet -->
+                            {% if rdv.lienJitsi %}
+                                <a href="{{ path('rendez_vous_show_medecin', {'id': rdv.id}) }}" class="btn btn-primary">
+                                    Rejoindre la consultation
+                                </a>
+                            {% else %}
+                                <span class="text-muted">Lien non disponible</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Aucun rendez-vous accepté pour le moment.</p>
+    {% endif %}
+
+    </main>
+{% endblock %}

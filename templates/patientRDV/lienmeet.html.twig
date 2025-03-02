@@ -1,0 +1,95 @@
+{% extends 'baseFrontOffice.html.twig' %}
+
+{% block title %}Mes Consultations Acceptées{% endblock %}
+
+{% block body %}
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <h1 class="text-center mb-4 text-primary">📅 Mes Consultations Acceptées</h1>
+
+                {% if rendezVous|length > 0 %}
+                    <div class="table-responsive rounded shadow-sm p-3 bg-white">
+                        <table class="table table-hover text-center">
+                            <thead class="bg-primary text-white">
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Médecin</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for rdv in rendezVous %}
+                                    <tr class="align-middle">
+                                        <td>
+                                            <strong>{{ rdv.date|date('d/m/Y') }}</strong> à 
+                                            <span class="text-muted">{{ rdv.heure|date('H:i') }}</span>
+                                        </td>
+                                        <td>
+                                            🩺 <strong>{{ rdv.medecin.user.firstName }} {{ rdv.medecin.user.lastName }}</strong>
+                                        </td>
+                                        <td>
+                                            <span class="badge rounded-pill 
+                                                {{ rdv.statut ? 'bg-success' : 'bg-warning text-dark' }}">
+                                                {{ rdv.statut ? 'Accepté' : 'En attente' }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {% if rdv.statut and rdv.lienJitsi %}
+                                                <a href="{{ path('rendez_vous_show', {'id': rdv.id}) }}" 
+                                                   class="btn btn-outline-primary btn-sm">
+                                                    🔗 Voir le lien
+                                                </a>
+                                            {% else %}
+                                                <span class="text-muted">Non disponible</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info text-center mt-3">
+                        Aucun rendez-vous accepté pour le moment.
+                    </div>
+                {% endif %}
+
+                <div class="text-center mt-4">
+                    <a href="{{ path('mes_consultations') }}" class="btn btn-outline-secondary btn-lg">
+                        ↩ Retour
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .table {
+            font-size: 16px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .table thead th {
+            padding: 15px;
+            font-size: 17px;
+        }
+        .table tbody td {
+            padding: 12px;
+        }
+        .badge {
+            font-size: 14px;
+            padding: 8px 12px;
+        }
+        .btn {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        .alert {
+            font-size: 18px;
+        }
+    </style>
+
+{% endblock %}

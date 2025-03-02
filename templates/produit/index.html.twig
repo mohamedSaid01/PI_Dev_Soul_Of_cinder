@@ -1,5 +1,6 @@
 {% extends 'baseBackOffice.html.twig' %}
 
+<<<<<<< Updated upstream
 {% block body %}
     <div class="container-fluid" style="padding-top: 5%; padding-left: 5%; padding-right: 5%;">
         <h1 class="mb-4">Product Management</h1>
@@ -50,6 +51,8 @@
     </div>
 {% endblock %}
 
+=======
+>>>>>>> Stashed changes
 {% block stylesheets %}
     {{ parent() }}
     <style>
@@ -87,8 +90,11 @@
             transition: all 0.3s ease;
         }
         .btn-info:hover {
+<<<<<<< Updated upstream
             background-color: #17a2b8;
             border-color: #17a2b8;
+=======
+>>>>>>> Stashed changes
         }
         .btn-warning:hover {
             background-color: #e0a800;
@@ -102,4 +108,55 @@
             font-style: italic;
         }
     </style>
+<<<<<<< Updated upstream
 {% endblock %}
+=======
+    {% endblock %}
+
+{% block body %}
+<main id="main" class="main">
+    <div class="container-fluid" style="padding-top: 5%; padding-left: 5%; padding-right: 5%;">
+        <h1 class="mb-4">Product Management</h1>
+
+        <!-- Table with improved styling -->
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered shadow-sm">
+                <thead class="thead-light">
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Image</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for produit in produits %}
+                        <tr>
+                            <td>{{ produit.name }}</td>
+                            <td>{{ produit.price|number_format(2) }}DT</td>
+                            <td>
+                                <img src="{{ asset('uploads/images/' ~ produit.image) }}" alt="Product Image" class="img-fluid rounded" style="max-width: 100px;">
+                            </td>
+                            <td>
+                                <a href="{{ path('app_produit_show_back', {'id': produit.id}) }}" class="btn btn-info btn-sm">View</a>
+                                <a href="{{ path('app_produit_edit', {'id': produit.id}) }}" class="btn btn-warning btn-sm">Edit</a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center text-muted">No records found.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Create new button -->
+        <div class="text-center mt-4">
+            <a href="{{ path('app_produit_new') }}" class="btn btn-success btn-lg">Create New Product</a>
+        </div>
+    </div>
+    <main/>
+{% endblock %}
+
+>>>>>>> Stashed changes

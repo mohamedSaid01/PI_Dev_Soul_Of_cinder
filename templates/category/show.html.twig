@@ -11,10 +11,13 @@
         <table class="table table-hover table-striped table-bordered text-center align-middle">
           <tbody>
             <tr>
+<<<<<<< Updated upstream
                 <th style="width: 20%;">Id</th>
               <td>{{ category.id }}</td>
             </tr>
             <tr>
+=======
+>>>>>>> Stashed changes
               <th style="width: 20%;">Name</th>
               <td>{{ category.name }}</td>
             </tr>
@@ -32,6 +35,7 @@
           <a href="{{ path('app_category_edit', {'id': category.id}) }}" class="btn btn-primary px-4 py-2 rounded-3 shadow-sm" style="background-color: #87CEEB; border-color: #87CEEB;">
             <i class="fas fa-edit"></i> Edit
           </a>
+<<<<<<< Updated upstream
 
                 <button class="btn btn-danger delete-category" data-id="{{ category.id }}">Delete</button>
 
@@ -97,4 +101,12 @@
         });
     });
   </script> 
+=======
+        </div>
+
+       
+      </div>
+    </div>
+  </div>
+>>>>>>> Stashed changes
 {% endblock %}

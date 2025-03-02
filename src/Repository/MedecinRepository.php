@@ -40,4 +40,11 @@ class MedecinRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+<<<<<<< Updated upstream
+=======
+
+
+
+
+>>>>>>> Stashed changes
 }

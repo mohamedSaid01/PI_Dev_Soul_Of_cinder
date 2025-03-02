@@ -29,7 +29,30 @@
   {% endblock %} {# Fin du bloc stylesheets #}
 
   {% block javascripts %}
+<<<<<<< Updated upstream
 <<<<<<< HEAD
+=======
+
+
+  <script>
+    function loadNotifications(event) {
+        event.preventDefault(); // Empêche le comportement par défaut
+    
+        const notificationContent = document.getElementById('notificationContent');
+        
+        // Effectuer une requête AJAX pour charger les notifications
+        fetch('{{ path('patient_notifications') }}')
+            .then(response => response.text())
+            .then(data => {
+                notificationContent.innerHTML = data; // Mettre à jour le contenu des notifications
+            })
+            .catch(error => console.error('Erreur lors du chargement des notifications:', error));
+    }
+    </script>
+    
+
+
+>>>>>>> Stashed changes
   <!-- script
     ================================================== -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -57,18 +80,49 @@
             </a>
           </div>
           <div class="col-lg-4 col-md-4 d-md-block d-sm-none">
-            <ul class="contact-list d-flex justify-content-lg-end flex-wrap list-unstyled m-0">
-              <li class="pe-5 pe-lg-0 pe-xxl-5 pb-3 pb-lg-0">
-                <svg class="location primary-color" width="24" height="24">
-                  <use xlink:href="#location"></use>
-                </svg>123 Arling, Miola, NY
-              </li>
-              <li class="ps-xl-3">
-                <svg class="phone primary-color" width="24" height="24">
-                  <use xlink:href="#phone"></use>
-                </svg>(+487) 384 9452
-              </li>
-            </ul>
+
+
+
+        {% if is_granted('ROLE_PATIENT') %}
+            <li class="nav-item dropdown">
+              <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown" onclick="loadNotifications(event)">
+                  <i class="bi bi-bell"></i>
+                  {% set unreadData = getUnreadNotifications() %}
+                  {% if unreadData.count > 0 %}
+                      <span class="badge bg-primary badge-number">{{ unreadData.count }}</span>
+                  {% endif %}
+              </a><!-- End Notification Icon -->
+              
+              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications" id="notificationDropdown">
+                  <li class="dropdown-header">
+                      Vous avez {{ unreadData.count }} nouvelles notifications
+                      <a href="{{ path('patient_notifications') }}" class="badge bg-primary">Voir toutes</a>
+                  </li>
+                  
+                  <div id="notificationContent">
+                      {% if unreadData.notifications is empty %}
+                          <p>Aucune notification.</p>
+                      {% else %}
+                          <ul>
+                              {% for notification in unreadData.notifications %}
+                                  <li>
+                                      {{ notification.message }}
+                                      {% if notification.medecin %}
+                                          - <a href="{{ path('medecin_profile', { 'id': notification.medecin.id }) }}">{{ notification.medecin.name }}</a>
+                                      {% endif %}
+                                      <a href="{{ path('mark_notification_read', { 'id': notification.id }) }}" class="mark-as-read">Marquer comme lu</a>
+                                  </li>
+                              {% endfor %}
+                          </ul>
+                      {% endif %}
+                  </div>
+              </ul><!-- End Notification Dropdown Items -->
+          </li><!-- End Notification Nav -->
+
+
+{% endif %}
+
+
           </div>
           <div class="col-lg-3 col-md-4 col-sm-6">
             <div class="btn-book text-end">
@@ -92,16 +146,38 @@
             <li class="nav-item ps-4 pe-4 border-right">
               <a class="nav-link text-dark active p-0 mt-3 mt-lg-0" aria-current="page" href="#intro">Home</a>
             </li>
+<<<<<<< Updated upstream
 
+=======
+            <li class="nav-item ps-4 pe-4 border-right">
+              <a class="nav-link text-dark p-0" href="#about-us">About</a>
+              
+>>>>>>> Stashed changes
             </li>
             <li class="nav-item ps-4 pe-4 border-right">
               <a class="nav-link text-dark p-0" href="{{path('mes_consultations')}}">Mes Consultations</a>
             </li>
             <li class="nav-item ps-4 pe-4 border-right">
+<<<<<<< Updated upstream
               <a href="{{ path('liste_medecins') }}" class="nav-link text-dark p-0" >Liste des Médecins</a>
+=======
+              <a class="nav-link text-dark p-0" href="{{ path('app_produit_show') }}">Products</a>
+            </li>
+            {% if app.user is not null %}
+            <li class="nav-item ps-4 pe-4 border-right">
+              <a class="nav-link text-dark p-0" href="{{path('mes_consultations')}}">Consultations</a> 
+>>>>>>> Stashed changes
             </li>
             <li class="nav-item ps-4 pe-4 border-right">
-              <a class="nav-link text-dark p-0" href="#our-team">Team</a>
+              <a href="{{ path('liste_medecins') }}" class="nav-link text-dark p-0" >Liste des Médecins</a>
+            </li>    
+
+            <li class="nav-item ps-4 pe-4 border-right">
+              <a href="{{ path('lienmeet') }}" class="nav-link text-dark p-0" >Mes Meeting </a>
+            </li>
+            {% endif %}
+<li class="nav-item ps-4 pe-4 border-right"> 
+              <a href="{{ path('front_medecin_event_index') }}">Events</a>
             </li>
 
 
