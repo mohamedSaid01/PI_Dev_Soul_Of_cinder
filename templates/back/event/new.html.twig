@@ -12,7 +12,7 @@
                 <li class="breadcrumb-item active">Créer</li>
             </ol>
         </nav>
-    </div><!-- End Page Title -->
+    </div>
 
     <section class="section">
         <div class="row">
@@ -24,65 +24,71 @@
                         <!-- Titre -->
                         <div class="form-group">
                             {{ form_label(form.title, 'Titre') }}
-                            {{ form_widget(form.title, {'attr': {'class': 'form-control ' ~ (form.title.vars.errors|length > 0 ? 'is-invalid' : '')}}) }}
+                            {{ form_widget(form.title, {'attr': {'class': 'form-control ' ~ (form.title.vars.errors|length > 0 ? 'is-invalid' : ''), 'id': 'event_title'}}) }}
                         </div>
 
-                        <!-- Description -->
                         <div class="form-group">
                             {{ form_label(form.description, 'Description') }}
-                            {{ form_widget(form.description, {'attr': {'class': 'form-control ' ~ (form.description.vars.errors|length > 0 ? 'is-invalid' : '')}}) }}
+                            {{ form_widget(form.description, {'attr': {'id': 'event_description'}}) }}
+                            <button type="button" id="generate-description" class="btn btn-primary">
+                                Générer une description
+                            </button>
                         </div>
 
                         <!-- Date de début -->
                         <div class="form-group">
                             {{ form_label(form.startDate, 'Date de début') }}
-                            {{ form_widget(form.startDate, {'attr': {'class': 'form-control ' ~ (form.startDate.vars.errors|length > 0 ? 'is-invalid' : '')}}) }}
+                            {{ form_widget(form.startDate, {'attr': {'class': 'form-control'}}) }}
                         </div>
 
                         <!-- Date de fin -->
                         <div class="form-group">
                             {{ form_label(form.endDate, 'Date de fin') }}
-                            {{ form_widget(form.endDate, {'attr': {'class': 'form-control ' ~ (form.endDate.vars.errors|length > 0 ? 'is-invalid' : '')}}) }}
+                            {{ form_widget(form.endDate, {'attr': {'class': 'form-control'}}) }}
                         </div>
 
                         <!-- Lieu -->
                         <div class="form-group">
                             {{ form_label(form.location, 'Lieu') }}
-                            {{ form_widget(form.location, {'attr': {'class': 'form-control ' ~ (form.location.vars.errors|length > 0 ? 'is-invalid' : '')}}) }}
+                            {{ form_widget(form.location, {'attr': {'class': 'form-control'}}) }}
                         </div>
 
                         <!-- Latitude -->
+                        <!-- Carte Leaflet pour la sélection de la position -->
                         <div class="form-group">
-                            {{ form_label(form.latitude, 'Latitude') }}
-                            {{ form_widget(form.latitude, {'attr': {'class': 'form-control'}}) }}
+                            <label for="map">Localisation</label>
+                            <div id="map" style="height: 400px; width: 100%; border-radius: 10px;"></div>
                         </div>
 
-                        <!-- Longitude -->
-                        <div class="form-group">
-                            {{ form_label(form.longitude, 'Longitude') }}
-                            {{ form_widget(form.longitude, {'attr': {'class': 'form-control'}}) }}
-                        </div>
+                        <!-- Champs cachés pour stocker Latitude et Longitude -->
+                        <p>Latitude sélectionnée : <span id="lat-display">Aucune</span></p>
+                        <p>Longitude sélectionnée : <span id="lng-display">Aucune</span></p>
+
+                        {{ form_widget(form.latitude, {'attr': {'id': 'latitude', 'type': 'hidden'}}) }}
+                        {{ form_widget(form.longitude, {'attr': {'id': 'longitude', 'type': 'hidden'}}) }}
+
 
                         <!-- Places disponibles -->
                         <div class="form-group">
                             {{ form_label(form.placesDisponibles, 'Places Disponibles') }}
-                            {{ form_widget(form.placesDisponibles, {'attr': {'class': 'form-control ' ~ (form.placesDisponibles.vars.errors|length > 0 ? 'is-invalid' : '')}}) }}
+                            {{ form_widget(form.placesDisponibles, {'attr': {'class': 'form-control'}}) }}
                         </div>
 
                         <!-- Catégorie -->
                         <div class="form-group">
                             {{ form_label(form.categorie, 'Catégorie') }}
-                            {{ form_widget(form.categorie, {'attr': {'class': 'form-control ' ~ (form.categorie.vars.errors|length > 0 ? 'is-invalid' : '')}}) }}
+                            {{ form_widget(form.categorie, {'attr': {'class': 'form-control'}}) }}
                         </div>
 
                         <!-- Affiche de l'événement -->
                         <div class="form-group">
-                            {{ form_label(form.afficheFile, 'Affiche de l’événement') }}
-                            <div class="custom-file">
-                                {{ form_widget(form.afficheFile, {'attr': {'class': 'custom-file-input ' ~ (form.afficheFile.vars.errors|length > 0 ? 'is-invalid' : ''), 'id': 'event_afficheFile'}}) }}
-                                <label class="custom-file-label" for="event_afficheFile">Choisir un fichier</label>
-                            </div>
+                            <label for="event_image">Affiche de l'événement</label>
+                            <button type="button" id="generate-deepai-image" class="btn btn-success">
+                                Générer une image
+                            </button>
+                            <img id="event_image_preview" src="" alt="Prévisualisation de l'affiche" style="max-width: 100%; display: none;">
                         </div>
+
 
                         <br>
                         <button type="submit" class="btn btn-primary">Créer</button>
@@ -94,7 +100,6 @@
             </div>
         </div>
     </section>
-
     <!-- SweetAlert pour afficher les erreurs -->
     {% if errors is defined and errors|length > 0 %}
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -107,7 +112,148 @@
                 });
             });
         </script>
-    {% endif %}
 
+    {% endif %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Générer une description
+            document.getElementById('generate-description').addEventListener('click', function () {
+                const title = document.getElementById('event_title').value;
+                const descField = document.getElementById('event_description');
+
+                if (!title) {
+                    alert('Veuillez entrer un titre avant de générer une description.');
+                    return;
+                }
+
+                if (!descField) {
+                    console.error('Erreur: Le champ description est introuvable.');
+                    alert('Une erreur est survenue : Champ description non trouvé.');
+                    return;
+                }
+
+                fetch('{{ path('event_generate') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ title: title }),
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erreur serveur');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        descField.value = data.description;
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la génération de la description :', error);
+                        alert('Une erreur est survenue lors de la génération de la description. Veuillez réessayer.');
+                    });
+            });
+
+            // Générer une image
+            document.getElementById('generate-deepai-image').addEventListener('click', function () {
+                const title = document.getElementById('event_title').value;
+                const imagePreview = document.getElementById('event_image_preview');
+
+                if (!title) {
+                    alert('Veuillez entrer un titre avant de générer une image.');
+                    return;
+                }
+
+                fetch('{{ path('event_generate_deepai_image') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ title: title }),
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erreur serveur');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        imagePreview.src = data.image_url;
+                        imagePreview.style.display = 'block';
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la génération de l\'image :', error);
+                        alert('Une erreur est survenue lors de la génération de l\'image.');
+                    });
+            });
+
+
+        });
+    </script>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var map = L.map('map').setView([36.8065, 10.1815], 6); // Centrer sur la Tunisie
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            var marker;
+
+            // Sélectionne les champs de latitude et longitude
+            var latField = document.querySelector("input[name='event[latitude]']");
+            var lngField = document.querySelector("input[name='event[longitude]']");
+
+            // Vérifie si les champs sont trouvés
+            if (!latField || !lngField) {
+                console.error("❌ Champs latitude/longitude introuvables !");
+                return;
+            }
+
+            // Ajoute un événement au clic sur la carte
+            map.on('click', function (e) {
+                var lat = e.latlng.lat.toFixed(6);
+                var lng = e.latlng.lng.toFixed(6);
+
+                console.log("✅ Nouvelle position sélectionnée :", lat, lng);
+
+                // Supprime le marqueur précédent s'il existe
+                if (marker) {
+                    map.removeLayer(marker);
+                }
+
+                // Ajoute un nouveau marqueur
+                marker = L.marker([lat, lng]).addTo(map);
+
+                // Met à jour les champs cachés du formulaire
+                latField.value = lat;
+                lngField.value = lng;
+
+                // Met à jour l'affichage des coordonnées
+                document.getElementById('lat-display').textContent = lat;
+                document.getElementById('lng-display').textContent = lng;
+
+                console.log("✅ Latitude mise à jour :", latField.value);
+                console.log("✅ Longitude mise à jour :", lngField.value);
+            });
+
+            // Si des coordonnées existent déjà, les afficher sur la carte
+            if (latField.value && lngField.value) {
+                var lat = parseFloat(latField.value);
+                var lng = parseFloat(lngField.value);
+                marker = L.marker([lat, lng]).addTo(map);
+                map.setView([lat, lng], 10);
+                console.log("📌 Position existante chargée :", lat, lng);
+            }
+        });
+
+
+    </script>
 
 {% endblock %}

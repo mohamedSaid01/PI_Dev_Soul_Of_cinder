@@ -1,8 +1,82 @@
 {% extends 'baseBackOffice.html.twig' %}
+{% block title %}Statistiques des événements{% endblock %}
 
 {% block body %}
-  
- 
+    <div class="container">
+        <h1 class="mt-5">Tableau de bord - Statistiques</h1>
 
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <h2>Événements par mois</h2>
+                <canvas id="eventsByMonthChart"></canvas>
+            </div>
 
+            <div class="col-md-6">
+                <h2>Inscriptions par événement</h2>
+                <canvas id="inscriptionsByEventChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Données pour le graphique des événements par mois
+        const eventsByMonthData = {
+            labels: {{ eventsByMonth|map(e => ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"][e.month - 1])|json_encode|raw }},
+            datasets: [{
+                label: 'Nombre d\'événements',
+                data: {{ eventsByMonth|map(e => e.count)|json_encode|raw }},
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        // Données pour le graphique des inscriptions par événement
+        const inscriptionsByEventData = {
+            labels: {{ inscriptionsByEvent|map(i => eventTitles[i.event_id - 1].title)|json_encode|raw }},
+            datasets: [{
+                label: 'Nombre d\'inscriptions',
+                data: {{ inscriptionsByEvent|map(i => i.count)|json_encode|raw }},
+                backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                borderColor: 'rgba(153, 102, 255, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        // Configuration des graphiques
+        const chartConfig = {
+            type: 'bar',
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1, // Pas de 1 pour l'axe Y
+                            callback: function(value) {
+                                if (value % 1 === 0) { // Affiche uniquement des valeurs entières
+                                    return value;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        // Création des graphiques
+        document.addEventListener('DOMContentLoaded', function() {
+            const eventsByMonthCtx = document.getElementById('eventsByMonthChart').getContext('2d');
+            new Chart(eventsByMonthCtx, {
+                ...chartConfig,
+                data: eventsByMonthData
+            });
+
+            const inscriptionsByEventCtx = document.getElementById('inscriptionsByEventChart').getContext('2d');
+            new Chart(inscriptionsByEventCtx, {
+                ...chartConfig,
+                data: inscriptionsByEventData
+            });
+        });
+    </script>
 {% endblock %}

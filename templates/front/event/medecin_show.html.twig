@@ -260,7 +260,6 @@
                     {% endif %}
                     {% if event.isArchived and event.endDate < date() %}
                         <div class="rating-section">
-                            <h5>Noter cet événement :</h5>
                             <div class="stars" data-event-id="{{ event.id }}">
                                 {% for i in 1..5 %}
                                     <i class="bi bi-star star {% if userRating and i <= userRating %}text-warning{% endif %}" data-value="{{ i }}"></i>
@@ -268,11 +267,7 @@
                             </div>
                             <p id="rating-message"></p>
                         </div>
-                    {% else %}
-                        <p style="color: red;">⚠️ La condition pour afficher le rating n'est pas remplie</p>
-                        <p>event.isArchived: {{ event.isArchived ? 'Oui' : 'Non' }}</p>
-                        <p>event.endDate: {{ event.endDate|date('Y-m-d H:i:s') }}</p>
-                        <p>Date actuelle: {{ "now"|date("Y-m-d H:i:s") }}</p>
+
                     {% endif %}
 
                 {% endif %}

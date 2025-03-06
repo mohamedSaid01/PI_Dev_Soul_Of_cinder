@@ -66,6 +66,30 @@ class EventRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+    // src/Repository/EventRepository.php
+    public function countEventsByMonth(): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = '
+        SELECT MONTH(e.start_date) as month, COUNT(e.id) as count
+        FROM event e
+        GROUP BY month
+        ORDER BY month ASC
+    ';
+        $stmt = $conn->prepare($sql);
+        $result = $stmt->executeQuery();
+        return $result->fetchAllAssociative();
+    }
+    public function findAllTitles(): array
+    {
+        return $this->createQueryBuilder('e')
+            ->select('e.id, e.title')
+            ->getQuery()
+            ->getResult();
+    }
+
+
+
 
 
 

@@ -186,9 +186,10 @@
         document.querySelectorAll('.archive-event').forEach(button => {
             button.addEventListener('click', function () {
                 const id = this.getAttribute('data-id');
+
                 Swal.fire({
                     title: 'Archiver cet événement ?',
-                    text: "Vous pourrez le désarchiver plus tard si nécessaire.",
+                    text: "Toutes les inscriptions seront supprimées et un email sera envoyé aux utilisateurs.",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
@@ -204,19 +205,23 @@
                                 'Content-Type': 'application/json'
                             }
                         })
-
                             .then(response => response.json())
                             .then(data => {
                                 if (data.success) {
                                     Swal.fire('Archivé !', data.message, 'success').then(() => location.reload());
                                 } else {
-                                    Swal.fire('Erreur !', 'Une erreur est survenue lors de l’archivage.', 'error');
+                                    Swal.fire('Erreur !', data.message, 'error');
                                 }
+                            })
+                            .catch(error => {
+                                console.error('Erreur lors de l’archivage :', error);
+                                Swal.fire('Erreur !', 'Impossible d’archiver l’événement.', 'error');
                             });
                     }
                 });
             });
         });
+
 
 
         document.querySelectorAll('.unarchive-event').forEach(button => {

@@ -16,6 +16,26 @@ class InscriptionRepository extends ServiceEntityRepository
         parent::__construct($registry, Inscription::class);
     }
 
+    /**
+     * Trouver toutes les inscriptions liées à un événement donné
+     */
+    public function findByEvent($event): array
+    {
+        return $this->createQueryBuilder('i')
+            ->where('i.event = :event')
+            ->setParameter('event', $event)
+            ->getQuery()
+            ->getResult();
+    }
+    public function countInscriptionsByEvent(): array
+    {
+        return $this->createQueryBuilder('i')
+            ->select('IDENTITY(i.event) as event_id, COUNT(i.id) as count')
+            ->groupBy('event_id')
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Inscription[] Returns an array of Inscription objects
     //     */

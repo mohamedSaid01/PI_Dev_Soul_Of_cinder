@@ -17,7 +17,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints as Assert;
-
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 class EventType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -27,7 +27,8 @@ class EventType extends AbstractType
                 'label' => 'Titre',
             ])
             ->add('description', TextareaType::class, [
-                'label' => 'Description',
+                'required' => false,
+                'attr' => ['id' => 'eventDescription'],
             ])
             ->add('startDate', DateTimeType::class, [
                 'label' => 'Date de début',
@@ -40,12 +41,10 @@ class EventType extends AbstractType
             ->add('location', TextType::class, [
                 'label' => 'Lieu',
             ])
-            ->add('latitude', NumberType::class, [
-                'label' => 'Latitude',
+            ->add('latitude', HiddenType::class, [
                 'required' => false
             ])
-            ->add('longitude', NumberType::class, [
-                'label' => 'Longitude',
+            ->add('longitude', HiddenType::class, [
                 'required' => false
             ])
             ->add('placesDisponibles', IntegerType::class, [

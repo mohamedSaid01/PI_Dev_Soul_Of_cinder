@@ -95,6 +95,8 @@
         <h3 class="mt-5 text-danger">Événements expirés</h3>
         <div class="row mt-4">
             {% for event in events_archived %}
+                {% if event.isExpired %}
+
                 <div class="col-md-4 mb-4">
                     <div class="card">
                         <div class="event-category">{{ event.categorie.nom }}</div> {# 🔥 Ajout de la catégorie ici #}
@@ -115,8 +117,10 @@
                         </div>
                     </div>
                 </div>
+                {% endif %}
             {% else %}
                 <p class="text-center">Aucun événement expiré disponible.</p>
+
             {% endfor %}
         </div>
 

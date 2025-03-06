@@ -4,9 +4,11 @@ namespace App\Controller;
 
 use App\Entity\Event;
 use App\Entity\Rating;
-use App\Entity\Notification;
 use App\Form\EventType;
+use App\Service\DalleService;
 use App\Service\EventService;
+use App\Service\GeminiService;
+use App\Service\DeepAiImageService;
 use App\Repository\EventRepository;
 use App\Repository\RatingRepository;
 use App\Repository\CategorieEventRepository;
@@ -15,9 +17,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-
+use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
+use App\Entity\Inscription;
+use App\Repository\InscriptionRepository;
 
 #[Route('/event')]
 class EventController extends AbstractController
@@ -26,6 +31,8 @@ class EventController extends AbstractController
     #[Route('/medecin', name: 'front_medecin_event_index', methods: ['GET'])]
     public function medecinIndex(EventRepository $eventRepository): Response
     {
+        $eventsActive = $eventRepository->findBy(['isArchived' => false]);
+        $eventsArchived = $eventRepository->findExpiredEvents(); // 🔥 Modifier ici
         return $this->render('front/event/medecin_index.html.twig', [
             'events_active' => $eventRepository->findBy(['isArchived' => false]),
             'events_archived' => $eventRepository->findBy(['isArchived' => true]),
@@ -272,13 +279,67 @@ public function backEdit(Request $request, Event $event, EntityManagerInterface 
         return new JsonResponse(['success' => true, 'message' => 'Événement supprimé avec succès.']);
     }
     #[Route('/event/archive/{id}', name: 'event_archive', methods: ['POST'])]
-    public function archive(Event $event, EntityManagerInterface $entityManager): JsonResponse
-    {
-        $event->setIsArchived(true); // Marque l'événement comme archivé
+    public function archiveEvent(
+        Request $request,
+        Event $event,
+        EntityManagerInterface $entityManager,
+        MailerInterface $mailer,
+        InscriptionRepository $inscriptionRepository
+    ): JsonResponse {
+        // 🔥 Vérifier si l'événement est déjà archivé
+        if ($event->isArchived()) {
+            return new JsonResponse(['success' => false, 'message' => 'Cet événement est déjà archivé.'], 400);
+        }
+
+        // 🗑️ Récupérer toutes les inscriptions liées à l'événement
+        $inscriptions = $inscriptionRepository->findBy(['event' => $event]);
+
+        if (empty($inscriptions)) {
+            return new JsonResponse(['success' => false, 'message' => 'Aucune inscription trouvée pour cet événement.'], 400);
+        }
+
+        // 📬 Liste des emails des utilisateurs inscrits
+        $emails = [];
+
+        foreach ($inscriptions as $inscription) {
+            $userEmail = $inscription->getUser()->getEmail();
+            $emails[] = $userEmail;
+        }
+
+        // 📧 Envoi des emails en une seule fois
+        $email = (new Email())
+            ->from('stoustou419@gmail.com')
+            ->to(...$emails) // 🔥 Envoi en une seule fois à plusieurs destinataires
+            ->subject("Annulation de l'événement: " . $event->getTitle())
+            ->html("
+            <p>Bonjour,</p>
+            <p>Nous vous informons que l'événement <strong>{$event->getTitle()}</strong> prévu le <strong>{$event->getStartDate()->format('d/m/Y')}</strong> a été annulé.</p>
+            <p>Nous nous excusons pour la gêne occasionnée.</p>
+            <p>Cordialement,</p>
+            <p>L'équipe d'organisation</p>
+        ");
+
+        $mailer->send($email);
+
+        // 🔥 Supprimer toutes les inscriptions après envoi des emails
+        foreach ($inscriptions as $inscription) {
+            $entityManager->remove($inscription);
+        }
+
+        // 🔥 Confirmer la suppression des inscriptions
         $entityManager->flush();
 
-        return new JsonResponse(['success' => true, 'message' => 'Événement archivé avec succès.']);
+        // 📌 Archiver l'événement
+        $event->setIsArchived(true);
+        $entityManager->persist($event);
+        $entityManager->flush();
+
+        return new JsonResponse([
+            'success' => true,
+            'message' => "L'événement a été archivé, toutes les inscriptions supprimées et un email d'annulation envoyé."
+        ]);
     }
+
 
     #[Route('/event/unarchive/{id}', name: 'event_unarchive', methods: ['POST'])]
     public function unarchive(Request $request, Event $event, EntityManagerInterface $em): JsonResponse
@@ -300,10 +361,12 @@ public function backEdit(Request $request, Event $event, EntityManagerInterface 
 
 
     private EventService $eventService;
+    private GeminiService $geminiService;
 
-    public function __construct(EventService $eventService)
+    public function __construct(EventService $eventService, GeminiService $geminiService)
     {
         $this->eventService = $eventService;
+        $this->geminiService = $geminiService;
     }
 
     #[Route('/archive-expired-events', name: 'archive_expired_events')]
@@ -380,7 +443,53 @@ public function backEdit(Request $request, Event $event, EntityManagerInterface 
 
         return new JsonResponse(['success' => true, 'message' => 'Votre note a été enregistrée !']);
     }
+    #[Route('/event/generate', name: 'event_generate', methods: ['POST'])]
+    public function generateDescription(Request $request, GeminiService $geminiService): JsonResponse
+    {
+        $title = $request->toArray()['title'] ?? '';
 
+        if (empty($title)) {
+            return new JsonResponse(['description' => 'Veuillez fournir un titre pour générer une description.'], 400);
+        }
+
+        // Utilisez le service Gemini pour générer la description en français
+        try {
+            $description = $geminiService->generateText($title);
+            return new JsonResponse(['description' => $description]);
+        } catch (\Exception $e) {
+            return new JsonResponse(['description' => 'Erreur lors de la génération de la description : ' . $e->getMessage()], 500);
+        }
+    }
+
+    #[Route('/event/generate-deepai-image', name: 'event_generate_deepai_image', methods: ['POST'])]
+    public function generateDeepAiImage(Request $request, DeepAiImageService $deepAiImageService): JsonResponse
+    {
+        $title = trim($request->toArray()['title'] ?? '');
+
+        if (empty($title)) {
+            return new JsonResponse(['error' => 'Veuillez fournir un titre valide pour générer une image.'], 400);
+        }
+
+        try {
+            $imageUrl = $deepAiImageService->generateImage($title);
+            return new JsonResponse(['image_url' => $imageUrl]);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => 'Erreur lors de la génération de l\'image : ' . $e->getMessage()], 500);
+        }
+    }
+
+
+    #[Route('/admin/stats', name: 'admin_stats')]
+    public function statistics(EventRepository $eventRepository, InscriptionRepository $inscriptionRepository): Response
+    {
+        $eventsByMonth = $eventRepository->countEventsByMonth();
+        $inscriptionsByEvent = $inscriptionRepository->countInscriptionsByEvent();
+
+        return $this->render('back/index.html.twig', [ // Vérifie bien le nom du fichier Twig !
+            'eventsByMonth' => $eventsByMonth,
+            'inscriptionsByEvent' => $inscriptionsByEvent,
+        ]);
+    }
 
 
 
