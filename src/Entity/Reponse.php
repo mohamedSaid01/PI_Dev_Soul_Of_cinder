@@ -21,31 +21,27 @@ class Reponse
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $dateReponse = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $patient = null;
-    #[ORM\ManyToOne(targetEntity: Medecin::class)]
-    #[ORM\JoinColumn(name: 'medecin_id', referencedColumnName: 'id', nullable: true)]
-    private ?Medecin $medecin = null; // Use camelCase for property names
+    #[ORM\ManyToOne(targetEntity: Patient::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Patient $patient = null;
 
-    // Getter and Setter for medecin
-    public function getMedecin(): ?Medecin
+
+    public function getPatient(): ?Patient
     {
-        return $this->medecin;
+        return $this->patient;
     }
 
-    public function setMedecin(?Medecin $medecin): self
+    public function setPatient(?Patient $patient): self
     {
-        $this->medecin = $medecin;
+        $this->patient = $patient;
         return $this;
     }
 
 
-    #[ORM\ManyToOne(inversedBy: 'reponses')]
-    private ?TypeReclamation $typeReclamation = null;
-
     #[ORM\ManyToOne(targetEntity: Reclamation::class, inversedBy: 'reponses')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Reclamation $reclamation = null;
+    
     public function getId(): ?int
     {
         return $this->id;
@@ -71,30 +67,6 @@ class Reponse
     public function setDateReponse(\DateTimeInterface $dateReponse): static
     {
         $this->dateReponse = $dateReponse;
-
-        return $this;
-    }
-
-    public function getPatient(): ?string
-    {
-        return $this->patient;
-    }
-
-    public function setPatient(string $patient): static
-    {
-        $this->patient = $patient;
-
-        return $this;
-    }
-
-    public function getTypeReclamation(): ?TypeReclamation
-    {
-        return $this->typeReclamation;
-    }
-
-    public function setTypeReclamation(?TypeReclamation $typeReclamation): static
-    {
-        $this->typeReclamation = $typeReclamation;
 
         return $this;
     }

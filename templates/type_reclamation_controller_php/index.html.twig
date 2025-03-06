@@ -1,7 +1,39 @@
 {% extends 'baseBackOffice.html.twig' %}
 
 {% block title %}TypeReclamation index{% endblock %}
-{% block stylesheets %}
+
+{% block body %}
+  <main id="main" class="main">
+  <div class="type-reclamation-container">
+ 
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Type_reclamation</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for type_reclamation in type_reclamations %}
+          <tr>
+            <td>{{ type_reclamation.typeReclamation }}</td>
+            <td class="actions">
+              <a href="{{ path('app_type_reclamation_controller_php_show', {'id': type_reclamation.id}) }}">Show</a>
+              <a href="{{ path('app_type_reclamation_controller_php_edit', {'id': type_reclamation.id}) }}">Edit</a>
+            </td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="3" class="no-records">No records found</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <a href="{{ path('app_type_reclamation_controller_php_new') }}" class="create-new-link">Create new</a>
+  </div>
+  </main>
 <style>
   .type-reclamation-container {
     max-width: 1200px;
@@ -83,37 +115,4 @@
     padding: 20px;
   }
 </style>
-{% endblock %}
-{% block body %}
-  <div class="type-reclamation-container">
-    <h1>TypeReclamation index</h1>
-
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Id</th>
-          <th>Type_reclamation</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for type_reclamation in type_reclamations %}
-          <tr>
-            <td>{{ type_reclamation.id }}</td>
-            <td>{{ type_reclamation.typeReclamation }}</td>
-            <td class="actions">
-              <a href="{{ path('app_type_reclamation_controller_php_show', {'id': type_reclamation.id}) }}">Show</a>
-              <a href="{{ path('app_type_reclamation_controller_php_edit', {'id': type_reclamation.id}) }}">Edit</a>
-            </td>
-          </tr>
-        {% else %}
-          <tr>
-            <td colspan="3" class="no-records">No records found</td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-
-    <a href="{{ path('app_type_reclamation_controller_php_new') }}" class="create-new-link">Create new</a>
-  </div>
 {% endblock %}

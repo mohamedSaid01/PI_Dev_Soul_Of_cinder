@@ -1,34 +1,72 @@
 <?php
 
+// src/Entity/Patient.php
 namespace App\Entity;
 
-use App\Repository\PatientRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: PatientRepository::class)]
+#[ORM\Entity]
 class Patient
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(type: 'integer')]
+    private $id;
 
-    #[ORM\Column]
-    private ?int $user_id = null;
+    #[ORM\OneToOne(targetEntity: User::class, inversedBy: 'patient', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
+    private $user;
+
+    #[ORM\OneToMany(mappedBy: 'patient', targetEntity: RendezVous::class)]
+    private $rendezVous;
+
+    public function __construct()
+    {
+        $this->rendezVous = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getUserId(): ?int
+    public function getUser(): ?User
     {
-        return $this->user_id;
+        return $this->user;
     }
 
-    public function setUserId(int $user_id): static
+    public function setUser(User $user): self
     {
-        $this->user_id = $user_id;
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getRendezVous(): Collection
+    {
+        return $this->rendezVous;
+    }
+
+    public function addRendezVous(RendezVous $rendezVous): self
+    {
+        if (!$this->rendezVous->contains($rendezVous)) {
+            $this->rendezVous[] = $rendezVous;
+            $rendezVous->setPatient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRendezVous(RendezVous $rendezVous): self
+    {
+        if ($this->rendezVous->removeElement($rendezVous)) {
+            // Définir le côté propriétaire à null (si nécessaire)
+            if ($rendezVous->getPatient() === $this) {
+                $rendezVous->setPatient(null);
+            }
+        }
 
         return $this;
     }

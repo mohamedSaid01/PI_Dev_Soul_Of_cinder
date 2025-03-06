@@ -29,12 +29,8 @@ class ReclamationRepository extends ServiceEntityRepository
                ->setParameter('date', $date);
         }
 
-        // Recherche par nom de médecin (si fournie)
-        if ($medecin) {
-            $qb->join('r.medecin', 'm')
-               ->andWhere('m.nom LIKE :medecin')
-               ->setParameter('medecin', '%' . $medecin . '%');
-        }
+
+       
 
         return $qb->getQuery()->getResult();
     }

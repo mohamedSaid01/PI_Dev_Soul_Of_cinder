@@ -1,8 +1,10 @@
-{% extends 'base.html.twig' %}
+{% extends 'baseFrontOffice.html.twig' %}
 
 {% block title %}Gestion des Réclamations{% endblock %}
 
+
 {% block stylesheets %}
+ {{ parent() }}
 <style>
   .reclamation-index-container {
     max-width: 1200px;
@@ -95,7 +97,55 @@
 </style>
 {% endblock %}
 
+
 {% block body %}
+  <main id="main" class="main">
+    <body style="background-color: white;">
+        <style>
+            .navbar-nav {
+                display: flex;
+                align-items: center; /* Centre verticalement */
+                justify-content: center; /* Centre horizontalement */
+                width: 100%;
+            }
+            .navbar-nav .nav-item {
+                position: relative;
+                padding-right: 20px; /* Espacement entre les éléments */
+                padding-left: 20px;
+                text-align: center; 
+            }
+
+            .navbar-nav .nav-item:not(:last-child)::after {
+                content: "";
+                position: absolute;
+                top: 50%;
+                right: 0;
+                transform: translateY(-50%);
+                width: 2px;  /* Largeur de la ligne */
+                height: 20px; /* Hauteur de la ligne */
+                background-color: #ccc; /* Couleur de la ligne */
+            }
+
+           
+        </style>
+
+
+
+<form class="search-form mb-3 mb-lg-0" role="search" action="{{ path('reclamation_search') }}" method="GET">
+                            <svg class="search primary-color position-absolute" width="18" height="18">
+                                <use xlink:href="#search"></use>
+                            </svg>
+                            <input class="form-control border-0 ps-4 position-relative" 
+                                    type="search" 
+                                    placeholder="Search.." 
+                                    aria-label="Search"
+                                    id="search-input"
+                                    name="q">
+                        </form>
+
+
+
+
 <div class="container py-4">
     <div class="reclamation-index-container bg-light p-4 rounded shadow">
         <h1> Liste des Réclamations</h1>
@@ -133,10 +183,17 @@
                 <tr>
                     <td>{{ reclamation.description }}</td>
                     <td>{{ reclamation.dateReclamation ? reclamation.dateReclamation|date('Y-m-d H:i:s') : '' }}</td>
-                    <td>{{ reclamation.medecin ? reclamation.medecin.nom : 'N/A' }}</td> {# Utilisation de medecin.nom #}
+                    <td>
+    {% if reclamation.medecin and reclamation.medecin.user %}
+        {{ reclamation.medecin.user.firstName ~ ' ' ~ reclamation.medecin.user.lastName }}
+    {% else %}
+        N/A
+    {% endif %}
+</td>
+
                     <td>
                         {% if reclamation.photo %}
-                            <img src="{{ asset('upload/images/' ~ reclamation.photo) }}" alt="Photo" style="max-width: 100px;">
+                            <img src="{{ asset('uploads/images/' ~ reclamation.photo) }}" alt="Photo" style="max-width: 100px;">
                         {% else %}
                             N/A
                         {% endif %}
@@ -154,8 +211,65 @@
             {% endfor %}
         </tbody>
     </table>
+{# {% for reclamation in reclamations %}
+    <a href="{{ path('app_reponse_controller_php_new', {'id': reclamation.id}) }}" class="btn btn-primary">Ajouter une réponse</a>
+{% endfor %} #}
 
-    <a href="{{ path('app_reclamation_controller_php_new') }}" class="create-new-link">Créer une nouvelle réclamation</a>
+   {% for reclamation in reclamations|slice(0,1) %}
+    <a href="{{ path('app_reclamation_controller_php_new', {'id': reclamation.id}) }}" class="btn btn-primary">Réclamation</a>
+{% endfor %}
+
 </div>
-
+</main>
 {% endblock %}
+
+{% block javascripts %}
+  {% block importmap %}{{ importmap('app') }}{% endblock %}
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('search-input').addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    let query = this.value;
+
+                    fetch('/reclamation/controller/php/reclamations/search?q=' + query, {
+                        method: 'GET',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.text())
+                    .then(data => {
+                        document.getElementById('search-results').innerHTML = data;
+                    });
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('search-by-type').addEventListener('click', function() {
+                const type = document.getElementById('type-select').value;
+
+                if (type) {
+                    fetch(/reclamations/type/${type}, {
+                        method: 'GET',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.text())
+                    .then(data => {
+                        document.getElementById('reclamations-table').innerHTML = data;
+                    });
+                } else {
+                    alert('Veuillez sélectionner un type de réclamation.');
+                }
+            });
+        });
+
+
+            function toggleNotificationPopup() {
+                const popup = document.getElementById('notificationPopup');
+                popup.classList.toggle('active');
+            }
+        </script>
+  {% endblock %}

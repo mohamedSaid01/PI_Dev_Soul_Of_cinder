@@ -20,6 +20,192 @@
   <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800;900&amp;display=swap"
     rel="stylesheet">
+            <link href="{{ asset('assetsBackOffice/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+            
+
+<style>
+.notification-icon {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        cursor: pointer;
+        z-index: 1001;
+    }
+
+    .notification-icon svg {
+        width: 24px;
+        height: 24px;
+        fill: #007bff; /* Couleur bleue */
+    }
+
+    /* Notification Popup */
+    .notification-popup {
+        display: none;
+        position: fixed;
+        top: 60px;
+        right: 20px;
+        width: 300px;
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+        z-index: 1000;
+    }
+
+    .notification-popup.active {
+        display: block;
+    }
+
+    .notification-popup h3 {
+        margin: 0 0 10px 0;
+        font-size: 18px;
+        color: #333;
+    }
+
+    .notification-popup button {
+        font-size: 18px;
+        color: #666;
+    }
+
+    /* Notification Item */
+    .notification-item {
+        margin-bottom: 10px;
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .notification-item:last-child {
+        border-bottom: none;
+    }
+
+    .notification-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    .notification-header svg {
+        width: 20px;
+        height: 20px;
+        fill: #007bff; /* Couleur bleue */
+        margin-right: 8px;
+    }
+
+    .notification-title {
+        font-size: 16px;
+        font-weight: bold;
+        color: #007bff; /* Couleur bleue */
+    }
+
+    .notification-body {
+        font-size: 14px;
+        color: #333;
+        margin-bottom: 8px;
+    }
+
+    .notification-date {
+        font-size: 12px;
+        color: #666;
+        text-align: right;
+    }
+
+    /* Flash Messages */
+    .flash-success {
+        color: #28a745;
+    }
+
+    .flash-error {
+        color: #dc3545;
+    }
+            .notification-card {
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                padding: 16px;
+                margin-bottom: 16px;
+                background-color: #f9f9f9;
+            }
+            .notification-card.unread {
+                background-color: #e3f2fd;
+            }
+            .notification-card .date {
+                font-size: 0.9em;
+                color: #666;
+            }
+            .notification-card .actions {
+                margin-top: 8px;
+            }
+
+            /* Notification logo styling */
+            .notification-icon {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                cursor: pointer;
+                font-size: 24px;
+                color: #007bff;
+                z-index: 1001;
+            }
+
+            /* Mini-page styling */
+            .notification-popup {
+                display: none;
+                position: fixed;
+                top: 60px;
+                right: 20px;
+                width: 300px;
+                background-color: white;
+                border: 1px solid #ddd;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                padding: 15px;
+                z-index: 1000;
+            }
+
+            .notification-popup.active {
+                display: block;
+            }
+
+            .notification-item {
+                margin-bottom: 10px;
+                padding: 10px;
+                border-bottom: 1px solid #eee;
+            }
+
+            .notification-item:last-child {
+                border-bottom: none;
+            }
+
+            /* Additional CSS for notification popup */
+            .notification-popup {
+                background-color: #f9f9f9;
+                border-radius: 8px;
+                padding: 10px;
+            }
+
+            .notification-item {
+                background-color: white;
+                padding: 10px;
+                margin-bottom: 10px;
+                border-radius: 4px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .flash-success {
+                color: #28a745;
+            }
+
+            .flash-error {
+                color: #dc3545;
+            }
+</style>
+
+
+
+
+
+
+
+
 
   {% endblock %} {# Fin du bloc stylesheets #}
 
@@ -33,27 +219,16 @@
   <script type="text/javascript" src="{{ asset('assetsFrontOffice/js/plugins.js') }}"></script>
   <script type="text/javascript" src="{{ asset('assetsFrontOffice/js/script.js') }}"></script>
   <script src="{{ asset('assetsFrontOffice/js/iconify-icon.min.js') }}"></script>
-  <script>
-document.getElementById('search-input').addEventListener('input', function() {
-    let query = this.value;
-
-    fetch('/reclamation/search?q=' + query, {
-        method: 'GET',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-    })
-    .then(response => response.text())
-    .then(data => {
-        document.getElementById('search-results').innerHTML = data;
-    });
-});</script>
   {% endblock %}
 </head>
 
 <body data-bs-spy="scroll" data-bs-target="#header-nav" tabindex="0">
   
-
+<div class="notification-icon" onclick="toggleNotificationPopup()">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#007bff">
+        <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.93 6 11v5l-2 2v1h16v-1l-2-2z"/>
+    </svg>
+</div>
   <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
     <symbol xmlns="http://www.w3.org/2000/svg" id="navbar-icon" viewBox="0 0 16 16">
       <path
@@ -154,23 +329,111 @@ document.getElementById('search-input').addEventListener('input', function() {
           </div>
           <div class="col-lg-4 col-md-4 d-md-block d-sm-none">
             <ul class="contact-list d-flex justify-content-lg-end flex-wrap list-unstyled m-0">
-              <li class="pe-5 pe-lg-0 pe-xxl-5 pb-3 pb-lg-0">
-                <svg class="location primary-color" width="24" height="24">
-                  <use xlink:href="#location"></use>
-                </svg>123 Arling, Miola, NY
-              </li>
               <li class="ps-xl-3">
                 <svg class="phone primary-color" width="24" height="24">
                   <use xlink:href="#phone"></use>
-                </svg>(+487) 384 9452
+                </svg>70 685 685
               </li>
             </ul>
           </div>
-          <div class="col-lg-3 col-md-4 col-sm-6">
-            <div class="btn-book text-end">
-              <a href="booking.html" class="btn btn-medium btn-outline-primary btn-pill text-uppercase">Book Now</a>
+
+ {% block importmap %}{{ importmap('app') }}{% endblock %}
+<!-- Mini-page for Notifications -->
+<div class="notification-popup" id="notificationPopup">
+    <h3>Notifications <button onclick="toggleNotificationPopup()" style="float: right; background: none; border: none; cursor: pointer;">×</button></h3>
+    <div id="notificationContent">
+        {% for type, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="notification-item flash-{{ type }}">
+                    <div class="notification-header">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#007bff">
+                            <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.93 6 11v5l-2 2v1h16v-1l-2-2z"/>
+                        </svg>
+                        <span class="notification-title">Réponse de réclamation</span>
+                    </div>
+                    <div class="notification-body">
+                        {{ message }}
+                    </div>
+                    <div class="notification-date">
+                        {{ "now"|date('Y-m-d H:i:s') }}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="notification-item">
+                <div class="notification-body">
+                    Aucune nouvelle notification.
+                </div>
             </div>
-          </div>
+        {% endfor %}
+    </div>
+</div>
+
+        <!-- JavaScript to Toggle the Mini-page -->
+        <script>
+            function toggleNotificationPopup() {
+                const popup = document.getElementById('notificationPopup');
+                popup.classList.toggle('active');
+            }
+        </script>
+
+
+
+<div class="col-lg-3 col-md-4 col-sm-6">
+    {% if not is_granted('IS_AUTHENTICATED_FULLY') %}
+        <!-- Afficher les boutons de connexion et d'inscription si l'utilisateur n'est pas connecté -->
+        <div class="btn-book text-end">
+            <a href="{{ path('app_login') }}" class="btn btn-sm btn-outline-primary btn-pill text-uppercase">Login</a>
+            <a href="{{ path('choix_inscription') }}" class="btn btn-sm btn-outline-primary btn-pill text-uppercase">Inscription</a>
+        </div>
+    {% else %}
+        <!-- Afficher le menu de profil si l'utilisateur est connecté -->
+        <li class="nav-item dropdown pe-3">
+            <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                {# <img src="{{ asset('assetsBackOffice/img/profile-img.jpg') }}" alt="Profile" class="rounded-circle"> #}
+                <span class="d-none d-md-block dropdown-toggle ps-5" style="color: #00B4D8;">
+                    {{ app.user.firstName }} {{ app.user.lastName }}
+                </span>
+            </a><!-- End Profile Image Icon -->
+
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                <li class="dropdown-header">
+                    <h6>{{ app.user.firstName }} {{ app.user.lastName }}</h6>
+                </li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+
+                <li>
+                    <a class="dropdown-item d-flex align-items-center" href="{{ path('profile_patient') }}">
+                        <i class="bi bi-person"></i>
+                        <span>My Profile</span>
+                    </a>
+                </li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+
+                <li>
+                    <a class="dropdown-item d-flex align-items-center" href="{{ path('profile_patient') }}">
+                        <i class="bi bi-gear"></i>
+                        <span>Account Settings</span>
+                    </a>
+                </li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+
+                <li>
+                    <a class="dropdown-item d-flex align-items-center" href="{{ path('app_logout') }}">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Sign Out</span>
+                    </a>
+                </li>
+            </ul><!-- End Profile Dropdown Items -->
+        </li><!-- End Profile Nav -->
+    {% endif %}
+</div>
         </div>
       </div>
     </nav>
@@ -189,74 +452,48 @@ document.getElementById('search-input').addEventListener('input', function() {
               <a class="nav-link text-dark active p-0 mt-3 mt-lg-0" aria-current="page" href="#intro">Home</a>
             </li>
             <li class="nav-item ps-4 pe-4 border-right">
-              <a class="nav-link text-dark p-0" href="#about-us">About</a>
+              <a class="nav-link text-dark p-0" href="{{ path('app_produit_show') }}">Products</a>
+            </li>
+            {% if app.user is not null %}
+            <li class="nav-item ps-4 pe-4 border-right">
+              <a class="nav-link text-dark p-0" href="{{path('mes_consultations')}}">Consultations</a> 
             </li>
             <li class="nav-item ps-4 pe-4 border-right">
-              <a class="nav-link text-dark p-0" href="#our-services">Services</a>
+              <a href="{{ path('liste_medecins') }}" class="nav-link text-dark p-0" >Liste des Médecins</a>
+            </li>
+            {% endif %}
+<li class="nav-item ps-4 pe-4 border-right">
+              <a href="{{ path('front_medecin_event_index') }}">Events</a>
             </li>
             <li class="nav-item ps-4 pe-4 border-right">
-              <a class="nav-link text-dark p-0" href="#book-appointment">Booking</a>
+              <a class="nav-link text-dark p-0" href="{{ path('app_front_list') }}">Posts</a>
             </li>
+            {% if app.user is not null %}
             <li class="nav-item ps-4 pe-4 border-right">
-              <a class="nav-link text-dark p-0" href="#our-team">Team</a>
+              <a class="nav-link text-dark p-0" href="{{ path('app_reclamation_controller_php_index') }}">Reclamations</a>
             </li>
-            <li class="nav-item ps-4 pe-4 border-right">
-              <a class="nav-link text-dark p-0" href="#faqs">Faqs</a>
-            </li>
-            <li class="nav-item ps-4 pe-4 border-right">
-            <a class="nav-link text-dark p-0" href="{{ path('app_reclamation_controller_php_index') }}">Reclamation</a>
-            </li>
-            <li class="nav-item ps-4 pe-3 dropdown border-right">
-              <a class="nav-link text-dark p-0 dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
-                aria-expanded="false">Pages <iconify-icon icon="iconamoon:arrow-down-2-fill"></iconify-icon> </a>
-              <ul class="dropdown-menu">
-                <li class="py-1"><a href="about.html" class="dropdown-item text-uppercase">About <span
-                      class="badge bg-secondary">Pro</span></a></li>
-                <li class="py-1"><a href="blog.html" class="dropdown-item text-uppercase">Blog <span
-                      class="badge bg-secondary">Pro</span></a></li>
-                <li class="py-1"><a href="blog-single.html" class="dropdown-item text-uppercase">Blog-Single <span
-                      class="badge bg-secondary">Pro</span></a></li>
-                <li class="py-1"><a href="booking.html" class="dropdown-item text-uppercase">Booking <span
-                      class="badge bg-secondary">Pro</span></a></li>
-                <li class="py-1"><a href="services.html" class="dropdown-item text-uppercase">Services <span
-                      class="badge bg-secondary">Pro</span></a></li>
-                <li class="py-1"><a href="departments.html" class="dropdown-item text-uppercase">Departments
-                    <span class="badge bg-secondary">Pro</span></a></li>
-                <li class="py-1"><a href="gallery.html" class="dropdown-item text-uppercase">Gallery <span
-                      class="badge bg-secondary">Pro</span></a></li>
-                <li class="py-1"><a href="pricing.html" class="dropdown-item text-uppercase">Pricing <span
-                      class="badge bg-secondary">Pro</span></a></li>
-                <li class="py-1"><a href="contact.html" class="dropdown-item text-uppercase">Contact <span
-                      class="badge bg-secondary">Pro</span></a></li>
-                <li class="py-1"><a href="team.html" class="dropdown-item text-uppercase">Our Team <span
-                      class="badge bg-secondary">Pro</span></a></li>
-                <li class="py-1"><a href="review.html" class="dropdown-item text-uppercase">Reviews <span
-                      class="badge bg-secondary">Pro</span></a></li>
-                <li class="py-1"><a href="faq.html" class="dropdown-item text-uppercase">FAQs <span
-                      class="badge bg-secondary">Pro</span></a></li>
-              </ul>
-            </li>
-            <li class="nav-item ps-4 pe-4 ">
-              <a class="nav-link get-pro text-dark fw-bold p-0" href="https://templatesjungle.gumroad.com/l/free-insove-medical-healthcare-bootstrap-5-html-website-template">GET PRO</a>
-            </li>
+            {% endif %}
+{% if app.user is not null %}
+    <!-- Afficher le lien "Profil" si l'utilisateur est connecté -->
+    <li class="nav-item ps-4 pe-4 border-right">
+        <a class="nav-link text-dark p-0" href="{{ path('profile_patient') }}">My profile</a>
+    </li>
+{% endif %}
           </ul>
           <form class="search-form mb-3 mb-lg-0" role="search">
             <svg class="search primary-color position-absolute" width="18" height="18">
-              <use xlink:href="#search"></use> </svg>
-              <input class="form-control border-0 ps-4 position-relative" 
-           type="search" 
-           placeholder="Search.." 
-           aria-label="Search"
-           id="search-input">
+              <use xlink:href="#search"></use>
+            </svg>
+            <input class="form-control border-0 ps-4 position-relative" type="search" placeholder="Search.."
+              aria-label="Search">
           </form>
-          <div id="search-results"></div>
         </div>
       </div>
     </nav>
   </header>
 {% endblock %}
 
-  <section id="intro" class="position-relative overflow-hidden">
+  {# <section id="intro" class="position-relative overflow-hidden">
     <div class="banner">
       <img src={{ asset('assetsFrontOffice/images/banner-image.jpg')}} alt="banner" class="img-fluid">
       <div class="container">
@@ -326,9 +563,9 @@ document.getElementById('search-input').addEventListener('input', function() {
 
       </div>
     </div>
-  </section>
+  </section> #}
 
-  <section id="our-services"
+  {# <section id="our-services"
     style="background-image: url('{{ asset('assetsFrontOffice/images/services-bg.jpg') }}'); background-repeat: no-repeat; background-position: center; background-position: top;">
     <div class="container">
       <div class="row">
@@ -526,9 +763,9 @@ document.getElementById('search-input').addEventListener('input', function() {
         </div>
       </div>
     </div>
-  </section>
+  </section> #}
 
-  <section id="our-team" class="padding-large">
+  {# <section id="our-team" class="padding-large">
     <div class="container">
       <div class="row">
         <div class="display-header mb-5">
@@ -877,9 +1114,9 @@ document.getElementById('search-input').addEventListener('input', function() {
         </div>
       </div>
     </div>
-  </section>
+  </section> #}
 
-  <section id="latest-blog" class="padding-large">
+  {# <section id="latest-blog" class="padding-large">
     <div class="container">
       <div class="row">
         <div class="display-header">
@@ -978,9 +1215,9 @@ document.getElementById('search-input').addEventListener('input', function() {
         </div>
       </div>
     </div>
-  </section>
+  </section> #}
 
-  <section id="subscribe" class="d-flex align-items-center"
+  {# <section id="subscribe" class="d-flex align-items-center"
     style="background-image: url('{{ asset('assetsFrontOffice/images/subscribe-bg.jpg') }}'); background-repeat: no-repeat;background-size: cover; height: 444px;">
     <div class="container">
       <div class="row align-items-center">
@@ -1004,7 +1241,7 @@ document.getElementById('search-input').addEventListener('input', function() {
         </div>
       </div>
     </div>
-  </section>
+  </section> #}
 
   {% block body %}
 {% endblock %}
@@ -1016,25 +1253,25 @@ document.getElementById('search-input').addEventListener('input', function() {
         <div class="col-lg-4 col-md-6 col-sm-6 pb-3">
           <div class="footer-menu">
             <img src={{ asset('assetsFrontOffice/images/logo.svg')}} alt="logo"  width="150">
-            <p>Elit adipi massa diam in dignissim. Sagittis pulvinar ut dis venenatis nunc nunc.</p>
+            <p>Our application is designed to simplify the management of your categories and products, offering an intuitive interface and powerful features for an optimal user experience.</p>
             <div class="contact-item">
               <p>
                 <svg class="location primary-color" width="25" height="25">
                   <use xlink:href="#location"></use>
                 </svg>
-                <span>123 Arling, Miola, NY</span>
+                <span>Pôle Technologique El Ghazela, Ariana, Tunisia</span>
               </p>
               <p>
                 <svg class="email primary-color" width="25" height="25">
                   <use xlink:href="#email"></use>
                 </svg>
-                <a href="mailto:">Info@yourinfo.com</a>
+                <a href="mailto:">sahateck@gmail.com</a>
               </p>
               <p>
                 <svg class="phone primary-color" width="25" height="25">
                   <use xlink:href="#phone"></use>
                 </svg>
-                <span>(+487) 384 9452</span>
+                <span>70 685 685</span>
               </p>
               <ul class="social-links list-unstyled d-flex mt-3">
                 <li>
@@ -1077,7 +1314,7 @@ document.getElementById('search-input').addEventListener('input', function() {
             </div>
           </div>
         </div>
-        <div class="col-lg-4 col-md-6 col-sm-6 pb-3">
+        {# <div class="col-lg-4 col-md-6 col-sm-6 pb-3">
           <div class="footer-menu">
             <h5 class="widget-title pb-2 fw-semibold">Quick Links</h5>
             <ul class="menu-list list-unstyled">
@@ -1110,7 +1347,7 @@ document.getElementById('search-input').addEventListener('input', function() {
               </li>
             </ul>
           </div>
-        </div>
+        </div> #}
         <div class="col-lg-4 col-md-6 col-sm-6 pb-3">
           <div class="footer-menu">
             <h5 class="widget-title fw-semibold">Opening Hours</h5>
@@ -1136,8 +1373,7 @@ document.getElementById('search-input').addEventListener('input', function() {
         </div>
       </div>
       <div class="d-md-flex text-center justify-content-between border-top mt-5 py-4">
-        <p>© 2023 Insove - All rights reserved</p>
-        <p>Free HTML Templates by: <a href="https://templatesjungle.com/" class="fw-semibold"> TemplatesJungle</a></p>
+        <p>&copy; {{ "now"|date("Y") }} <strong><span>SAHATECK</span></strong>. - All rights reserved</p>
       </div>
     </div>
   </footer>

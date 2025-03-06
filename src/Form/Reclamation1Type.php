@@ -35,7 +35,7 @@ class Reclamation1Type extends AbstractType
                         ])
                         ->add('medecin', EntityType::class, [ // Use 'medecin' instead of 'medecin_id'
                             'class' => Medecin::class,
-                            'choice_label' => 'nom',
+                            // 'choice_label' => 'nom',
                             'placeholder' => 'Select a medecin',
                             'required' => false,
                         ])

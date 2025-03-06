@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Reponse;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use App\Entity\Patient;
 
 /**
  * @extends ServiceEntityRepository<Reponse>
@@ -14,6 +15,15 @@ class ReponseRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Reponse::class);
+    }
+
+    public function findByPatient(Patient $patient)
+    {
+        return $this->createQueryBuilder('r')
+            ->andWhere('r.patient = :patient')
+            ->setParameter('patient', $patient)
+            ->getQuery()
+            ->getResult();
     }
     
 //    /**

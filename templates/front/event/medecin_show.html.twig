@@ -1,0 +1,207 @@
+{% extends 'baseFrontOffice.html.twig' %}
+
+{% block title %}SAHATECH - {{ event.title }}{% endblock %}
+
+{% block body %}
+<!-- Intégration des styles Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+
+<style>
+    /* Conteneur principal */
+    .event-container {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        margin-top: 30px;
+    }
+
+    /* Section des détails */
+    .event-details {
+        flex: 1;
+        max-width: 45%;
+        margin-right: 20px;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .event-details h1 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .event-details p {
+        font-size: 1.2rem;
+        color: #555;
+        margin-bottom: 15px;
+    }
+
+    .event-details .btn {
+        margin-top: 15px;
+    }
+
+    /* Conteneur de la carte */
+    #event-map {
+        flex: 1;
+        max-width: 45%;
+        height: 300px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<section class="event-page">
+    <!-- Bannière avec l'affiche -->
+    <div class="event-banner">
+        <img src="{{ asset('uploads/affiches/' ~ event.affiche) }}" alt="Affiche de {{ event.title }}" style="max-height: 400px; width: 100%; object-fit: contain;">
+    </div>
+
+    <!-- Conteneur principal -->
+    <div class="container event-container">
+        <!-- Détails de l'événement -->
+        <div class="event-details">
+            <h1>{{ event.title }}</h1>
+            <p><strong>Date de début :</strong> {{ event.startDate|date('d/m/Y H:i') }}</p>
+            <p><strong>Date de fin :</strong> {{ event.endDate|date('d/m/Y H:i') }}</p>
+            <p><strong>Lieu :</strong> {{ event.location }}</p>
+            <p>{{ event.description }}</p>
+            {% if is_granted('ROLE_USER') %}
+                {% if event.isArchived %}
+                    <button class="btn btn-secondary" disabled>Terminé</button>
+                {% else %}
+                    {% set deja_inscrit = false %}
+
+                    {% for inscription in event.inscriptions %}
+                        {% if inscription.user.id == app.user.id %}
+                            {% set deja_inscrit = true %}
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if deja_inscrit %}
+                        <button class="btn btn-danger desinscrire" data-id="{{ event.id }}" style="display: inline-block;">Se désinscrire</button>
+                        <button class="btn btn-success inscrire" data-id="{{ event.id }}" style="display: none;">S'inscrire</button>
+                    {% else %}
+                        {% if event.placesDisponibles > 0 %}
+                            <button class="btn btn-success inscrire" data-id="{{ event.id }}" style="display: inline-block;">S'inscrire</button>
+                            <button class="btn btn-danger desinscrire" data-id="{{ event.id }}" style="display: none;">Se désinscrire</button>
+                        {% else %}
+                            <button class="btn btn-secondary" disabled>Complet</button>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+            <a href="{{ path('front_medecin_event_index') }}" class="btn btn-success">Retour à la liste</a>
+
+
+
+
+        </div>
+
+        <!-- Carte Leaflet -->
+        <div id="event-map"></div>
+    </div>
+
+</section>
+
+<!-- Intégration de Leaflet.js -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+<script>
+    // Initialisation de la carte
+    const eventLatitude = {{ event.latitude|default(0) }}; // Latitude de l'événement
+    const eventLongitude = {{ event.longitude|default(0) }}; // Longitude de l'événement
+    const eventLocation = "{{ event.location }}"; // Lieu de l'événement
+
+    const map = L.map('event-map').setView([eventLatitude, eventLongitude], 13); // Vue initiale de la carte
+
+    // Chargement de la couche de tuiles (OpenStreetMap)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Ajout d'un marqueur
+    L.marker([eventLatitude, eventLongitude]).addTo(map)
+        .bindPopup(`<strong>${eventLocation}</strong>`)
+        .openPopup();
+</script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll('.inscrire').forEach(button => {
+                button.addEventListener('click', function () {
+                    const eventId = this.getAttribute('data-id');
+
+                    Swal.fire({
+                        title: "Confirmer l'inscription?",
+                        text: "Une confirmation de votre participation sera envoyée à votre email.",
+                        icon: "question",
+                        showCancelButton: true,
+                        confirmButtonText: "Oui, s'inscrire",
+                        cancelButtonText: "Annuler"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            fetch(`/inscription/event/${eventId}`, {
+                                method: 'POST',
+                                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        Swal.fire("Succès!", "Inscription réussie!", "success");
+
+                                        // ✅ Mise à jour de l'affichage des boutons
+                                        button.style.display = "none";
+                                        document.querySelector(`.desinscrire[data-id="${eventId}"]`).style.display = "inline-block";
+                                    } else {
+                                        Swal.fire("Erreur!", data.message, "error");
+                                    }
+                                })
+                                .catch(error => Swal.fire("Erreur!", "Un problème est survenu.", "error"));
+                        }
+                    });
+                });
+            });
+
+            document.querySelectorAll('.desinscrire').forEach(button => {
+                button.addEventListener('click', function () {
+                    const eventId = this.getAttribute('data-id');
+
+                    Swal.fire({
+                        title: "Confirmer la désinscription?",
+                        text: "Voulez-vous vraiment vous désinscrire?",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: "Oui, me désinscrire",
+                        cancelButtonText: "Annuler"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            fetch(`/inscription/event/${eventId}/desinscription`, {
+                                method: 'POST',
+                                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        Swal.fire("Succès!", "Désinscription réussie!", "success");
+
+                                        // ✅ Mise à jour de l'affichage des boutons
+                                        button.style.display = "none";
+                                        document.querySelector(`.inscrire[data-id="${eventId}"]`).style.display = "inline-block";
+                                    } else {
+                                        Swal.fire("Erreur!", data.message, "error");
+                                    }
+                                })
+                                .catch(error => Swal.fire("Erreur!", "Un problème est survenu.", "error"));
+                        }
+                    });
+                });
+            });
+        });
+
+
+    </script>
+
+
+{% endblock %}

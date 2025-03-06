@@ -1,0 +1,287 @@
+{% extends 'baseBackOffice.html.twig' %}
+
+{% block body %}
+  <div class="main-content">
+    <div class="container-fluid mt-5">
+      <div class="row justify-content-center">
+        <div class="col-12">
+          <div class="card shadow-lg border-0 rounded-4">
+            <div class="card-body p-4">
+              <h2 class="text-center text-primary fw-bold mb-4">📝 Post Management</h2>
+
+              <!-- Category Filter Dropdown -->
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted fs-5">Total Posts: <strong>{{ posts|length }}</strong></span>
+                <form action="{{ path('post_index') }}" method="get" class="d-inline-block">
+                  <label for="categoryFilter" class="form-label me-2">Filter by Category:</label>
+                  <select name="category" id="categoryFilter" class="form-select d-inline-block w-auto" onchange="this.form.submit()">
+                    <option value="">All Categories</option>
+                    {% for category in categories %}
+                      <option value="{{ category.id }}" {% if selectedCategory == category.id %}selected{% endif %}>
+                        {{ category.name }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </form>
+              </div>
+
+              <!-- Table -->
+              <div class="table-responsive">
+                <table class="table table-hover table-striped table-bordered text-center align-middle">
+                  <thead class="table-dark">
+                    <tr>
+                      <th>Title</th>
+                      <th>Type</th>
+                      <th>Created At</th>
+                      <th>Author</th>
+                      <th>Enable</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for post in posts %}
+                      <tr class="table-row">
+                        <td>{{ post.title }}</td>
+                        <td>{{ post.type }}</td>
+                        <td>{{ post.createdAt|date('Y-m-d H:i:s') }}</td>
+                        <td>{{ post.author.firstName ? post.author.firstName : 'Non spécifier' }}</td>
+                        <td>
+                            <form action="{{ path('post_toggle_enable', {'id': post.id}) }}" method="post">
+                                <input type="hidden" name="_token" value="{{ csrf_token('toggle' ~ post.id) }}">
+                                <button type="submit" class="btn {{ post.enabled ? 'btn-success' : 'btn-danger' }}">
+                                    {{ post.enabled ? 'Enabled' : 'Disabled' }}
+                                </button>
+                            </form>
+                        </td>
+                        <td>
+                          <div class="d-flex justify-content-center gap-2">
+                            <button class="btn btn-info btn-sm rounded-3 shadow-sm" onclick="showDetails({{ post.id }})" style="background-color: #ADD8E6; border-color: #ADD8E6; color: white;">
+                              <i class="fas fa-eye"></i> View
+                            </button>
+                            <form class="delete-form" action="{{ path('post_delete', {'id': post.id}) }}" method="post">
+                              <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ post.id) }}">
+                              <button type="button" class="btn btn-danger btn-sm rounded-3 shadow-sm delete-btn">
+                                  <i class="fas fa-trash"></i> Delete
+                              </button>
+                            </form>
+                          </div>
+                        </td>
+                      </tr>
+
+                      <!-- Hidden Modal for Viewing Details -->
+                      <tr id="details-{{ post.id }}" class="details-row" style="display: none;">
+                        <td colspan="6">
+                          <div class="card p-3">
+                            <h5>Description:</h5>
+                            <p>{{ post.description }}</p>
+                            <h5>Image:</h5>
+                            {% if post.image %}
+                                <img src="{{ asset('uploads/' ~ post.image) }}" alt="Post Image" class="img-fluid rounded shadow-sm" style="max-width: 200px;">
+                            {% else %}
+                                <p class="text-muted">Non spécifié</p>
+                            {% endif %}
+                          </div>
+                        </td>
+                      </tr>
+                    {% else %}
+                      <tr>
+                        <td colspan="6" class="text-muted py-4">
+                          <i class="fas fa-exclamation-circle fa-2x mb-3"></i><br>
+                          No posts found.
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    // Function to show/hide details
+    function showDetails(postId) {
+      var detailsRow = document.getElementById('details-' + postId);
+      if (detailsRow.style.display === "none" || !detailsRow.style.display) {
+        detailsRow.style.display = "table-row"; // Show the details row
+      } else {
+        detailsRow.style.display = "none"; // Hide the details row
+      }
+    }
+
+    // Function to handle post deletion
+   document.querySelectorAll('.delete-btn').forEach(button => {
+    button.addEventListener('click', function () {
+        const form = this.closest('.delete-form'); // Récupérer le formulaire parent
+        const actionUrl = form.getAttribute('action'); // Récupérer l'URL de l'action
+        const csrfToken = form.querySelector('input[name="_token"]').value; // Récupérer le token CSRF
+
+        Swal.fire({
+            title: 'Confirm Deletion',
+            text: 'Are you sure you want to delete this post? This action is irreversible.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(actionUrl, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ _token: csrfToken }) // Envoyer le token CSRF
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire('Deleted!', data.message, 'success')
+                            .then(() => location.reload()); // Recharger la page en cas de succès
+                    } else {
+                        Swal.fire('Error', data.message, 'error'); // Afficher un message d'erreur
+                    }
+                })
+                .catch(error => {
+                    console.error('Error during deletion:', error);
+                    Swal.fire('Error', 'An error occurred. Please try again.', 'error');
+                });
+            }
+        });
+    });
+});
+  </script>
+
+  <style>
+    /* Main Content */
+    .main-content {
+      margin-left: 300px;
+      padding: 20px;
+    }
+
+    /* Table Responsiveness */
+    .table-responsive {
+      overflow-x: auto;
+      max-width: 100%;
+    }
+
+    .table {
+      width: 100%;
+      table-layout: auto;
+    }
+
+    .table th, .table td {
+      white-space: nowrap; /* Prevents text from wrapping */
+    }
+
+    /* Hover Effect */
+    .table-row:hover {
+      background-color: #f8f9fa !important;
+      transition: background-color 0.3s ease;
+    }
+
+    /* Buttons */
+    .btn {
+      transition: transform 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+    }
+
+    .d-flex.gap-2 {
+      gap: 0.5rem;
+    }
+
+    /* Enable/Disable Badge */
+    .badge {
+      font-size: 0.9rem;
+      padding: 5px 10px;
+      border-radius: 5px;
+    }
+
+    /* Details Row Styling */
+    .details-row {
+      background-color: #f8f9fa;
+    }
+
+    /* Alternating Row Colors */
+    .table-striped tbody tr:nth-of-type(odd) {
+      background-color: #f8f9fa;
+    }
+
+    .table-striped tbody tr:nth-of-type(even) {
+      background-color: #ffffff;
+    }
+
+    /* Image Styling */
+    .details-row img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: auto;
+      border-radius: 5px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+      .main-content {
+        margin-left: 0; /* Removes fixed margin */
+        padding: 10px;
+      }
+
+      .d-flex.justify-content-between {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .btn {
+        width: 100%;
+        margin-top: 5px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .table th, .table td {
+        font-size: 14px;
+        padding: 10px;
+      }
+
+      .table-responsive {
+        overflow-x: auto;
+      }
+
+      .btn {
+        font-size: 14px;
+        padding: 8px;
+      }
+
+      .details-row .card {
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .btn {
+        font-size: 12px;
+        padding: 6px;
+      }
+
+      .table th, .table td {
+        font-size: 12px;
+        padding: 8px;
+      }
+    }
+  </style>
+{% endblock %}

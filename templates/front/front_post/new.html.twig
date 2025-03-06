@@ -1,0 +1,190 @@
+{% extends 'baseFrontOffice.html.twig' %}
+
+{% block title %}Créer un Post{% endblock %}
+
+{% block body %}
+<div class="post-container">
+    <h1 class="text-center mb-4">Créer un Post</h1>
+
+    {{ form_start(form) }}
+        <div class="form-group">
+            {{ form_label(form.title, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.title, {'attr': {'class': 'form-control', 'placeholder': 'Titre du post'}}) }}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.description, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 5, 'placeholder': 'Description du post'}}) }}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.type, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.type, {'attr': {'class': 'form-control'}}) }}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.image, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.image, {'attr': {'class': 'form-control-file'}}) }}
+            <small class="form-text text-muted">Formats supportés: JPG, PNG, GIF</small>
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.category, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.category, {'attr': {'class': 'form-control'}}) }}
+        </div>
+
+        <button class="btn btn-primary btn-block">Créer</button>
+    {{ form_end(form) }}
+
+    <a href="{{ path('app_front_list') }}" class="btn btn-secondary btn-block mt-3">Retour à la liste</a>
+</div>
+
+<style>
+    /* Container styling */
+    .post-container {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 30px;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+    }
+
+    /* Form group spacing */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    /* Label styling */
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    /* Input and textarea styling */
+    .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        font-size: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: #007bff;
+        outline: none;
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    /* File input styling */
+    .form-control-file {
+        display: block;
+        width: 100%;
+        padding: 0.75rem;
+        font-size: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+        transition: border-color 0.3s ease;
+    }
+
+    .form-control-file:focus {
+        border-color: #007bff;
+    }
+
+    /* Button styling */
+    .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background-color: #545b62;
+        transform: translateY(-2px);
+    }
+
+    .btn-block {
+        width: 100%;
+        display: block;
+    }
+
+    /* Image preview styling */
+    .img-preview {
+        margin-top: 10px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        max-width: 100%;
+        height: auto;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .post-container {
+            padding: 20px;
+        }
+
+        .form-control {
+            padding: 0.5rem;
+        }
+
+        .btn {
+            padding: 10px 20px;
+        }
+    }
+</style>
+
+<script>
+    // Optional: Add JavaScript for image preview
+    document.addEventListener('DOMContentLoaded', function () {
+        const imageInput = document.querySelector('input[type="file"]');
+        const imagePreview = document.createElement('img');
+        imagePreview.classList.add('img-preview');
+        imagePreview.style.display = 'none';
+        imageInput.parentNode.appendChild(imagePreview);
+
+        imageInput.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                imagePreview.style.display = 'none';
+            }
+        });
+    });
+</script>
+{% endblock %}

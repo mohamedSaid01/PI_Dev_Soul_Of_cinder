@@ -1,0 +1,39 @@
+{% extends 'baseBackOffice.html.twig' %}
+
+{% block title %}Edit Category{% endblock %}
+
+{% block body %}
+  <div class="container mt-5" style="max-width: 60%;">
+    <div class="card shadow-lg border-0 rounded-4">
+      <div class="card-body p-5">
+        <h2 class="mb-4 text-center fw-bold" style="color: #87CEEB;">Edit Category</h2>
+
+        <div class="border-bottom mb-4"></div>
+
+        {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'true'}}) }}
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Category Name</label>
+            {{ form_widget(form.name, {'attr': {'class': 'form-control shadow-sm', 'placeholder': 'Enter category name'}}) }}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Description</label>
+            {{ form_widget(form.description, {'attr': {'class': 'form-control shadow-sm', 'placeholder': 'Enter description', 'rows': '4'}}) }}
+          </div>
+
+          <button class="btn w-100 py-2" style="background-color: #87CEEB; border: 2px solid #4682B4; color: white;">
+            <i class="fas fa-save"></i> Update
+          </button>
+        {{ form_end(form) }}
+      </div>
+    </div>
+
+   <div class="mt-4 d-flex justify-content-between">
+      <a href="{{ path('app_category_index') }}" class="btn btn-outline-secondary fw-bold">
+        <i class="fas fa-arrow-left"></i> Back to List
+      </a>
+       
+    </div>
+  </div>
+ 
+{% endblock %}

@@ -1,0 +1,115 @@
+{% extends 'baseBackOffice.html.twig' %}
+
+{% block title %}Créer un nouvel événement{% endblock %}
+
+{% block body %}
+    <main id="main" class="main">
+
+    <div class="pagetitle">
+        <h1>Créer un nouvel événement</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="">Accueil</a></li>
+                <li class="breadcrumb-item">Événements</li>
+                <li class="breadcrumb-item active">Créer</li>
+            </ol>
+        </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+                        <!-- Titre -->
+                        <div class="form-group">
+                            {{ form_label(form.title, 'Titre') }}
+                            {{ form_widget(form.title, {'attr': {'class': 'form-control ' ~ (form.title.vars.errors|length > 0 ? 'is-invalid' : '')}}) }}
+                        </div>
+
+                        <!-- Description -->
+                        <div class="form-group">
+                            {{ form_label(form.description, 'Description') }}
+                            {{ form_widget(form.description, {'attr': {'class': 'form-control ' ~ (form.description.vars.errors|length > 0 ? 'is-invalid' : '')}}) }}
+                        </div>
+
+                        <!-- Date de début -->
+                        <div class="form-group">
+                            {{ form_label(form.startDate, 'Date de début') }}
+                            {{ form_widget(form.startDate, {'attr': {'class': 'form-control ' ~ (form.startDate.vars.errors|length > 0 ? 'is-invalid' : '')}}) }}
+                        </div>
+
+                        <!-- Date de fin -->
+                        <div class="form-group">
+                            {{ form_label(form.endDate, 'Date de fin') }}
+                            {{ form_widget(form.endDate, {'attr': {'class': 'form-control ' ~ (form.endDate.vars.errors|length > 0 ? 'is-invalid' : '')}}) }}
+                        </div>
+
+                        <!-- Lieu -->
+                        <div class="form-group">
+                            {{ form_label(form.location, 'Lieu') }}
+                            {{ form_widget(form.location, {'attr': {'class': 'form-control ' ~ (form.location.vars.errors|length > 0 ? 'is-invalid' : '')}}) }}
+                        </div>
+
+                        <!-- Latitude -->
+                        <div class="form-group">
+                            {{ form_label(form.latitude, 'Latitude') }}
+                            {{ form_widget(form.latitude, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+
+                        <!-- Longitude -->
+                        <div class="form-group">
+                            {{ form_label(form.longitude, 'Longitude') }}
+                            {{ form_widget(form.longitude, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+
+                        <!-- Places disponibles -->
+                        <div class="form-group">
+                            {{ form_label(form.placesDisponibles, 'Places Disponibles') }}
+                            {{ form_widget(form.placesDisponibles, {'attr': {'class': 'form-control ' ~ (form.placesDisponibles.vars.errors|length > 0 ? 'is-invalid' : '')}}) }}
+                        </div>
+
+                        <!-- Catégorie -->
+                        <div class="form-group">
+                            {{ form_label(form.categorie, 'Catégorie') }}
+                            {{ form_widget(form.categorie, {'attr': {'class': 'form-control ' ~ (form.categorie.vars.errors|length > 0 ? 'is-invalid' : '')}}) }}
+                        </div>
+
+                        <!-- Affiche de l'événement -->
+                        <div class="form-group">
+                            {{ form_label(form.afficheFile, 'Affiche de l’événement') }}
+                            <div class="custom-file">
+                                {{ form_widget(form.afficheFile, {'attr': {'class': 'custom-file-input ' ~ (form.afficheFile.vars.errors|length > 0 ? 'is-invalid' : ''), 'id': 'event_afficheFile'}}) }}
+                                <label class="custom-file-label" for="event_afficheFile">Choisir un fichier</label>
+                            </div>
+                        </div>
+
+                        <br>
+                        <button type="submit" class="btn btn-primary">Créer</button>
+                        <a href="{{ path('back_event_index') }}" class="btn btn-secondary">Retour à la liste</a>
+
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SweetAlert pour afficher les erreurs -->
+    {% if errors is defined and errors|length > 0 %}
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                Swal.fire({
+                    title: "Erreur de validation",
+                    html: "{% for error in errors %} <p class='text-danger'><i class='bi bi-exclamation-circle-fill'></i> {{ error }}</p> {% endfor %}",
+                    icon: "error"
+                });
+            });
+        </script>
+    {% endif %}
+
+</main> 
+{% endblock %}

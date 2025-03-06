@@ -1,0 +1,171 @@
+{% extends 'baseBackOffice.html.twig' %}
+
+{% block title %}Edit Category{% endblock %}
+
+{% block body %}
+<main id="main" class="main">
+    <div class="form-container">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="title text-center">Edit Category</h2>
+
+                <div class="border-bottom mb-4"></div>
+
+                {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'true'}}) }}
+                    <div class="mb-3">
+                        <label class="form-label">Category Name</label>
+                        {{ form_widget(form.name, {'attr': {'class': 'form-control' ~ (form.name.vars.errors|length > 0 ? ' is-invalid' : ''), 'placeholder': 'Enter category name'}}) }}
+                        <div class="invalid-feedback">
+                            {{ form_errors(form.name) }} {# Display validation errors for the name field #}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        {{ form_widget(form.description, {'attr': {'class': 'form-control' ~ (form.description.vars.errors|length > 0 ? ' is-invalid' : ''), 'placeholder': 'Enter description', 'rows': '4'}}) }}
+                        <div class="invalid-feedback">
+                            {{ form_errors(form.description) }} {# Display validation errors for the description field #}
+                        </div>
+                    </div>
+
+                    <button class="btn btn-custom w-100 mb-3">
+                        <i class="fas fa-save"></i> Update
+                    </button>
+                {{ form_end(form) }}
+
+                <a href="{{ path('post_category_index') }}" class="btn btn-outline-secondary w-100">
+                    <i class="fas fa-arrow-left"></i> Back to List
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+<style>
+    .main {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 20px;
+        min-height: calc(100vh - 60px);
+    }
+
+    .form-container {
+        width: 100%;
+        max-width: 800px;
+        margin-left: 10%;
+    }
+
+    .card {
+        background: #fff;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        border: none;
+    }
+
+    .card-body {
+        padding: 2.5rem;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        padding: 0.75rem 1rem;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: #87CEEB;
+        box-shadow: 0 0 0 0.2rem rgba(135, 206, 235, 0.25);
+    }
+
+    .btn-custom {
+        background-color: #87CEEB;
+        border: none;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-custom:hover {
+        background-color: #4682B4;
+        transform: translateY(-1px);
+    }
+
+    .btn-outline-secondary {
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .title {
+        color: #87CEEB;
+        font-size: clamp(24px, 4vw, 28px);
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Validation error styling */
+    .invalid-feedback {
+        color: #dc3545; /* Red color for error messages */
+        font-size: 0.875rem; /* Smaller font size */
+        margin-top: 0.25rem; /* Spacing above the error message */
+    }
+
+    .is-invalid {
+        border-color: #dc3545 !important; /* Red border for invalid fields */
+    }
+
+    @media (max-width: 1200px) {
+        .form-container {
+            max-width: 700px;
+        }
+    }
+
+    @media (max-width: 992px) {
+        .form-container {
+            max-width: 600px;
+            margin-left: 5%;
+        }
+        .card-body {
+            padding: 2rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .main {
+            justify-content: center;
+            padding: 15px;
+        }
+        .form-container {
+            margin-left: 0;
+            max-width: 100%;
+            padding: 0 15px;
+        }
+        .card-body {
+            padding: 1.5rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .main {
+            padding: 10px;
+        }
+        .card-body {
+            padding: 1.25rem;
+        }
+        .btn-custom, .btn-outline-secondary {
+            padding: 0.625rem 1.25rem;
+        }
+    }
+</style>
+{% endblock %}

@@ -2,45 +2,9 @@
 
 {% block title %}Reponse index{% endblock %}
 
-{% block body %}
-
-    <h1 class="tt">Reponse index</h1>
-
-    <div class="table-container">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Contenu</th>
-                    <th>Date_reponse</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for reponse in reponses %}
-                <tr>
-                    <td>{{ reponse.contenu }}</td>
-                    
-                    <td>{{ reponse.dateReponse ? reponse.dateReponse|date('Y-m-d H:i:s') : ''}}</td>
-                    <td>
-                        <a href="{{ path('app_reponse_controller_php_show', {'id': reponse.id}) }}">show</a>
-                        <a href="{{ path('app_reponse_controller_php_edit', {'id': reponse.id}) }}">edit</a>
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="4">no records found</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
-    <a href="{{ path('app_reponse_controller_php_new') }}">
-    Ajouter une réponse
-</a>
-{% endblock %}
 
 {% block stylesheets %}
+{{ parent()}}
 <style>
   /* Table styling */
 .table-container {
@@ -109,3 +73,45 @@ a:hover {
 </style>
 {% endblock %}
 
+{% block body %}
+
+    <h1 class="tt">Reponse index</h1>
+
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Contenu</th>
+                    <th>Date_reponse</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for reponse in reponses %}
+                <tr>
+                    <td>{{ reponse.contenu }}</td>
+                    
+                    <td>{{ reponse.dateReponse ? reponse.dateReponse|date('Y-m-d H:i:s') : ''}}</td>
+                    <td>
+                        <a href="{{ path('app_reponse_controller_php_show', {'id': reponse.id}) }}">show</a>
+                        <a href="{{ path('app_reponse_controller_php_edit', {'id': reponse.id}) }}">edit</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% if reclamation is defined and reclamation is not null %}
+    {% for rec in [reclamation]|slice(0, 1) %}
+        <a href="{{ path('app_reponse_controller_php_new', {'id': rec.id}) }}" class="btn btn-primary">réponse</a>
+    {% endfor %}
+{% else %}
+    <p>Aucune réclamation trouvée.</p>
+{% endif %}
+
+{% endblock %}

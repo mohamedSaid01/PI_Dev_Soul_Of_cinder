@@ -1,0 +1,40 @@
+{# templates/pagination/custom_pagination.html.twig #}
+
+<div class="pagination">
+    <ul class="pagination-list">
+        {# Bouton Précédent #}
+        {% if patients.hasPreviousPage %}
+            <li class="pagination-item">
+                <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': patients.getPreviousPage})) }}" class="pagination-link">
+                    &laquo; Précédent
+                </a>
+            </li>
+        {% else %}
+            <li class="pagination-item disabled">
+                <span class="pagination-link">&laquo; Précédent</span>
+            </li>
+        {% endif %}
+
+        {# Pages #}
+        {% for page in patients.getPaginationData.pagesInRange %}
+            <li class="pagination-item {{ page == patients.getCurrentPage ? 'active' : '' }}">
+                <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': page})) }}" class="pagination-link">
+                    {{ page }}
+                </a>
+            </li>
+        {% endfor %}
+
+        {# Bouton Suivant #}
+        {% if patients.hasNextPage %}
+            <li class="pagination-item">
+                <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': patients.getNextPage})) }}" class="pagination-link">
+                    Suivant &raquo;
+                </a>
+            </li>
+        {% else %}
+            <li class="pagination-item disabled">
+                <span class="pagination-link">Suivant &raquo;</span>
+            </li>
+        {% endif %}
+    </ul>
+</div>

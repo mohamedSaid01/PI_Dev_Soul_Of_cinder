@@ -1,0 +1,265 @@
+{# templates/profile/index.html.twig #}
+{% extends 'baseFrontOffice.html.twig' %}
+
+{% block title %}Mon Profil{% endblock %}
+
+{% block body %}
+    <section class="section profile">
+      <div class="row">
+<section id="intro" style="background-color:#E8F0F1;">
+    <div class="container">
+<div class="banner-content padding-large">
+    {# Affichage d'un titre générique pour le profil #}
+    <h1 class="display-3 fw-bold text-dark">Mon Profil</h1>
+    
+    {# Fil d'Ariane dynamique en fonction du rôle de l'utilisateur #}
+    <span class="item">Patient</span>
+</div>
+
+    </div>
+</section>
+
+<div class="col-xl-8 mx-auto"> {# Centrer la carte et limiter la largeur #}
+    <div class="card shadow-sm"> {# Ajout d'une ombre pour un effet visuel #}
+        <div class="card-body pt-4">
+            <!-- Bordered Tabs -->
+            <ul class="nav nav-tabs nav-tabs-bordered justify-content-center"> {# Centrer les onglets #}
+                <li class="nav-item">
+<button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview" style="color: #00B4D8;">
+  Aperçu
+</button>
+
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit" style="color: #00B4D8;">Modifier le profil</button>
+                </li>
+
+                {# Afficher l'onglet Settings uniquement pour les patients #}
+                {% if 'ROLE_USER' in user.roles %}
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-settings" style="color: #00B4D8;">Dossier Médical</button>
+                    </li>
+                {% endif %}
+
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password" style="color: #00B4D8;">Changer le mot de passe</button>
+                </li>
+            </ul>
+
+            <!-- Contenu des onglets -->
+            <div class="tab-content pt-4">
+                <!-- Onglet Aperçu -->
+                <div class="tab-pane fade show active" id="profile-overview">
+                    <h5 class="card-title text-center mb-4">À propos</h5>
+                    <p class="small fst-italic text-center mb-4">Bienvenue sur votre profil. Vous pouvez consulter et modifier vos informations personnelles ici.</p>
+
+                    <h5 class="card-title text-center mb-4">Détails du Profil</h5>
+
+                    <!-- Affichage des informations utilisateur -->
+                    <div class="row mb-3">
+                        <div class="col-lg-3 col-md-4 label fw-bold">Nom Complet</div>
+                        <div class="col-lg-9 col-md-8">{{ user.firstName }} {{ user.lastName }}</div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-lg-3 col-md-4 label fw-bold">Email</div>
+                        <div class="col-lg-9 col-md-8">{{ user.email }}</div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-lg-3 col-md-4 label fw-bold">Téléphone</div>
+                        <div class="col-lg-9 col-md-8">{{ user.phoneNumber }}</div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-lg-3 col-md-4 label fw-bold">Adresse</div>
+                        <div class="col-lg-9 col-md-8">{{ user.adress }}</div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-lg-3 col-md-4 label fw-bold">Âge</div>
+                        <div class="col-lg-9 col-md-8">{{ user.age }}</div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-lg-3 col-md-4 label fw-bold">Genre</div>
+                        <div class="col-lg-9 col-md-8">{{ user.gender ? user.gender.value : 'Non spécifié' }}</div>
+                    </div>
+
+                    {# Afficher le dossier médical si disponible #}
+                    {% if user.medicalFile %}
+                        <div class="row mb-3">
+                            <div class="col-lg-3 col-md-4 label fw-bold">Dossier Médical</div>
+                            <div class="col-lg-9 col-md-8">
+                                <a href="{{ asset('uploads/' ~ user.medicalFile) }}" target="_blank" class="btn btn-primary btn-sm me-2">
+                                    <i class="bi bi-eye"></i> Voir
+                                </a>
+                                <a href="{{ path('download_medical_file', {'filename': user.medicalFile}) }}" class="btn btn-success btn-sm">
+                                    <i class="bi bi-download"></i> Télécharger
+                                </a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="row mb-3">
+                            <div class="col-lg-3 col-md-4 label fw-bold">Dossier Médical</div>
+                            <div class="col-lg-9 col-md-8">
+                                <span class="text-muted">Aucun dossier médical téléversé.</span>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {# Informations supplémentaires pour les médecins #}
+                    {% if 'ROLE_MEDECIN' in user.roles %}
+                        <div class="row mb-3">
+                            <div class="col-lg-3 col-md-4 label fw-bold">Spécialité</div>
+                            <div class="col-lg-9 col-md-8">{{ user.specialite.value }}</div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-lg-3 col-md-4 label fw-bold">Numéro de Licence</div>
+                            <div class="col-lg-9 col-md-8">{{ user.numeroLicence }}</div>
+                        </div>
+                    {% endif %}
+                </div><!-- Fin de l'onglet Aperçu -->
+
+                <!-- Onglet Modifier le profil -->
+                <div class="tab-pane fade" id="profile-edit">
+                    <h5 class="card-title text-center mb-4">Modifier le profil</h5>
+                    {{ form_start(profileForm) }}
+                        <div class="row mb-3">
+                            {{ form_label(profileForm.firstName, null, {'label_attr': {'class': 'col-md-4 col-lg-3 col-form-label fw-bold'}}) }}
+                            <div class="col-md-8 col-lg-9">
+                                {{ form_widget(profileForm.firstName, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            {{ form_label(profileForm.lastName, null, {'label_attr': {'class': 'col-md-4 col-lg-3 col-form-label fw-bold'}}) }}
+                            <div class="col-md-8 col-lg-9">
+                                {{ form_widget(profileForm.lastName, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            {{ form_label(profileForm.email, null, {'label_attr': {'class': 'col-md-4 col-lg-3 col-form-label fw-bold'}}) }}
+                            <div class="col-md-8 col-lg-9">
+                                {{ form_widget(profileForm.email, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            {{ form_label(profileForm.phoneNumber, null, {'label_attr': {'class': 'col-md-4 col-lg-3 col-form-label fw-bold'}}) }}
+                            <div class="col-md-8 col-lg-9">
+                                {{ form_widget(profileForm.phoneNumber, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            {{ form_label(profileForm.adress, null, {'label_attr': {'class': 'col-md-4 col-lg-3 col-form-label fw-bold'}}) }}
+                            <div class="col-md-8 col-lg-9">
+                                {{ form_widget(profileForm.adress, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            {{ form_label(profileForm.age, null, {'label_attr': {'class': 'col-md-4 col-lg-3 col-form-label fw-bold'}}) }}
+                            <div class="col-md-8 col-lg-9">
+                                {{ form_widget(profileForm.age, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            {{ form_label(profileForm.gender, null, {'label_attr': {'class': 'col-md-4 col-lg-3 col-form-label fw-bold'}}) }}
+                            <div class="col-md-8 col-lg-9">
+                                {{ form_widget(profileForm.gender, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                        </div>
+
+                        {% if 'ROLE_MEDECIN' in user.roles %}
+                            <div class="row mb-3">
+                                {{ form_label(profileForm.specialite, null, {'label_attr': {'class': 'col-md-4 col-lg-3 col-form-label fw-bold'}}) }}
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form_widget(profileForm.specialite, {'attr': {'class': 'form-control'}}) }}
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                {{ form_label(profileForm.numeroLicence, null, {'label_attr': {'class': 'col-md-4 col-lg-3 col-form-label fw-bold'}}) }}
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form_widget(profileForm.numeroLicence, {'attr': {'class': 'form-control'}}) }}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                        </div>
+                    {{ form_end(profileForm) }}
+                </div><!-- Fin de l'onglet Modifier le profil -->
+
+                <!-- Onglet Dossier Médical (pour les patients) -->
+                {% if 'ROLE_USER' in user.roles %}
+                    <div class="tab-pane fade" id="profile-settings">
+                        <h5 class="card-title text-center mb-4">Dossier Médical</h5>
+                        {{ form_start(medicalFileForm) }}
+                            <div class="row mb-3">
+                                <label for="medicalFile" class="col-md-4 col-lg-3 col-form-label fw-bold">Dossier Médical</label>
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form_widget(medicalFileForm.medicalFile, {'attr': {'class': 'form-control'}}) }}
+                                    <small class="text-muted">Téléversez votre dossier médical (PDF, JPEG, PNG).</small>
+                                </div>
+                            </div>
+
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                            </div>
+                        {{ form_end(medicalFileForm) }}
+                    </div>
+                {% endif %}
+
+                <!-- Onglet Changer le mot de passe -->
+                <div class="tab-pane fade" id="profile-change-password">
+                    <h5 class="card-title text-center mb-4">Changer le mot de passe</h5>
+                    {{ form_start(changePasswordForm, {'attr': {'class': 'form', novalidate: 'novalidate'}}) }}
+                        <div class="row mb-3">
+                            <div class="col-md-4 col-lg-3 col-form-label fw-bold">
+                                {{ form_label(changePasswordForm.currentPassword) }}
+                            </div>
+                            <div class="col-md-8 col-lg-9">
+                                {{ form_widget(changePasswordForm.currentPassword, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(changePasswordForm.currentPassword) }}
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-4 col-lg-3 col-form-label fw-bold">
+                                {{ form_label(changePasswordForm.newPassword) }}
+                            </div>
+                            <div class="col-md-8 col-lg-9">
+                                {{ form_widget(changePasswordForm.newPassword, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(changePasswordForm.newPassword) }}
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-4 col-lg-3 col-form-label fw-bold">
+                                {{ form_label(changePasswordForm.confirmPassword) }}
+                            </div>
+                            <div class="col-md-8 col-lg-9">
+                                {{ form_widget(changePasswordForm.confirmPassword, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(changePasswordForm.confirmPassword) }}
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-primary">Changer le mot de passe</button>
+                        </div>
+                    {{ form_end(changePasswordForm) }}
+                </div><!-- Fin de l'onglet Changer le mot de passe -->
+            </div><!-- Fin du contenu des onglets -->
+        </div>
+    </div>
+</div>
+      </div>
+    </section>
+{% endblock %}

@@ -84,7 +84,7 @@ final class ReclamationControllerPhpController extends AbstractController
                 $newFilename = uniqid().'.'.$photoFile->guessExtension();
                 try {
                     $photoFile->move(
-                        $this->getParameter('photo_dir'),
+                        $this->getParameter('images_directory'),
                         $newFilename
                     );
                     $reclamation->setPhoto($newFilename);
@@ -103,10 +103,10 @@ final class ReclamationControllerPhpController extends AbstractController
             $entityManager->persist($reclamation);
             $entityManager->flush();
     
-            // ✅ **Envoi de l'e-mail après l'ajout de la réclamation**
+            // ✅ *Envoi de l'e-mail après l'ajout de la réclamation*
             try {
                 $emailService->sendEmail(
-                    'sourournajjar2@gmail.com', // Destinataire
+                    'mohamedsaidboubaker10@gmail.com', // Destinataire
                     'Nouvelle Réclamation', // Sujet
                     "Une nouvelle réclamation a été ajoutée par l'utilisateur." // Contenu
                 );

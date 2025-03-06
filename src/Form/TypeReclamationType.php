@@ -14,16 +14,7 @@ class TypeReclamationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('type_reclamation', ChoiceType::class, [
-            'choices'  => [
-                'Rendez-vous' => 'rendez_vous',
-                'Produit' => 'produit',
-                 'autre' => 'autre',
-            ],
-            'attr' => ['class' => 'form-control'],
-            'label' => 'Type de Réclamation',
-            ]);
-            
+            ->add('type_reclamation', );
         ;
     }
 

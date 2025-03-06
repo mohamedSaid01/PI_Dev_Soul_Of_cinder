@@ -101,7 +101,12 @@
             </tr>
             <tr>
                 <th>Médecin</th>
-                <td>{{ reclamation.medecin ? reclamation.medecin.nom : 'N/A' }}</td> {# Utilisation de medecin.nom #}
+               <td> {% if reclamation.medecin and reclamation.medecin.user %}
+        {{ reclamation.medecin.user.firstName ~ ' ' ~ reclamation.medecin.user.lastName }}
+    {% else %}
+        N/A
+    {% endif %}</td>
+
             </tr>
             <tr>
                 <th>Photo</th>

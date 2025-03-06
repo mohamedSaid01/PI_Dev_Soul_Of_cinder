@@ -1,0 +1,275 @@
+{# templates/patient/index.html.twig #}
+
+{% extends 'baseBackOffice.html.twig' %}
+
+{% block title %}List of Patients - SAHATECK{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="{{ asset('assetsBackOffice/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assetsBackOffice/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+    <link href="{{ asset('assetsBackOffice/vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assetsBackOffice/vendor/quill/quill.snow.css') }}" rel="stylesheet">
+    <link href="{{ asset('assetsBackOffice/vendor/quill/quill.bubble.css') }}" rel="stylesheet">
+    <link href="{{ asset('assetsBackOffice/vendor/remixicon/remixicon.css') }}" rel="stylesheet">
+    <link href="{{ asset('assetsBackOffice/vendor/simple-datatables/style.css') }}" rel="stylesheet">
+
+    <!-- Template Main CSS File -->
+    <link href="{{ asset('assetsBackOffice/css/style.css') }}" rel="stylesheet">
+
+    <!-- Favicon -->
+    <link href="{{ asset('assetsBackOffice/img/favicon.png') }}" rel="icon">
+    <link href="{{ asset('assetsBackOffice/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+
+    <style>
+        .label {
+            color: rgb(31, 31, 34);
+            font-weight: 600;
+            font-size: 16px;
+        }
+        .table th, .table td {
+            vertical-align: middle;
+        }
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            border-radius: 0.2rem;
+        }
+        .btn-add {
+            margin-bottom: 15px;
+            background-color: #00B4D8;
+            color: white;
+            border: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            display: inline-block;
+            text-align: center;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-add:hover {
+            background-color: #90E0E6;
+        }
+        .search-bar {
+            margin-bottom: 15px;
+            width: 400px;
+            position: relative;
+        }
+        .search-bar input {
+            padding-left: 30px;
+            padding-right: 30px;
+            width: 100%;
+        }
+        .search-bar .bi-search {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+        .search-bar input::placeholder {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 200;
+            font-size: 13px;
+            color: #6c757d;
+        }
+
+        .search-bar button {
+            background-color: white;
+            color: black;
+            border-color: black;
+            font-weight: 350;
+            border-radius: 5px;
+            cursor: pointer;
+            height: 38px;
+        }
+        .search-bar button:hover {
+            background-color: #90E0E6;
+            border-color: #90E0E6;
+        }
+
+        /* Styles for pagination */
+        .navigation {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            gap: 8px;
+        }
+
+        .pagination span,
+        .pagination a {
+            display: block;
+            padding: 5px 7px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            color: #00B4D8;
+            text-decoration: none;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .pagination a:hover {
+            background-color: #00B4D8;
+            color: white;
+            border-color: #00B4D8;
+        }
+
+        .pagination .current {
+            background-color: #00B4D8;
+            color: white;
+            border-color: #00B4D8;
+        }
+
+        .pagination .disabled {
+            color: #ddd;
+            border-color: #ddd;
+            cursor: not-allowed;
+        }
+
+        .pagination .next a,
+        .pagination .last a {
+            font-weight: bold;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <main id="main" class="main">
+        <div class="container mt-5">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">List of Patients</h5>
+                    <p class="small fst-italic" style="font-family: 'Poppins', sans-serif; font-weight: 200; font-size: 13px;">
+                        Find here the complete list of patients registered in our system.
+                    </p>
+
+                    <!-- Search Form -->
+                    <div class="d-flex justify-content-between mb-4">
+                        <form method="get" action="{{ path('app_patient_index') }}" class="search-bar d-flex align-items-center">
+                            <input type="text" name="search" class="form-control" placeholder="Search for a patient" value="{{ search }}">
+                            <button type="submit" class="btn btn-primary ms-2">
+                                Search
+                            </button>
+                        </form>
+
+                        <a href="{{ path('app_patient_new') }}" class="btn btn-success btn-sm btn-add">
+                            + Add a Patient
+                        </a>
+                    </div>
+
+                    <!-- Patients Table -->
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Last Name</th>
+                                    <th>First Name</th>
+                                    <th>Email</th>
+                                    <th>Address</th>
+                                    <th>Phone Number</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for patient in patients %}
+                                    <tr>
+                                        <td>{{ patient.lastName ?? 'Not specified' }}</td>
+                                        <td>{{ patient.firstName ?? 'Not specified' }}</td>
+                                        <td>{{ patient.email ?? 'Not specified' }}</td>
+                                        <td>{{ patient.adress ?? 'Not specified' }}</td>
+                                        <td>{{ patient.phoneNumber ?? 'Not specified' }}</td>
+                                        <td>
+                                            <a href="{{ path('app_patient_show', {'id': patient.id}) }}" class="btn btn-info btn-sm">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a href="{{ path('app_patient_edit', {'id': patient.id}) }}" class="btn btn-warning btn-sm">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <form method="post" action="{{ path('app_patient_delete', {'id': patient.id}) }}" class="delete-form d-inline">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ patient.id) }}">
+                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="8" class="text-center">No patients found.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="navigation">
+                        {{ knp_pagination_render(patients, null, {}, {
+                            'prev_message': '<i class="bi bi-chevron-left"></i>',
+                            'next_message': '<i class="bi bi-chevron-right"></i>',
+                            'first_message': '<i class="bi bi-chevron-double-left"></i>',
+                            'last_message': '<i class="bi bi-chevron-double-right"></i>'
+                        }) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <!-- Vendor JS Files -->
+    <script src="{{ asset('assetsBackOffice/vendor/apexcharts/apexcharts.min.js') }}"></script>
+    <script src="{{ asset('assetsBackOffice/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('assetsBackOffice/vendor/chart.js/chart.umd.js') }}"></script>
+    <script src="{{ asset('assetsBackOffice/vendor/echarts/echarts.min.js') }}"></script>
+    <script src="{{ asset('assetsBackOffice/vendor/quill/quill.js') }}"></script>
+    <script src="{{ asset('assetsBackOffice/vendor/simple-datatables/simple-datatables.js') }}"></script>
+    <script src="{{ asset('assetsBackOffice/vendor/tinymce/tinymce.min.js') }}"></script>
+    <script src="{{ asset('assetsBackOffice/vendor/php-email-form/validate.js') }}"></script>
+
+    <!-- Template Main JS File -->
+    <script src="{{ asset('assetsBackOffice/js/main.js') }}"></script>
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.delete-form').forEach(form => {
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    Swal.fire({
+                        text: "Are you sure you want to delete this patient?",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#00B4D8',
+                        confirmButtonText: 'Yes, delete!',
+                        cancelButtonText: 'Cancel'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+{% endblock %}

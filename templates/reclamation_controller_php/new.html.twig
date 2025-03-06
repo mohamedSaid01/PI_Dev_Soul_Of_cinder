@@ -1,7 +1,20 @@
-{% extends 'base.html.twig' %}
+{% extends 'baseFrontOffice.html.twig' %}
 
 {% block title %}New Reclamation{% endblock %}
-{% block stylesheets %}
+
+{% block body %}
+ <main id="main" class="main">
+  <div class="cont">
+    <div class="hea">
+    
+      <a href="{{ path('app_reclamation_controller_php_index') }}" class="bbtn btn-back">Back to List</a>
+    </div>
+
+    <div class="form-wrapper">
+      {{ include('reclamation_controller_php/_form.html.twig') }}
+    </div>
+  </div>
+  </main>
 <style>
   .cont {
     max-width: 800px;
@@ -103,17 +116,4 @@
     transform: translateY(-2px);
   }
 </style>
-{% endblock %}
-{% block body %}
-
-  <div class="cont">
-    <div class="hea">
-    
-      <a href="{{ path('app_reclamation_controller_php_index') }}" class="bbtn btn-back">Back to List</a>
-    </div>
-
-    <div class="form-wrapper">
-      {{ include('reclamation_controller_php/_form.html.twig') }}
-    </div>
-  </div>
 {% endblock %}

@@ -24,9 +24,9 @@ document.addEventListener("DOMContentLoaded", function () {
     if (photoCheckbox && photoNameInput) {
         photoCheckbox.addEventListener("change", function () {
             if (photoCheckbox.checked) {
-                photoNameInput.style.display = "block"; // Afficher le champ "nom du médecin"
+                photoNameInput.style.display = "block"; 
             } else {
-                photoNameInput.style.display = "none"; // Masquer le champ "nom du médecin"
+                photoNameInput.style.display = "none"; 
             }
         });
         
@@ -44,13 +44,12 @@ document.addEventListener("DOMContentLoaded", function () {
     if (medecinCheckbox && medecinNameInput) {
         medecinCheckbox.addEventListener("change", function () {
             if (medecinCheckbox.checked) {
-                medecinNameInput.style.display = "block"; // Afficher le champ "nom du médecin"
+                medecinNameInput.style.display = "block"; 
             } else {
-                medecinNameInput.style.display = "none"; // Masquer le champ "nom du médecin"
+                medecinNameInput.style.display = "none";
             }
         });
 
-        // Initialiser l'état du champ "nom du médecin" au chargement de la page
         medecinNameInput.style.display = medecinCheckbox.checked ? "block" : "none";
     }
 });</script>

@@ -1,0 +1,69 @@
+{% extends 'baseFrontOffice.html.twig' %}
+
+{% block title %}Liste des Médecins{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <h2 class="mb-4">Liste des Médecins</h2>
+
+    <!-- Filtres -->
+    <div class="d-flex align-items-center mb-4">
+        <label for="typeRendezVous" class="me-3 fw-bold">Filtrer par type de rendez-vous :</label>
+        <div class="btn-group" role="group">
+            <a href="{{ path('liste_medecins') }}" 
+               class="btn {{ app.request.query.get('typeRendezVous') is empty ? 'btn-primary' : 'btn-outline-secondary' }}">
+               Tous
+            </a>
+            <a href="{{ path('liste_medecins', { typeRendezVous: 'enligne' }) }}" 
+               class="btn {{ app.request.query.get('typeRendezVous') == 'enligne' ? 'btn-primary' : 'btn-outline-secondary' }}">
+               En ligne
+            </a>
+            <a href="{{ path('liste_medecins', { typeRendezVous: 'presentiel' }) }}" 
+               class="btn {{ app.request.query.get('typeRendezVous') == 'presentiel' ? 'btn-primary' : 'btn-outline-secondary' }}">
+               Présentiel
+            </a>
+            <a href="{{ path('liste_medecins', { typeRendezVous: 'hybride' }) }}" 
+               class="btn {{ app.request.query.get('typeRendezVous') == 'hybride' ? 'btn-primary' : 'btn-outline-secondary' }}">
+               Hybride
+            </a>
+        </div>
+    </div>
+
+    {% set medecinsFiltres = medecins|filter(medecin => typeRendezVous is empty or typeRendezVous in medecin.getTypesRendezVous()) %}
+
+    {% if medecins|length == 0 %}
+        <p class="alert alert-info text-center">Aucun médecin n'est disponible pour le moment.</p>
+    {% elseif medecinsFiltres|length == 0 %}
+        <p class="alert alert-warning text-center">Aucun médecin ne propose ce type de rendez-vous actuellement.</p>
+    {% else %}
+        <table class="table table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>Nom</th>
+                    <th>Téléphone</th>
+                    <th>Spécialité</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for medecin in medecinsFiltres %}
+                    <tr>
+<td>{{ medecin.getUser().getFirstName() }} {{ medecin.getUser().getLastName() }}</td>
+<td>{{ medecin.user.phoneNumber }}</td>
+                                    <td>
+                                            {{ medecin.getUser().getSpecialite().value ? medecin.getUser().getSpecialite().value : 'Non spécifié' }}
+                                    </td>
+<td>{{ medecin.user.email }}</td>
+                        <td>
+                             <a href="{{ path('prendre_rendez_vous', { id: medecin.id }) }}" class="btn btn-primary"> 
+                                Prendre un rendez-vous
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+{% endblock %}

@@ -23,7 +23,7 @@ class EmailService
     {
         // Créer un e-mail
         $email = (new Email())
-            ->from($this->smtpUsername) // Expéditeur
+            ->from('sourournajjar2@gmail.com') // Expéditeur
             ->to($recipientEmail) // Destinataire
             ->subject($subject) // Sujet
             ->text($content); // Contenu

@@ -3,6 +3,7 @@
 {% block title %}Reclamation index{% endblock %}
 
 {% block stylesheets %}
+{{ parent()}}
 <style>
   .reclamation-index-container {
     max-width: 1200px;
@@ -90,6 +91,7 @@
 </style>
 {% endblock %}
 {% block body %}
+  <main id="main" class="main">
   <div class="reclamation-index-container">
     <h1>Reclamation index</h1>
 
@@ -108,7 +110,7 @@
           <tr>
             <td>{{ reclamation.description }}</td>
             <td>{{ reclamation.dateReclamation ? reclamation.dateReclamation|date('Y-m-d H:i:s') : '' }}</td>
-            <td>{{ reclamation.medecin_id }}</td>
+            <td>{{ reclamation.medecin }}</td>
             <td>
               {% if reclamation.photo %}
                 <img src="{{ asset('upload/images/' ~ reclamation.photo) }}" alt="Photo">
@@ -117,10 +119,10 @@
               {% endif %}
             </td>
             <td>{{ reclamation.typeReclamation ? reclamation.typeReclamation.typeReclamation : 'N/A' }}</td>
-            {# <td class="actions">
-              <a href="{{ path('app_reclamation_controller_php_show', {'id': reclamation.id}) }}">Show</a>
-              <a href="{{ path('app_reclamation_controller_php_edit', {'id': reclamation.id}) }}">Edit</a>
-            </td> #}
+             <td class="actions">
+              <a href="{{ path('app_reponse_controller_php_new', {'id': reclamation.id}) }}">reponse</a>
+              {# <a href="{{ path('app_reclamation_controller_php_edit', {'id': reclamation.id}) }}">Edit</a> #}
+            </td> 
           </tr>
         {% else %}
           <tr>
@@ -132,5 +134,6 @@
 
     {# <a href="{{ path('app_reclamation_controller_php_new') }}" class="create-new-link">Create new</a> #}
   </div>
+  </main>
 {% endblock %}
 

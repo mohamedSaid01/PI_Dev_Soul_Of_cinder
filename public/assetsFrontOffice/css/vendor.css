@@ -8,10 +8,6 @@
  */
 
  /* Chocolat Lightbox */
- nav.navbar {
-    padding: 20px 0; /* Augmenter la hauteur en ajoutant plus de padding */
-    height: 400px; /* Définir une hauteur fixe si nécessaire */
-}
 
 .chocolat-zoomable.chocolat-zoomed {
     cursor: zoom-out;

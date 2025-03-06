@@ -5,6 +5,9 @@ namespace App\Entity;
 use App\Repository\ReclamationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use App\Entity\Medecin;
 
 #[ORM\Entity(repositoryClass: ReclamationRepository::class)]
 class Reclamation
@@ -21,10 +24,13 @@ class Reclamation
     private ?\DateTimeInterface $date_reclamation = null;
 
     #[ORM\ManyToOne(targetEntity: Medecin::class)]
-    #[ORM\JoinColumn(name: 'medecin_id', referencedColumnName: 'id', nullable: true)]
-    private ?Medecin $medecin = null; // Use camelCase for property names
+    #[ORM\JoinColumn(name: 'medecin_id', referencedColumnName: 'id')]
+    private ?Medecin $medecin = null;
 
-    // Getter and Setter for medecin
+
+    #[ORM\OneToMany(targetEntity: Reponse::class, mappedBy: 'reclamation')]
+    private Collection $reponses;
+
     public function getMedecin(): ?Medecin
     {
         return $this->medecin;
@@ -35,8 +41,32 @@ class Reclamation
         $this->medecin = $medecin;
         return $this;
     }
+    
 
 
+public function getReponses(): Collection
+{
+    return $this->reponses;
+}
+
+public function addReponse(Reponse $reponse): self
+{
+    if (!$this->reponses->contains($reponse)) {
+        $this->reponses[] = $reponse;
+        $reponse->setReclamation($this);
+    }
+    return $this;
+}
+
+public function removeReponse(Reponse $reponse): self
+{
+    if ($this->reponses->removeElement($reponse)) {
+        if ($reponse->getReclamation() === $this) {
+            $reponse->setReclamation(null);
+        }
+    }
+    return $this;
+}
 //     #[ORM\Column(length: 255, nullable: true)] // nullable: true permet NULL
 // private ?string  = null;
 
@@ -52,6 +82,7 @@ private ?string $photo = null;
     public function __construct()
     {
         $this->date_reclamation = new \DateTime(); // Définit la date actuelle par défaut
+        $this->reponses = new ArrayCollection();
     }
 
     public function getId(): ?int

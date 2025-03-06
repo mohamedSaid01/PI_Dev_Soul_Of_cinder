@@ -40,4 +40,28 @@ class MedecinRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+
+    public function findByRole(string $role): array
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.roles LIKE :role')
+            ->setParameter('role', '%"' . $role . '"%')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Recherche les médecins par spécialité.
+     */
+    public function findBySpecialite(string $specialite): array
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.roles LIKE :role') // Filtre par rôle médecin
+            ->andWhere('u.specialite = :specialite') // Filtre par spécialité
+            ->setParameter('role', '%"ROLE_MEDECIN"%')
+            ->setParameter('specialite', $specialite)
+            ->getQuery()
+            ->getResult();
+    }
 }

@@ -3,17 +3,16 @@
 {% block title %}New TypeReclamation{% endblock %}
 
 {% block body %}
+  <main id="main" class="main">
   <div class="new-type-reclamation-container">
-    <h1>Create new TypeReclamation</h1>
+    {# <h1>Create new TypeReclamation</h1> #}
 
     {{ include('type_reclamation_controller_php/_form.html.twig') }}
 
     <a href="{{ path('app_type_reclamation_controller_php_index') }}" class="back-link">← Back to list</a>
   </div>
-{% endblock %}
-
-{% block stylesheets %}
-<style>
+  </main>
+  <style>
   .new-type-reclamation-container {
     max-width: 800px;
     margin: 40px auto;
@@ -99,4 +98,6 @@
     color: #0099b3;
   }
 </style>
+
 {% endblock %}
+

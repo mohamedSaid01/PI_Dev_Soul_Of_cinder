@@ -7,6 +7,9 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use App\Entity\Patient;
 
 class ReponseType extends AbstractType
 {
@@ -18,7 +21,10 @@ class ReponseType extends AbstractType
                 'widget' => 'single_text',
                 'label' => 'Date de reclamation',
                 'disabled' => true, // Empêche la modification de la date
-            ])     
+            ])   
+            ->add('reclamation', HiddenType::class, [
+                'mapped' => false, // Ne pas mapper directement à l'entité
+            ])
         ;
     }
 
@@ -70,4 +76,3 @@ class ReponseType extends AbstractType
 //         $resolver->setDefaults([]);
 //     }
 // }
-

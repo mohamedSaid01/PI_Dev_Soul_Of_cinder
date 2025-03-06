@@ -1,0 +1,175 @@
+{# templates/patient/new.html.twig #}
+
+{% extends 'baseBackOffice.html.twig' %}
+
+{% block title %}Ajouter un Patient - SAHATECK{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}  <!-- Ceci appelle les styles du template parent -->
+    <style>
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .form-col {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+        }
+
+        .form-control:focus {
+            border-color: #00B4D8;
+            box-shadow: 0 0 5px rgba(0, 180, 216, 0.5);
+        }
+
+        .btn-primary {
+            background-color: #00B4D8;
+            border-color: #00B4D8;
+            padding: 10px 20px;
+            font-size: 14px;
+            border-radius: 8px;
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #0096C7;
+            border-color: #0096C7;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            padding: 10px 20px;
+            font-size: 14px;
+            border-radius: 8px;
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+        }
+
+        .text-error {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 5px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        p {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 200; /* Poids de la police (medium) */
+            font-size: 13px;
+        }
+
+        /* Aligner les boutons horizontalement */
+        .form-group.btn-group {
+            margin-top: 30px; /* Ajuster l'espacement si nécessaire */
+        }
+
+        /* Garder la taille du bouton */
+        .form-group button {
+            width: auto;
+            height: auto;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <main id="main" class="main">
+        <div class="card">
+            <div class="card-body">
+                <div class="form-container">
+                    <h5 class="card-title">Ajouter un nouveau patient</h5>
+                    <p>Utilisez ce formulaire pour ajouter un nouveau patient à notre application.<br>Assurez-vous de remplir tous les champs requis pour enregistrer correctement le patient.</p>
+
+                    {{ form_errors(form) }}
+
+                    {{ form_start(form, {'attr': {'class': 'form', novalidate: 'novalidate'}}) }}
+                        <div class="form-row">
+                            <!-- Colonne de gauche -->
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label>Prénom</label>
+                                    {{ form_widget(form.firstName, {'attr': {'class': 'form-control', 'placeholder': 'Entrer le prénom'}}) }}
+                                    {{ form_errors(form.firstName) }}
+                                </div>
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'Entrer l\'email' }}) }}
+                                    {{ form_errors(form.email) }}
+                                </div>
+                                <div class="form-group">
+                                    <label>Adresse</label>
+                                    {{ form_widget(form.adress, {'attr': {'class': 'form-control', 'placeholder': 'Entrer l\'adresse'}}) }}
+                                    {{ form_errors(form.adress) }}
+                                </div>
+                                <div class="form-group">
+                                    <label>Âge</label>
+                                    {{ form_widget(form.age, {'attr': {'class': 'form-control', 'placeholder': 'Entrer l\'âge'}}) }}
+                                    {{ form_errors(form.age) }}
+                                </div>
+                            </div>
+
+                            <!-- Colonne de droite -->
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label>Nom</label>
+                                    {{ form_widget(form.lastName, {'attr': {'class': 'form-control', 'placeholder': 'Entrer le nom'}}) }}
+                                    {{ form_errors(form.lastName) }}
+                                </div>
+                                <div class="form-group">
+                                    <label>Téléphone</label>
+                                    {{ form_widget(form.phoneNumber, {'attr': {'class': 'form-control', 'placeholder': 'Entrer le numéro de téléphone'}}) }}
+                                    {{ form_errors(form.phoneNumber) }}
+                                </div>
+                                <div class="form-group">
+                                    <label>Genre</label>
+                                    {{ form_widget(form.gender, {'attr': {'class': 'form-control'}}) }}
+                                    {{ form_errors(form.gender) }}
+                                </div>
+
+                                <!-- Boutons "Enregistrer" et "Annuler" -->
+                                <div class="form-group btn-group">
+                                                        <a href="{{ path('app_patient_index') }}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Retour à la liste
+                        </a>
+                                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                </div>
+                            </div>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}
