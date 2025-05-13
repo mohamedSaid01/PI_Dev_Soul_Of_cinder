@@ -1,0 +1,99 @@
+{% extends 'baseFrontOffice.html.twig' %}
+
+{% block title %}Gestion des Réclamations{% endblock %}
+
+{% block body %}
+<div class="content-container">
+    <h2 class="page-title">Liste des Réclamations</h2>
+
+    <!-- Search bar -->
+    <div class="search-container mb-4">
+        <form action="{{ path('reclamation_search') }}" method="GET">
+            <input class="form-control" type="search" placeholder="Rechercher une réclamation..." name="q" id="search-input">
+            <i class="bi bi-search search-icon"></i>
+        </form>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+        <span class="fs-5">
+            Total Réclamations: <strong>{{ reclamations|length }}</strong>
+        </span>
+
+        <form action="{{ path('app_reclamation_controller_php_index') }}" method="get" class="d-flex align-items-center">
+            <label for="typeReclamationFilter" class="form-label me-2 fw-bold">Filtrer par Type:</label>
+            <select name="typeReclamation" id="typeReclamationFilter" class="form-select w-auto" onchange="this.form.submit()">
+                <option value="">Tous les types</option>
+                {% for typeReclamation in typesReclamation %}
+                    <option value="{{ typeReclamation.id }}" {% if selectedType == typeReclamation.id %}selected{% endif %}>
+                        {{ typeReclamation.typeReclamation }}
+                    </option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Date Réclamation</th>
+                    <th>Médecin</th>
+                    <th>Photo</th>
+                    <th>Type Réclamation</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reclamation in reclamations %}
+                    <tr>
+                        <td>{{ reclamation.description }}</td>
+                        <td>{{ reclamation.dateReclamation ? reclamation.dateReclamation|date('Y-m-d H:i:s') : '' }}</td>
+                        <td>
+                            {% if reclamation.medecin and reclamation.medecin.user %}
+                                {{ reclamation.medecin.user.firstName ~ ' ' ~ reclamation.medecin.user.lastName }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if reclamation.photo %}
+                                <img src="{{ asset('uploads/images/' ~ reclamation.photo) }}" alt="Photo" class="img-fluid" style="max-width: 100px;">
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if reclamation.typeReclamation %}
+                                {{ reclamation.typeReclamation.typeReclamation }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-center gap-2">
+                                <a href="{{ path('app_reclamation_controller_php_show', {'id': reclamation.id}) }}" class="btn btn-sm btn-primary">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{{ path('app_reclamation_controller_php_edit', {'id': reclamation.id}) }}" class="btn btn-sm btn-success">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center">Aucune réclamation trouvée</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="{{ path('app_reclamation_controller_php_new') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-1"></i> Créer une nouvelle réclamation
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -16,54 +16,28 @@ class Medecin
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    private $specialite;
-
-    #[ORM\Column(type: 'string', length: 20)]
-    private $telephone;
-
     #[ORM\OneToOne(targetEntity: User::class, inversedBy: 'medecin', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private $user;
 
-    #[ORM\Column(type: 'json')]
-    private $typesRendezVous = []; // Types acceptés : "enligne", "presentiel", "hybride"
+    #[ORM\Column(type: 'string', length: 255)] // Changer de json à string
+    private $typesRendezVous = ''; // Stocke les IDs sous forme de chaîne (ex: "1,2,3")
 
     #[ORM\OneToMany(mappedBy: 'medecin', targetEntity: RendezVous::class)]
     private $rendezVous;
 
+    #[ORM\OneToMany(mappedBy: 'medecin', targetEntity: Notification::class)]
+    private Collection $notifications;
+
     public function __construct()
     {
         $this->rendezVous = new ArrayCollection();
+        $this->notifications = new ArrayCollection();
     }
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getSpecialite(): ?string
-    {
-        return $this->specialite;
-    }
-
-    public function setSpecialite(string $specialite): self
-    {
-        $this->specialite = $specialite;
-
-        return $this;
-    }
-
-    public function getTelephone(): ?string
-    {
-        return $this->telephone;
-    }
-
-    public function setTelephone(string $telephone): self
-    {
-        $this->telephone = $telephone;
-
-        return $this;
     }
 
     public function getUser(): ?User
@@ -78,44 +52,49 @@ class Medecin
         return $this;
     }
 
+   
+    public function getRendezVous(): Collection
+    {
+        return $this->rendezVous;
+    }
+
+
+
+
     public function getTypesRendezVous(): array
     {
-        return $this->typesRendezVous;
+        return array_map('intval', explode(',', $this->typesRendezVous)); // Convertir en tableau d'entiers
     }
 
     public function setTypesRendezVous(array $typesRendezVous): self
     {
-        $this->typesRendezVous = $typesRendezVous;
-
+        $this->typesRendezVous = implode(',', $typesRendezVous); // Convertir le tableau en chaîne
         return $this;
     }
 
-    public function addTypeRendezVous(string $type): self
+    public function addTypeRendezVous(int $typeId): self
     {
-        if (!in_array($type, $this->typesRendezVous)) {
-            $this->typesRendezVous[] = $type;
+        $types = $this->getTypesRendezVous();
+        if (!in_array($typeId, $types)) {
+            $types[] = $typeId;
+            $this->setTypesRendezVous($types);
         }
-
         return $this;
     }
 
-    public function removeTypeRendezVous(string $type): self
+    public function removeTypeRendezVous(int $typeId): self
     {
-        if (($key = array_search($type, $this->typesRendezVous)) !== false) {
-            unset($this->typesRendezVous[$key]);
+        $types = $this->getTypesRendezVous();
+        if (($key = array_search($typeId, $types)) !== false) {
+            unset($types[$key]);
+            $this->setTypesRendezVous($types);
         }
-
         return $this;
     }
 
-    public function hasTypeRendezVous(string $type): bool
+    public function hasTypeRendezVous(int $typeId): bool
     {
-        return in_array($type, $this->typesRendezVous);
-    }
-
-    public function getRendezVous(): Collection
-    {
-        return $this->rendezVous;
+        return in_array($typeId, $this->getTypesRendezVous());
     }
 
     public function addRendezVous(RendezVous $rendezVous): self
@@ -139,4 +118,38 @@ class Medecin
 
         return $this;
     }
+
+
+    public function getNotifications(): Collection
+    {
+        return $this->notifications;
+    }
+
+    public function addNotification(Notification $notification): self
+    {
+        if (!$this->notifications->contains($notification)) {
+            $this->notifications->add($notification);
+            $notification->setMedecin($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNotification(Notification $notification): self
+    {
+        if ($this->notifications->removeElement($notification)) {
+            if ($notification->getMedecin() === $this) {
+                $notification->setMedecin(null);
+            }
+        }
+
+        return $this;
+    }
+
+
+    public function __toString(): string
+{
+    return $this->user ? $this->user->getFirstname() . ' ' . $this->user->getLastname() : 'Médecin sans utilisateur';
+}
+
 }

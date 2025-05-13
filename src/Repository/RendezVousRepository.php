@@ -6,6 +6,7 @@ use App\Entity\RendezVous;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Entity\Patient;
+use App\Entity\Medecin;
 /**
  * @extends ServiceEntityRepository<RendezVous>
  */
@@ -34,9 +35,7 @@ class RendezVousRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('r')
             ->andWhere('r.patient = :patient')
-            ->andWhere('r.statut = :statut')
             ->setParameter('patient', $patient)
-            ->setParameter('statut', true) // statut = 1 (confirmé)
             ->orderBy('r.date', 'ASC') // Optionnel : trier par date
             ->addOrderBy('r.heure', 'ASC') // Optionnel : trier par heure
             ->getQuery()
@@ -51,4 +50,28 @@ class RendezVousRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    // src/Repository/RendezVousRepository.php
+public function findAccepted(Patient $patient): array
+{
+    return $this->createQueryBuilder('r')
+        ->andWhere('r.patient = :patient')
+        ->andWhere('r.statut = :statut')
+        ->setParameter('patient', $patient)
+        ->setParameter('statut', true) // true = rendez-vous accepté
+        ->getQuery()
+        ->getResult();
+}
+
+
+public function findAcceptedRendezVousByMedecin(Medecin $medecin): array
+{
+    return $this->createQueryBuilder('r')
+        ->andWhere('r.medecin = :medecin')
+        ->andWhere('r.statut = :statut')
+        ->setParameter('medecin', $medecin)
+        ->setParameter('statut', true) // true = rendez-vous accepté
+        ->getQuery()
+        ->getResult();
+}
 }

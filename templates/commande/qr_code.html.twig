@@ -1,0 +1,26 @@
+{# templates/commande/qr_code.html.twig #}
+
+{% extends 'baseFrontOffice.html.twig' %}
+
+{% block body %}
+  <div class="qr-code-container">
+    <h1>Order Confirmed</h1>
+    <p>Your order has been successfully confirmed. Here is your QR code:</p>
+    <img src="{{ qrCodeImage }}" alt="QR Code">
+    <p>Order ID: {{ commande.id }}</p>
+    <a href="{{ path('front_list') }}" class="btn btn-primary">Return to Home</a>
+  </div>
+{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <style>
+    .qr-code-container {
+      text-align: center;
+      margin-top: 50px;
+    }
+    .qr-code-container img {
+      margin: 20px 0;
+    }
+  </style>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'baseFrontOffice.html.twig' %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="mb-4">{{ produit.name }}</h1>
+    <img src="{{ asset('uploads/images/' ~ produit.image) }}" alt="{{ produit.name }}" class="img-fluid mb-3">
+    
+    <div class="product-details">
+        <p class="lead">{{ produit.desciption }}</p>
+        <p><strong>Price:</strong> <span class="text-success">{{ produit.price }} Dt</span></p>
+    </div>
+
+    <!-- Comments Section -->
+    <div class="mt-4">
+        <h5>Comments:</h5>
+        <div style="max-height: 200px; overflow-y: auto;" class="border rounded p-2">
+            {% if produit.commentaires is empty %}
+                <p class="text-muted">No comments yet. Be the first to comment!</p>
+            {% else %}
+                {% for commentaire in produit.commentaires %}
+                    <div class="comment-card mb-2 border p-2 rounded">
+                        <p class="card-text">{{ commentaire.content }}</p>
+                        <small class="text-muted">By {{ commentaire.user.firstName }} on {{ commentaire.createdAt|date('Y-m-d H:i') }}</small>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Related Products -->
+    <h5 class="mt-4">Related Products:</h5>
+    <div class="row">
+        {% if relatedProducts is empty %}
+            <p class="text-muted">No related products found.</p>
+        {% else %}
+            {% for related in relatedProducts %}
+                <div class="col-md-3 mb-3">
+                    <div class="card">
+                        <img src="{{ asset('uploads/images/' ~ related.image) }}" class="card-img-top" alt="{{ related.name }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ related.name }}</h5>
+                            <p class="card-text"><strong>Price:</strong> {{ related.price }} Dt</p>
+                            <a href="{{ path('produit_detailP', {'id': related.id}) }}" class="btn btn-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,175 @@
+{% extends 'baseBackOffice.html.twig' %}
+
+{% block title %}Reclamation index{% endblock %}
+
+{% block stylesheets %}
+{{ parent()}}
+<style>
+  .reclamation-index-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .reclamation-index-container h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    font-size: 28px;
+    font-weight: 600;
+  }
+
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+  }
+
+  .table th,
+  .table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .table th {
+    background-color: #00B4D8;
+    color: white;
+    font-weight: 500;
+  }
+
+  .table tr:hover {
+    background-color: #f9f9f9;
+  }
+
+  .table td img {
+    max-width: 100px;
+    border-radius: 5px;
+  }
+
+  .actions a {
+    display: inline-block;
+    margin-right: 10px;
+    padding: 6px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    color: white;
+    background-color: #00B4D8;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+
+  .actions a:hover {
+    background-color: #0099b3;
+    transform: translateY(-2px);
+  }
+
+  .create-new-link {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: #00B4D8;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+
+  .create-new-link:hover {
+    background-color: #0099b3;
+    transform: translateY(-2px);
+  }
+
+  .no-records {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    padding: 20px;
+  }
+</style>
+{% endblock %}
+{% block body %}
+  <main id="main" class="main">
+    <div class="pagetitle mb-4">
+      <h1 class="page-title"><i class="bi bi-journal-text"></i> Gestion des Réclamations</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{{ path('app_dashboard') }}">Accueil</a></li>
+          <li class="breadcrumb-item">Réclamations</li>
+          <li class="breadcrumb-item active">Liste</li>
+        </ol>
+      </nav>
+    </div>
+    <div class="container-fluid mt-5">
+      <div class="card shadow-lg border-0 rounded-4" style="background: #fff; box-shadow: 0 4px 24px rgba(0,0,0,0.08); border-radius: 24px;">
+        <div class="card-body p-4">
+          <h2 class="text-center text-primary fw-bold mb-4">📋 Reclamation Management</h2>
+          <div class="table-responsive">
+            <table class="table table-hover table-striped table-bordered text-center align-middle">
+              <thead class="table-dark">
+        <tr>
+          <th>Description</th>
+                  <th>Date Réclamation</th>
+                  <th>Médecin</th>
+          <th>Photo</th>
+                  <th>Type Réclamation</th>
+                  <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for reclamation in reclamations %}
+                  <tr class="table-row">
+            <td>{{ reclamation.description }}</td>
+            <td>{{ reclamation.dateReclamation ? reclamation.dateReclamation|date('Y-m-d H:i:s') : '' }}</td>
+                    <td>{{ safe_doctor(reclamation.medecin) }}</td>
+            <td>
+              {% if reclamation.photo %}
+                        <img src="{{ asset('upload/images/' ~ reclamation.photo) }}" alt="Photo" style="max-width: 100px;">
+              {% else %}
+                N/A
+              {% endif %}
+            </td>
+            <td>{{ safe_type_reclamation(reclamation.typeReclamation) }}</td>
+             <td class="actions">
+                      <a href="{{ path('app_reponse_controller_php_new', {'id': reclamation.id}) }}" class="btn btn-primary btn-sm rounded-3 shadow-sm"><i class="bi bi-reply"></i> Répondre</a>
+            </td> 
+          </tr>
+        {% else %}
+          <tr>
+                    <td colspan="6" class="text-muted py-4">
+                      <i class="fas fa-exclamation-circle fa-2x mb-3"></i><br>
+                      No records found.
+                    </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+          </div>
+        </div>
+      </div>
+  </div>
+  </main>
+  <style>
+    .table-row:hover {
+      background-color: #f8f9fa !important;
+      transition: background-color 0.3s ease;
+    }
+    .table-striped tbody tr:nth-of-type(odd) {
+      background-color: #f8f9fa;
+    }
+    .table-striped tbody tr:nth-of-type(even) {
+      background-color: #ffffff;
+    }
+    .btn {
+      transition: transform 0.2s ease;
+    }
+    .btn:hover {
+      transform: scale(1.05);
+    }
+    .d-flex.gap-2 {
+      gap: 0.5rem;
+    }
+  </style>
+{% endblock %}

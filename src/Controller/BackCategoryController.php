@@ -32,22 +32,12 @@ final class BackCategoryController extends AbstractController
         $form = $this->createForm(PostCategoryType::class, $category);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()) {
-            if ($form->isValid()) {
-                $em = $doctrine->getManager();
-                try {
-                    $em->persist($category);
-                    $em->flush();
-                    $this->addFlash('success', 'Category created successfully!');
-                    return $this->redirectToRoute('post_category_index');
-                } catch (\Exception $e) {
-                    $this->addFlash('error', 'Error creating category. The name might already exist.');
-                }
-            } else {
-                foreach ($form->getErrors(true) as $error) {
-                    $this->addFlash('error', $error->getMessage());
-                }
-            }
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $doctrine->getManager();
+            $em->persist($category);
+            $em->flush();
+
+            return $this->redirectToRoute('post_category_index');
         }
 
         return $this->render('back/back_category/new.html.twig', [
@@ -95,3 +85,4 @@ final class BackCategoryController extends AbstractController
         return new JsonResponse(['success' => true, 'message' => 'Category deleted successfully.']);
     }
 }
+

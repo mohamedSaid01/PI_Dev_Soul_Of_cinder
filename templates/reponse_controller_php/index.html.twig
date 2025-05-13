@@ -1,0 +1,78 @@
+{% extends 'baseBackOffice.html.twig' %}
+
+{% block title %}Gestion des Réponses{% endblock %}
+
+{% block body %}
+<main id="main" class="main">
+  <div class="pagetitle mb-4">
+    <h1 class="page-title"><i class="bi bi-reply"></i> Gestion des Réponses</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('app_dashboard') }}">Accueil</a></li>
+        <li class="breadcrumb-item">Réclamations</li>
+        <li class="breadcrumb-item active">Réponses</li>
+      </ol>
+    </nav>
+  </div>
+  <div class="row g-4">
+    <div class="col-12">
+      <div class="card glass-card p-0">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="card-title mb-0"><i class="bi bi-list-task"></i> Liste des Réponses</h3>
+            <div>
+              <a href="{{ path('app_reclamation_controller_php_index') }}" class="btn btn-primary me-2">
+                <i class="bi bi-card-list"></i> Liste des Réclamations
+              </a>
+              {% if reclamation %}
+              <a href="{{ path('app_reponse_controller_php_new', {'id': reclamation.id}) }}" class="btn btn-success">
+                <i class="bi bi-plus-circle"></i> Ajouter une réponse
+              </a>
+              {% else %}
+              <span class="text-muted">Aucune réclamation trouvée pour ajouter une réponse</span>
+              {% endif %}
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-hover table-bordered shadow-sm">
+              <thead style="background: #dbeafe; color: #222; font-weight: bold;">
+                <tr>
+                    <th>Contenu</th>
+                  <th>Date Réponse</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for reponse in reponses %}
+                <tr>
+                    <td>{{ reponse.contenu }}</td>
+                    <td>{{ reponse.dateReponse ? reponse.dateReponse|date('Y-m-d H:i:s') : '' }}</td>
+                    <td>
+                      <a href="{{ path('app_reponse_controller_php_show', {'id': reponse.id}) }}" class="btn btn-info btn-sm"><i class="bi bi-eye"></i></a>
+                      <a href="{{ path('app_reponse_controller_php_edit', {'id': reponse.id}) }}" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i></a>
+                    </td>
+                </tr>
+            {% else %}
+                  <tr><td colspan="3" class="text-center">Aucune réponse trouvée.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <style>
+    .table tbody tr { background-color: #f3f8ff !important; transition: background-color 0.3s ease; }
+    .table tbody tr:hover { background-color: #e0e7ef !important; }
+    .btn-info, .btn-warning, .btn-success { transition: all 0.3s ease; }
+    .btn-info:hover { background-color: #17a2b8; border-color: #17a2b8; }
+    .btn-warning:hover { background-color: #e0a800; border-color: #e0a800; }
+    .btn-success:hover { background-color: #218838; border-color: #218838; }
+  </style>
+{% endblock %}

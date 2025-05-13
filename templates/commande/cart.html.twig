@@ -1,0 +1,213 @@
+{# templates/commande/cart.html.twig #}
+
+{% extends 'baseFrontOffice.html.twig' %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <style>
+    /* Custom Styles for Cart Page */
+    .cart-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .cart-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    .cart-table th,
+    .cart-table td {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .cart-table th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+    }
+
+    .cart-table tbody tr:hover {
+      background-color: #f9f9f9;
+    }
+
+    .quantity-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .quantity-controls button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .quantity-controls button:hover {
+      background-color: #0056b3;
+    }
+
+    .btn-danger {
+      background-color: #dc3545;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-danger:hover {
+      background-color: #c82333;
+    }
+
+    .cart-total {
+      text-align: right;
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-top: 20px;
+    }
+
+    .btn-success {
+      background-color: #28a745;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-success:hover {
+      background-color: #218838;
+    }
+
+    .empty-cart-message {
+      text-align: center;
+      font-size: 1.2rem;
+      color: #777;
+      margin-top: 20px;
+    }
+  </style>
+{% endblock %}
+
+{% block body %}
+  <div class="cart-container">
+    <h1>Your Cart</h1>
+    {% if commande and commande.commandeLignes|length > 0 %}
+      <table class="cart-table">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Total</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for ligne in commande.commandeLignes %}
+            <tr>
+              <td>{{ ligne.produit.name }}</td>
+              <td>{{ ligne.produit.price }} Dt</td>
+              <td>
+                <div class="quantity-controls">
+                  <button onclick="updateQuantity({{ ligne.id }}, -1)" class="btn btn-secondary btn-sm">-</button>
+                  <span id="quantity-{{ ligne.id }}">{{ ligne.quantity }}</span>
+                  <button onclick="updateQuantity({{ ligne.id }}, 1)" class="btn btn-secondary btn-sm">+</button>
+                </div>
+              </td>
+              <td id="total-{{ ligne.id }}">{{ ligne.produit.price * ligne.quantity }} Dt</td>
+              <td>
+                <button onclick="removeFromCart({{ ligne.id }})" class="btn btn-danger">Delete</button>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <div class="cart-total">
+        <strong>Total:</strong> <span id="cart-total">{{ commande.total }} Dt</span>
+      </div>
+
+      <!-- Confirm Purchase Form -->
+    <form action="{{ path('confirm_purchase') }}" method="POST">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('confirm_purchase') }}">
+        <button type="submit" class="btn btn-success">Confirm Purchase</button>
+      </form>
+    
+ 
+    {% else %}
+      <p class="empty-cart-message">Your cart is empty.</p>
+    {% endif %}
+  </div>
+
+  {# Add JavaScript for DELETE and UPDATE requests #}
+  <script>
+    function removeFromCart(lineId) {
+      if (!confirm('Are you sure you want to remove this item from your cart?')) {
+        return;
+      }
+
+      fetch(`/cart/remove/${lineId}`, {
+        method: 'DELETE',
+        headers: {
+          'X-CSRF-TOKEN': '{{ csrf_token('delete') }}',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => {
+        if (response.ok) {
+          window.location.reload();
+        } else {
+          return response.json().then(data => {
+            throw new Error(data.error || 'An error occurred while removing the item.');
+          });
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert(error.message);
+      });
+    }
+
+    function updateQuantity(lineId, change) {
+      fetch(`/cart/update/${lineId}`, {
+        method: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': '{{ csrf_token('update') }}',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ change: change })
+      })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          return response.json().then(data => {
+            throw new Error(data.error || 'An error occurred while updating the quantity.');
+          });
+        }
+      })
+      .then(data => {
+        document.getElementById(`quantity-${lineId}`).innerText = data.quantity;
+        document.getElementById(`total-${lineId}`).innerText = `${data.lineTotal} Dt`;
+        document.getElementById('cart-total').innerText = `${data.cartTotal} Dt`;
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert(error.message);
+      });
+    }
+  </script>
+{% endblock %}

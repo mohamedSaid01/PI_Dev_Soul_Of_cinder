@@ -1,0 +1,113 @@
+{% extends 'baseFrontOffice.html.twig' %}
+
+{% block title %}SAHATECH - {{ 'Événements'|trans }}{% endblock %}
+
+{% block body %}
+<div class="content-container">
+    <h2 class="page-title">Nos Événements</h2>
+
+    <!-- Section des Événements Actifs -->
+    <h3 class="section-title mt-4 text-success">Événements en cours</h3>
+    <div class="row mt-4">
+        {% for event in events_active %}
+            <div class="col-md-4 mb-4">
+                <div class="card card-fixed-size">
+                    <div class="card-header bg-primary-custom text-white">{{ event.categorie.nom }}</div>
+                    <div class="position-relative">
+                        <span class="badge badge-success position-absolute" style="top: 10px; left: 10px; z-index: 1;">Actif</span>
+                        <img src="{{ event.affiche ? asset('uploads/affiches/' ~ event.affiche) : asset('images/default-event.png') }}"
+                             class="card-img-fixed-height" alt="Affiche de {{ event.title }}">
+                    </div>
+                    <div class="card-body card-body-fixed-height">
+                        <h5 class="card-title">{{ event.title }}</h5>
+                        <div class="card-text-truncate mb-2">
+                            <p><i class="bi bi-geo-alt"></i> Lieu: <strong>{{ event.location }}</strong></p>
+                            <p><i class="bi bi-calendar"></i> Date: {{ event.startDate|date('d M Y') }} - {{ event.endDate|date('d M Y') }}</p>
+                            <p><i class="bi bi-people"></i> Places: <strong>{{ event.placesDisponibles }}</strong></p>
+                        </div>
+                        <p class="card-text-truncate">{{ event.description|slice(0, 80) }}...</p>
+                    </div>
+                    <div class="card-footer bg-white border-top-0">
+                        <a href="{{ path('front_medecin_event_show', {'id': event.id}) }}" class="btn btn-success btn-sm w-100">Détails</a>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-info text-center">Aucun événement actif disponible.</div>
+        {% endfor %}
+    </div>
+
+    <!-- Section des Événements Expirés -->
+    <h3 class="section-title mt-5 text-danger">Événements expirés</h3>
+    <div class="row mt-4">
+        {% for event in events_archived %}
+            {% if event.isExpired %}
+            <div class="col-md-4 mb-4">
+                <div class="card card-fixed-size">
+                    <div class="card-header bg-secondary text-white">{{ event.categorie.nom }}</div>
+                    <div class="position-relative">
+                        <span class="badge badge-danger position-absolute" style="top: 10px; left: 10px; z-index: 1;">Expiré</span>
+                        <img src="{{ event.affiche ? asset('uploads/affiches/' ~ event.affiche) : asset('images/default-event.png') }}"
+                             class="card-img-fixed-height" alt="Affiche de {{ event.title }}">
+                    </div>
+                    <div class="card-body card-body-fixed-height">
+                        <h5 class="card-title">{{ event.title }}</h5>
+                        <div class="card-text-truncate mb-2">
+                            <p><i class="bi bi-geo-alt"></i> Lieu: <strong>{{ event.location }}</strong></p>
+                            <p><i class="bi bi-calendar"></i> Date: {{ event.startDate|date('d M Y') }} - {{ event.endDate|date('d M Y') }}</p>
+                            <p><i class="bi bi-people"></i> Places: <strong>{{ event.placesDisponibles }}</strong></p>
+                        </div>
+                        <p class="card-text-truncate">{{ event.description|slice(0, 80) }}...</p>
+                    </div>
+                    <div class="card-footer bg-white border-top-0">
+                        <a href="{{ path('front_medecin_event_show', {'id': event.id}) }}" class="btn btn-outline-danger btn-sm w-100">Voir détails</a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% else %}
+            <div class="alert alert-info text-center">Aucun événement expiré disponible.</div>
+        {% endfor %}
+    </div>
+
+    <div id="map" class="mt-5 shadow" style="height: 500px; width: 100%;"></div>
+</div>
+
+<!-- Script pour Leaflet.js (Aucune modification sur la carte, comme demandé) -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var map = L.map('map').setView([36.8065, 10.1815], 10);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        var events = [
+            {% for event in events_active %}
+            {% if event.latitude and event.longitude %}
+            { lat: {{ event.latitude }}, lng: {{ event.longitude }}, title: "{{ event.title }}", status: "Actif" },
+            {% endif %}
+            {% endfor %}
+            {% for event in events_archived %}
+            {% if event.latitude and event.longitude %}
+            { lat: {{ event.latitude }}, lng: {{ event.longitude }}, title: "{{ event.title }}", status: "Expiré" },
+            {% endif %}
+            {% endfor %}
+        ];
+
+        events.forEach(event => {
+            var markerColor = event.status === "Actif" ? "green" : "red";
+            L.marker([event.lat, event.lng], {
+                icon: L.divIcon({
+                    className: `custom-marker-${markerColor}`,
+                    html: `<div style="background-color:${markerColor}; width:12px; height:12px; border-radius:50%;"></div>`
+                })
+            }).addTo(map).bindPopup(`<strong>${event.title}</strong><br>Status: ${event.status}`);
+        });
+    });
+</script>
+
+<!-- Leaflet CSS et JS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'baseBackOffice.html.twig' %}
+
+{% block title %}Nouvelle Réponse{% endblock %}
+
+{% block body %}
+<main id="main" class="main">
+  <div class="pagetitle mb-4">
+    <h1 class="page-title"><i class="bi bi-reply"></i> Nouvelle Réponse</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('app_dashboard') }}">Accueil</a></li>
+        <li class="breadcrumb-item">Réclamations</li>
+        <li class="breadcrumb-item active">Réponses</li>
+      </ol>
+    </nav>
+  </div>
+  <div class="row g-4">
+    <div class="col-12">
+      <div class="card glass-card p-0">
+        <div class="card-body">
+          <h3 class="card-title mb-4"><i class="bi bi-plus-circle"></i> Ajouter une réponse</h3>
+    {{ include('reponse_controller_php/_form.html.twig') }}
+          <a href="{{ path('app_reponse_controller_php_index') }}" class="btn btn-secondary mt-3"><i class="bi bi-arrow-left"></i> Retour à la liste</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <style>
+    .btn-secondary:hover { background-color: #6c757d; border-color: #6c757d; }
+  </style>
+{% endblock %}

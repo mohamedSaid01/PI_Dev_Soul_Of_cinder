@@ -8,10 +8,12 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: PostCategoryRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\UniqueConstraint(name: 'unique_category_name', columns: ['name'])]
+#[UniqueEntity(fields: ['name'], message: 'This category already exists.')]
 class PostCategory
 {
     #[ORM\Id]
@@ -25,11 +27,18 @@ class PostCategory
         max: 255,
         maxMessage: "The category name cannot be longer than {{ limit }} characters."
     )]
-    #[Assert\Unique(message: "This category name already exists.")]
+    #[Assert\Regex(
+        pattern: '/^[^0-9]*$/',
+        message: "The category name cannot contain numbers."
+    )]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank(message: "The description cannot be empty.")]
+    #[Assert\Regex(
+        pattern: '/^[^0-9]*$/',
+        message: "The description cannot contain numbers."
+    )]
     private ?string $description = null;
 
     #[ORM\Column]

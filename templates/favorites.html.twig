@@ -1,0 +1,34 @@
+{% extends 'baseFrontOffice.html.twig' %}
+
+{% block body %}
+  <section id="favorites" class="py-5">
+    <div class="container">
+      <h1 class="mb-4">My Favorite Products</h1>
+      {% if favoris|length > 0 %}
+        <div class="row">
+          {% for favori in favoris %}
+            <div class="col-md-4 mb-4">
+              <div class="card h-100 shadow-sm">
+                <img src="{{ asset('uploads/images/' ~ favori.produit.image) }}" class="card-img-top" alt="{{ favori.produit.name }}">
+                <div class="card-body">
+                  <h5 class="card-title">{{ favori.produit.name }}</h5>
+                  <p class="card-text">{{ favori.produit.desciption }}</p>
+                  <p class="card-text"><strong>Price:</strong> {{ favori.produit.price }} Dt</p>
+  
+                  <form action="{{ path('toggle_favorite', {'id': favori.produit.id}) }}" method="POST">
+                    <input type="hidden" name="_token" value="{{ csrf_token('toggle_favorite' ~ favori.produit.id) }}">
+                    <button type="submit" class="btn btn-outline-danger w-100">
+                      ❤️ Remove from Favorites
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-center">You have no favorite products yet.</p>
+      {% endif %}
+    </div>
+  </section>
+{% endblock %}

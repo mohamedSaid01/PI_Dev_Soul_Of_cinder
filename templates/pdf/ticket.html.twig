@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billet d'Inscription</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .ticket { border: 2px solid #000; padding: 20px; width: 600px; margin: auto; }
+        .event-title { font-size: 24px; font-weight: bold; }
+        .event-info { margin: 10px 0; font-size: 18px; }
+        .qr-code { margin-top: 20px; }
+    </style>
+</head>
+<body>
+<div class="ticket">
+    <h2>Billet d'Inscription</h2>
+    <p class="event-title">{{ event.title }}</p>
+    <p class="event-info">Lieu : {{ event.location }}</p>
+    <p class="event-info">Date : {{ event.startDate|date('d/m/Y H:i') }} - {{ event.endDate|date('d/m/Y H:i') }}</p>
+    <p class="event-info">Participant : {{ user.firstName }} {{ user.lastName }}</p>
+
+    <div class="qr-code">
+        <img src="data:image/png;base64,{{ qrCodeBase64 }}" alt="QR Code">
+    </div>
+</div>
+</body>
+</html>

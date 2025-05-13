@@ -1,0 +1,53 @@
+{% extends 'baseBackOffice.html.twig' %}
+
+{% block title %}Détail de la Réponse{% endblock %}
+
+{% block body %}
+<main id="main" class="main">
+  <div class="pagetitle mb-4">
+    <h1 class="page-title"><i class="bi bi-reply"></i> Détail de la Réponse</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('app_dashboard') }}">Accueil</a></li>
+        <li class="breadcrumb-item">Réclamations</li>
+        <li class="breadcrumb-item active">Réponses</li>
+      </ol>
+    </nav>
+  </div>
+  <div class="row g-4">
+    <div class="col-12">
+      <div class="card glass-card p-0">
+        <div class="card-body">
+          <h3 class="card-title mb-4"><i class="bi bi-eye"></i> Détail</h3>
+          <table class="table table-bordered">
+      <tbody>
+        <tr>
+          <th>Contenu</th>
+          <td>{{ reponse.contenu }}</td>
+        </tr>
+        <tr>
+                <th>Date Réponse</th>
+                <td>{{ reponse.dateReponse ? reponse.dateReponse|date('Y-m-d H:i:s') : '' }}</td>
+        </tr>
+      </tbody>
+    </table>
+          <div class="d-flex gap-2 mt-3">
+            <a href="{{ path('app_reponse_controller_php_index') }}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Retour à la liste</a>
+            <a href="{{ path('app_reponse_controller_php_edit', {'id': reponse.id}) }}" class="btn btn-warning"><i class="bi bi-pencil"></i> Modifier</a>
+          </div>
+        </div>
+    </div>
+    </div>
+  </div>
+</main>
+{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+<style>
+    .table th { background-color: #dbeafe !important; color: #222 !important; font-weight: bold !important; }
+    .table td { background-color: #fff !important; }
+    .btn-warning:hover { background-color: #e0a800; border-color: #e0a800; }
+    .btn-secondary:hover { background-color: #6c757d; border-color: #6c757d; }
+</style>
+{% endblock %}

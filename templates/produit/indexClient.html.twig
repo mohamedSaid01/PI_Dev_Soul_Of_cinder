@@ -1,263 +1,26 @@
-<!DOCTYPE html>
-<html>
+{% extends 'baseFrontOffice.html.twig' %}
 
-<head>
-  <title>{% block title %}Welcome!{% endblock %}</title>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="format-detection" content="telephone=no">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="author" content="">
-  <meta name="keywords" content="">
-  <meta name="description" content="">
+{% block title %}Produits{% endblock %}
 
-  {% block stylesheets %}
-  <link rel="stylesheet" type="text/css" href="{{ asset('assetsFrontOffice/css/bootstrap.min.css') }}">
-  <link rel="stylesheet" type="text/css" href="{{ asset('assetsFrontOffice/style.css') }}">
-  <link rel="preconnect" href="https://fonts.googleapis.com/">
-  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800;900&amp;display=swap"
-    rel="stylesheet">
-  <style>
-    /* Custom Styles for Product Cards */
-    .card {
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      border: none;
-      border-radius: 10px;
-      overflow: hidden;
-      background: #fff;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    }
-
-    .card-img-top {
-      width: 100%;
-      height: 100%;
-      border: 5px solid #fff;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .card-body {
-      padding: 1.5rem;
-    }
-
-    .card-title {
-      font-size: 1.25rem;
-      font-weight: 600;
-      margin-bottom: 0.75rem;
-      color: #333;
-    }
-
-    .card-text {
-      font-size: 0.9rem;
-      color: #555;
-      margin-bottom: 0.5rem;
-    }
-
-    .text-warning {
-      color: #ffc107 !important;
-      font-weight: 500;
-    }
-
-    .btn-outline-primary {
-      border-color: #007bff;
-      color: #007bff;
-      transition: background-color 0.3s ease, color 0.3s ease;
-      font-weight: 500;
-    }
-
-    .btn-outline-primary:hover {
-      background-color: #007bff;
-      color: #fff;
-    }
-
-    /* Styles for Comments Section */
-    .comments-section {
-      margin-top: 1rem;
-    }
-
-    .comment-list {
-      list-style: none;
-      padding: 0;
-    }
-
-    .comment-list li {
-      background: #f8f9fa;
-      padding: 0.75rem;
-      margin-bottom: 0.5rem;
-      border-radius: 5px;
-      border: 1px solid #e9ecef;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .comment-actions button {
-      background: none;
-      border: none;
-      cursor: pointer;
-      margin-left: 10px;
-      color: #dc3545;
-      transition: color 0.3s ease;
-    }
-
-    .comment-actions button:hover {
-      color: #a71d2a;
-    }
-
-    .btn-delete-all {
-      margin-top: 10px;
-      background-color: #dc3545;
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    .btn-delete-all:hover {
-      background-color: #a71d2a;
-    }
-  </style>
-  {% endblock %}
-
-  {% block javascripts %}
-  <script src="{{ asset('assetsFrontOffice/js/modernizr.js') }}"></script>
-  <script src="{{ asset('assetsFrontOffice/js/jquery-1.11.0.min.js') }}"></script>
-  <script type="text/javascript" src="{{ asset('assetsFrontOffice/js/bootstrap.bundle.min.js') }}"></script>
-  <script type="text/javascript" src="{{ asset('assetsFrontOffice/js/plugins.js') }}"></script>
-  <script type="text/javascript" src="{{ asset('assetsFrontOffice/js/script.js') }}"></script>
-  {% endblock %}
-</head>
-
-<body data-bs-spy="scroll" data-bs-target="#header-nav" tabindex="0">
-
-  {% block header %}
-  <!-- Your existing navigation bar -->
-  <header id="header">
-    <nav class="header-top">
-      <div class="container">
-        <div class="row justify-content-between align-items-center">
-          <div class="col-lg-5 col-md-4 col-sm-6 p-0 m-0">
-            <a class="" href="index-2.html">
-              <img src="{{ asset('assetsFrontOffice/images/logo.svg') }}" width="150">
-            </a>
-          </div>
-          <div class="col-lg-4 col-md-4 d-md-block d-sm-none">
-            <ul class="contact-list d-flex justify-content-lg-end flex-wrap list-unstyled m-0">
-              <li class="pe-5 pe-lg-0 pe-xxl-5 pb-3 pb-lg-0">
-                <svg class="location primary-color" width="24" height="24">
-                  <use xlink:href="#location"></use>
-                </svg>123 Arling, Miola, NY
-              </li>
-              <li class="ps-xl-3">
-                <svg class="phone primary-color" width="24" height="24">
-                  <use xlink:href="#phone"></use>
-                </svg>(+487) 384 9452
-              </li>
-            </ul>
-          </div>
-          <div class="col-lg-3 col-md-4 col-sm-6">
-            <div class="btn-book text-end">
-              <a href="booking.html" class="btn btn-medium btn-outline-primary btn-pill text-uppercase">Book Now</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </nav>
-
-    <nav id="primary-header" class="navbar navbar-expand-lg shadow-none" aria-label="navbar" height="30">
-      <div class="container">
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-primary"
-          aria-controls="navbar-primary" aria-expanded="false" aria-label="Toggle navigation">
-          <svg class="navbar-icon mt-3 primary-color-500 bg-light" width="50" height="50">
-            <use xlink:href="#navbar-icon"></use>
-          </svg>
-        </button>
-        <div class="header-bottom collapse navbar-collapse bg-light border-radius-10 py-2" id="navbar-primary">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item ps-4 pe-4 border-right">
-              <a class="nav-link text-dark active p-0 mt-3 mt-lg-0" aria-current="page" href="#intro">Home</a>
-            </li>
-            <li class="nav-item ps-4 pe-4 border-right">
-              <a class="nav-link text-dark p-0" href="#about-us">About</a>
-            </li>
-            <li class="nav-item ps-4 pe-4 border-right">
-              <a class="nav-link text-dark p-0" href="#our-services">Services</a>
-            </li>
-            <li class="nav-item ps-4 pe-4 border-right">
-              <a class="nav-link text-dark p-0" href="#book-appointment">Booking</a>
-            </li>
-            <li class="nav-item ps-4 pe-4 border-right">
-              <a class="nav-link text-dark p-0" href="#our-team">Team</a>
-            </li>
-            <li class="nav-item ps-4 pe-4 border-right">
-              <a class="nav-link text-dark p-0" href="#faqs">Products</a>
-            </li>
-            <li class="nav-item ps-4 pe-4 border-right">
-              <a class="nav-link text-dark p-0" href="#department">Department</a>
-            </li>
-            <li class="nav-item ps-4 pe-3 dropdown border-right">
-              <a class="nav-link text-dark p-0 dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
-                aria-expanded="false">Pages <iconify-icon icon="iconamoon:arrow-down-2-fill"></iconify-icon> </a>
-              <ul class="dropdown-menu">
-                <li class="py-1"><a href="about.html" class="dropdown-item text-uppercase">About <span
-                      class="badge bg-secondary">Pro</span></a></li>
-                <li class="py-1"><a href="blog.html" class="dropdown-item text-uppercase">Blog <span
-                      class="badge bg-secondary">Pro</span></a></li>
-                <li class="py-1"><a href="blog-single.html" class="dropdown-item text-uppercase">Blog-Single <span
-                      class="badge bg-secondary">Pro</span></a></li>
-                <li class="py-1"><a href="booking.html" class="dropdown-item text-uppercase">Booking <span
-                      class="badge bg-secondary">Pro</span></a></li>
-                <li class="py-1"><a href="services.html" class="dropdown-item text-uppercase">Services <span
-                      class="badge bg-secondary">Pro</span></a></li>
-                <li class="py-1"><a href="departments.html" class="dropdown-item text-uppercase">Departments
-                    <span class="badge bg-secondary">Pro</span></a></li>
-                <li class="py-1"><a href="gallery.html" class="dropdown-item text-uppercase">Gallery <span
-                      class="badge bg-secondary">Pro</span></a></li>
-                <li class="py-1"><a href="pricing.html" class="dropdown-item text-uppercase">Pricing <span
-                      class="badge bg-secondary">Pro</span></a></li>
-                <li class="py-1"><a href="contact.html" class="dropdown-item text-uppercase">Contact <span
-                      class="badge bg-secondary">Pro</span></a></li>
-                <li class="py-1"><a href="team.html" class="dropdown-item text-uppercase">Products <span
-                      class="badge bg-secondary">Pro</span></a></li>
-                <li class="py-1"><a href="review.html" class="dropdown-item text-uppercase">Reviews <span
-                      class="badge bg-secondary">Pro</span></a></li>
-                <li class="py-1"><a href="faq.html" class="dropdown-item text-uppercase">FAQs <span
-                      class="badge bg-secondary">Pro</span></a></li>
-              </ul>
-            </li>
-            <li class="nav-item ps-4 pe-4 ">
-              <a class="nav-link get-pro text-dark fw-bold p-0" href="https://templatesjungle.gumroad.com/l/free-insove-medical-healthcare-bootstrap-5-html-website-template">GET PRO</a>
-            </li>
-          </ul>
-          <form class="search-form mb-3 mb-lg-0" role="search">
-            <svg class="search primary-color position-absolute" width="18" height="18">
-              <use xlink:href="#search"></use>
-            </svg>
-            <input class="form-control border-0 ps-4 position-relative" type="search" placeholder="Search.."
-              aria-label="Search">
-          </form>
-        </div>
-      </div>
-    </nav>
-  </header>
-  {% endblock %}
-
-  {% block body %}
+{% block body %}
   <section id="products" class="py-5">
-    <div class="container">
+    <div class="content-container">
+      <h2 class="page-title">Nos Produits</h2>
+      
+      <div class="search-container mb-4">
+        <input 
+          type="text" 
+          id="search-input" 
+          placeholder="Search products by name, category, or description..." 
+          class="form-control"
+        >
+        <div id="search-results" style="display: none;"></div>
+      </div>
+     
       <!-- Filter by Category -->
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <form method="get" action="{{ path('front_list') }}" class="d-flex">
-          <select name="category" class="form-select me-2">
+     <div class="d-flex justify-content-between align-items-center mb-4">
+        <form method="get" action="{{ path('front_list') }}" class="d-flex flex-wrap flex-grow-1 me-2">
+          <select name="category" class="form-select me-2 mb-2 mb-md-0" style="max-width: 150px;">
             <option value="">All Categories</option>
             {% for category in categories %}
               <option value="{{ category.id }}" {{ selectedCategory == category.id ? 'selected' : '' }}>
@@ -265,122 +28,133 @@
               </option>
             {% endfor %}
           </select>
-          <button type="submit" class="btn btn-secondary btn-sm">Filter</button>
+          <input type="number" name="minPrice" class="form-control me-2 mb-2 mb-md-0" style="max-width: 120px;" placeholder="Min Price" value="{{ minPrice }}">
+          <input type="number" name="maxPrice" class="form-control me-2 mb-2 mb-md-0" style="max-width: 120px;" placeholder="Max Price" value="{{ maxPrice }}">
+          <button type="submit" class="btn btn-secondary btn-sm mb-2 mb-md-0">Filter</button>
+          {% if selectedCategory or minPrice or maxPrice %}
+            <a href="{{ path('front_list') }}" class="btn btn-outline-secondary btn-sm ms-2 mb-2 mb-md-0">Reset</a>
+          {% endif %}
         </form>
       </div>
-      <div class="row">
+    
+      <!-- Product List -->
+      <div class="row" id="product-list">
         {% for produit in produits %}
-        <div class="col-md-4 mb-4">
-          <div class="card h-100" data-product-id="{{ produit.id }}">
-            <img src="{{ asset('uploads/images/' ~ produit.image) }}" class="card-img-top" alt="{{ produit.name }}">
-            <div class="card-body">
-              <h5 class="card-title">{{ produit.name }}</h5>
-              <p class="card-text">{{ produit.desciption }}</p>
-              <p class="card-text"><strong>Price:</strong> {{ produit.price }} Dt</p>
-              <p class="card-text"><strong>Stock:</strong> {{ produit.quantity }}</p>
-              {% if produit.quantity < 3 %}
-              <p class="card-text text-warning"><strong>Alert: This product may be out of stock soon!</strong></p>
-              {% endif %}
-              <a href="#" class="btn btn-outline-primary">Add to Cart</a>
-            </div>
-            <!-- Comment Section -->
-            <div class="card-footer bg-transparent">
-              <div class="mb-3">
-                <textarea class="form-control comment-input" rows="2" placeholder="Add a comment..." required></textarea>
+          <div class="col-md-4 mb-4">
+            <div class="card card-fixed-size">
+              <!-- Product Image -->
+              <a href="{{ path('produit_detailP', {'id': produit.id}) }}">
+                <img src="{{ asset('uploads/images/' ~ produit.image) }}" class="card-img-fixed-height" alt="{{ produit.name }}">
+              </a>
+              
+              <div class="card-body card-body-fixed-height">
+                <!-- Product Title -->
+                <a href="{{ path('produit_detailP', {'id': produit.id}) }}" class="text-decoration-none">
+                  <h5 class="card-title">{{ produit.name }}</h5>
+                </a>
+                
+                <!-- Price and Stock -->
+                <p class="card-text-truncate">{{ produit.desciption|slice(0, 80) }}...</p>
+                <p class="card-text"><strong>Price:</strong> {{ produit.price }} Dt</p>
+                {% if produit.quantity < 3 %}
+                  <p class="card-text text-danger"><small><strong>Alert: Only {{ produit.quantity }} left in stock!</strong></small></p>
+                {% endif %}
               </div>
-              <button class="btn btn-primary btn-sm submit-comment">Submit</button>
-            </div>
-            <!-- Display Comments -->
-            <div class="comments-section mt-3">
-              <h6>Comments:</h6>
-              <ul class="list-group comment-list">
-                <!-- Comments will be dynamically added here -->
-              </ul>
+              
+              <div class="card-footer bg-white border-top-0">
+                <div class="d-flex flex-column gap-2">
+                  <!-- Add to Cart Button -->
+                  {% if app.user %}
+                    <form action="{{ path('add_to_cart', {'id': produit.id}) }}" method="POST">
+                      <input type="hidden" name="_token" value="{{ csrf_token('add_to_cart' ~ produit.id) }}">
+                      <button type="submit" class="btn btn-primary btn-sm w-100">Add To Cart</button>
+                    </form>
+                  {% endif %}
+    
+                  <!-- Toggle Favorite Button -->
+                  {% if app.user %}
+                    <form action="{{ path('toggle_favorite', {'id': produit.id}) }}" method="POST">
+                      <input type="hidden" name="_token" value="{{ csrf_token('toggle_favorite' ~ produit.id) }}">
+                      <button type="submit" class="btn btn-outline-danger btn-sm w-100">
+                        {% if produit in app.user.favoris|map(f => f.produit) %}
+                          ❤️ Remove from Favorites
+                        {% else %}
+                          🤍 Add to Favorites
+                        {% endif %}
+                      </button>
+                    </form>
+                  {% endif %}
+                
+                  <!-- View Details Button -->
+                  <a href="{{ path('produit_detailP', {'id': produit.id}) }}" class="btn btn-outline-secondary btn-sm w-100">View Details</a>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-        {% else %}
-        <div class="col-12">
-          <p class="text-center">No products found</p>
-        </div>
         {% endfor %}
       </div>
     </div>
   </section>
-  {% endblock %}
 
-  {% block footer %}
-  <!-- Your existing footer -->
-  {% endblock %}
+  <!-- Comments Modal -->
+  <div class="modal fade" id="commentsModal" tabindex="-1" aria-labelledby="commentsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="commentsModalLabel">Product Comments</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="commentsModalBody">
+          <!-- Comments will be loaded here -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <!-- JavaScript for Comments -->
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      // Load comments for each product
-      document.querySelectorAll('.card').forEach(card => {
-        const productId = card.dataset.productId;
-        const commentList = card.querySelector('.comment-list');
-        const comments = JSON.parse(localStorage.getItem(`product_${productId}_comments`)) || [];
+    document.addEventListener('DOMContentLoaded', function() {
+      const searchInput = document.getElementById('search-input');
+      const searchResults = document.getElementById('search-results');
 
-        // Display existing comments
-        comments.forEach((comment, index) => {
-          addCommentToDOM(commentList, comment, index, productId);
-        });
-
-        // Handle comment submission
-        const submitButton = card.querySelector('.submit-comment');
-        submitButton.addEventListener('click', function () {
-          const commentInput = card.querySelector('.comment-input');
-          const commentText = commentInput.value.trim();
-
-          if (commentText) {
-            // Save comment to localStorage
-            const comments = JSON.parse(localStorage.getItem(`product_${productId}_comments`)) || [];
-            comments.push(commentText);
-            localStorage.setItem(`product_${productId}_comments`, JSON.stringify(comments));
-
-            // Add comment to the DOM
-            addCommentToDOM(commentList, commentText, comments.length - 1, productId);
-
-            // Clear the input
-            commentInput.value = '';
-          }
-        });
-
-        // Handle "Delete All Comments" button
-         /*
-        deleteAllButton.addEventListener('click', function () {
-          if (confirm('Are you sure you want to delete all comments?')) {
-            localStorage.removeItem(`product_${productId}_comments`);
-            commentList.innerHTML = ''; // Clear the comment list in the DOM
-          }
-          
-        });
-        */
+      searchInput.addEventListener('input', function() {
+        const query = this.value.trim();
+        
+        if (query.length >= 2) {
+          fetch(`/produit/search?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+              searchResults.innerHTML = '';
+              searchResults.style.display = 'block';
+              
+              if (data.products.length > 0) {
+                data.products.forEach(product => {
+                  const div = document.createElement('div');
+                  div.classList.add('result-item');
+                  div.innerHTML = `
+                    <a href="/produit/${product.id}/detail" class="d-block p-2 text-decoration-none">
+                      <strong>${product.name}</strong> - ${product.price} Dt
+                    </a>
+                  `;
+                  searchResults.appendChild(div);
+                });
+              } else {
+                searchResults.innerHTML = '<div class="p-2">No products found</div>';
+              }
+            });
+        } else {
+          searchResults.style.display = 'none';
+        }
       });
 
-      // Function to add a comment to the DOM
-      function addCommentToDOM(commentList, commentText, index, productId) {
-        const commentItem = document.createElement('li');
-        commentItem.className = 'list-group-item';
-        commentItem.innerHTML = `
-          <span>${commentText}</span>
-          <div class="comment-actions">
-            <button class="delete" onclick="deleteComment(${productId}, ${index})">🗑️ Delete</button>
-          </div>
-        `;
-        commentList.appendChild(commentItem);
-      }
+      // Close search results when clicking outside
+      document.addEventListener('click', function(e) {
+        if (e.target !== searchInput && e.target !== searchResults) {
+          searchResults.style.display = 'none';
+        }
+      });
     });
-
-    // Function to delete a comment
-    function deleteComment(productId, index) {
-      const comments = JSON.parse(localStorage.getItem(`product_${productId}_comments`)) || [];
-      comments.splice(index, 1); // Remove the comment
-      localStorage.setItem(`product_${productId}_comments`, JSON.stringify(comments));
-      location.reload(); // Refresh to show updated comments
-    }
   </script>
-</body>
-
-</html>
+{% endblock %}

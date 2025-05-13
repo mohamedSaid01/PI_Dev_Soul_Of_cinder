@@ -1,98 +1,124 @@
 <div class="container mt-5">
     <div class="card shadow-lg border-0 rounded-4">
         <div class="card-body p-4">
-            <h4 class="mb-3 text-center fw-bold" style="color: #87CEEB;">Form Title</h4>
+            {# Form with file upload capability #}
+            {{ form_start(form, {
+                'attr': {
+                    'class': 'needs-validation',
+                    'novalidate': 'true',
+                    'enctype': 'multipart/form-data'
+                }
+            }) }}
+            <div class="form-floating mb-3">
+                {{ form_widget(form.name, {
+                    'attr': {
+                        'class': 'form-control shadow-sm rounded-3',
+                        'placeholder': form.name.vars.label,
+                        'style': 'border: 2px solid #87CEEB;',
+                        'id': 'product-name'
+                    }
+                }) }}
+                {{ form_errors(form.name, {
+                    'attr': {'class': 'invalid-feedback'}
+                }) }}
+            </div>
 
-            {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'true'}}) }}
+            {# Champ Description avec bouton de génération #}
+            <div class="form-floating mb-3">
+                {{ form_widget(form.desciption, {
+                    'attr': {
+                        'class': 'form-control shadow-sm rounded-3',
+                        'placeholder': form.desciption.vars.label,
+                        'style': 'border: 2px solid #87CEEB;',
+                        'id': 'description-field'
+                    }
+                }) }}
+                {{ form_label(form.desciption, null, {
+                    'label_attr': {'class': 'form-label'}
+                }) }}
+                {{ form_errors(form.desciption, {
+                    'attr': {'class': 'invalid-feedback'}
+                }) }}
+                
+            </div>
 
-                {# Champ Name #}
-                <div class="form-floating mb-3">
-                    {{ form_widget(form.name, {
-                        'attr': {
-                            'class': 'form-control shadow-sm rounded-3',
-                            'placeholder': form.name.vars.label,
-                            'style': 'border: 2px solid #87CEEB;'
-                        }
-                    }) }}
-                    {{ form_label(form.name, null, {'attr': {'class': 'form-label'}}) }}
-                    {{ form_errors(form.name, {'attr': {'class': 'invalid-feedback'}}) }}
-                </div>
+            {# Champ Price #}
+            <div class="form-floating mb-3">
+                {{ form_widget(form.price, {
+                    'attr': {
+                        'class': 'form-control shadow-sm rounded-3',
+                        'placeholder': form.price.vars.label,
+                        'min': 0,
+                        'step': '0.01',
+                        'style': 'border: 2px solid #87CEEB;'
+                    }
+                }) }}
+                {{ form_label(form.price, null, {
+                    'label_attr': {'class': 'form-label'}
+                }) }}
+                {{ form_errors(form.price, {
+                    'attr': {'class': 'invalid-feedback'}
+                }) }}
+            </div>
 
-                {# Champ Description #}
-                <div class="form-floating mb-3">
-                    {{ form_widget(form.desciption, {
-                        'attr': {
-                            'class': 'form-control shadow-sm rounded-3',
-                            'placeholder': form.desciption.vars.label,
-                            'style': 'border: 2px solid #87CEEB;'
-                        }
-                    }) }}
-                    {{ form_label(form.desciption, null, {'attr': {'class': 'form-label'}}) }}
-                    {{ form_errors(form.desciption, {'attr': {'class': 'invalid-feedback'}}) }}
-                </div>
+            {# Champ Image #}
+            <div class="mb-3">
+                <label class="form-label">{{ form_label(form.image) }}</label>
+                {{ form_widget(form.image, {
+                    'attr': {
+                        'class': 'form-control',
+                        'accept': 'image/*',
+                        'data-max-size': '2048',
+                        'style': 'border: 2px solid #87CEEB;',
+                        padding: '2px'
+                    }
+                }) }}
+                {{ form_errors(form.image) }}
+            </div>
 
-                {# Champ Price #}
-                <div class="form-floating mb-3">
-                    {{ form_widget(form.price, {
-                        'attr': {
-                            'class': 'form-control shadow-sm rounded-3',
-                            'placeholder': form.price.vars.label,
-                            'min': 0,
-                            'step': '0.01',
-                            'style': 'border: 2px solid #87CEEB;'
-                        }
-                    }) }}
-                    {{ form_label(form.price, null, {'attr': {'class': 'form-label'}}) }}
-                    {{ form_errors(form.price, {'attr': {'class': 'invalid-feedback'}}) }}
-                </div>
+            {# Champ Quantity #}
+            <div class="form-floating mb-3">
+                {{ form_widget(form.quantity, {
+                    'attr': {
+                        'class': 'form-control shadow-sm rounded-3',
+                        'placeholder': form.quantity.vars.label,
+                        'style': 'border: 2px solid #87CEEB;'
+                    }
+                }) }}
+                {{ form_label(form.quantity, null, {
+                    'label_attr': {'class': 'form-label'}
+                }) }}
+                {{ form_errors(form.quantity, {
+                    'attr': {'class': 'invalid-feedback'}
+                }) }}
+            </div>
 
-                {# Champ Image #}
-                <div class="mb-3">
-                    <label class="form-label">{{ form_label(form.image) }}</label>
-                    {{ form_widget(form.image, {'attr': {'class': 'form-control', 'accept': 'image/*', 'data-max-size': '2048', 'style': 'border: 2px solid #87CEEB;'}}) }}
-                    {{ form_errors(form.image) }}
-                </div>
+            {# Champ Category #}
+            <div class="form-floating mb-3">
+                {{ form_widget(form.Category, {
+                    'attr': {
+                        'class': 'form-control shadow-sm rounded-3',
+                        'placeholder': form.Category.vars.label,
+                        'style': 'border: 2px solid #87CEEB;'
+                    }
+                }) }}
+                {{ form_label(form.Category, null, {
+                    'label_attr': {'class': 'form-label'}
+                }) }}
+                {{ form_errors(form.Category, {
+                    'attr': {'class': 'invalid-feedback'}
+                }) }}
+            </div>
 
-                {# Champ Quantity #}
-                <div class="form-floating mb-3">
-                    {{ form_widget(form.quantity, {
-                        'attr': {
-                            'class': 'form-control shadow-sm rounded-3',
-                            'placeholder': form.quantity.vars.label,
-                            'style': 'border: 2px solid #87CEEB;'
-                        }
-                    }) }}
-                    {{ form_label(form.quantity, null, {'attr': {'class': 'form-label'}}) }}
-                    {{ form_errors(form.quantity, {'attr': {'class': 'invalid-feedback'}}) }}
-                </div>
-
-                {# Champ Category #}
-                <div class="form-floating mb-3">
-                    {{ form_widget(form.Category, {
-                        'attr': {
-                            'class': 'form-control shadow-sm rounded-3',
-                            'placeholder': form.Category.vars.label,
-                            'style': 'border: 2px solid #87CEEB;'
-                        }
-                    }) }}
-                    {{ form_label(form.Category, null, {'attr': {'class': 'form-label'}}) }}
-                    {{ form_errors(form.Category, {'attr': {'class': 'invalid-feedback'}}) }}
-                </div>
-
-                {# Bouton Submit #}
-                <div class="d-grid">
-                    {{ form_widget(form.submit, {
-                        'attr': {
-                            'class': 'btn btn-lg rounded-3',
-                            'style': 'background-color: #89CFF0; color: white;'
-                        }
-                    }) }}
-                </div>
+            {# Bouton Submit #}
+            <div class="d-grid">
+                <button type="submit" class="btn btn-lg rounded-3" style="background-color: #89CFF0; color: white;">Valider</button>
+            </div>
 
             {{ form_end(form) }}
 
             <div class="mt-3">
-                <a href="{{ path('app_category_index') }}" class="btn btn-outline-secondary">
+                <a href="{{ path('app_produit_index') }}" class="btn btn-outline-secondary">
                     <span class="fw-bold">Back to List</span>
                 </a>
             </div>
@@ -101,40 +127,59 @@
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function()) {
         const imageInput = document.querySelector('input[name="form[image]"]');
         const priceInput = document.querySelector('input[name="form[price]"]');
-        
-        // Validation pour le champ Image
-        imageInput.addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const fileSize = file.size / 1024 / 1024; // taille en Mo
-                const fileType = file.type.split('/')[0];
 
-                // Vérification du type de fichier (image)
-                if (fileType !== 'image') {
-                    alert('Veuillez télécharger un fichier image.');
-                    imageInput.value = ''; // Réinitialiser l'input
+        // Validation pour le champ Image
+        if (imageInput) {
+            imageInput.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const fileSize = file.size / 1024 / 1024; // Taille en Mo
+                    const fileType = file.type.split('/')[0];
+
+                    // Vérification du type de fichier (image)
+                    if (fileType !== 'image') {
+                        alert('Veuillez télécharger un fichier image.');
+                        event.target.value = ''; // Réinitialiser l'input
+                    }
+                    // Vérification de la taille de l'image
+                    else if (fileSize > 2) {
+                        alert('La taille de l\'image ne doit pas dépasser 2 Mo.');
+                        event.target.value = ''; // Réinitialiser l'input
+                    }
                 }
-                // Vérification de la taille de l'image
-                else if (fileSize > 2) {
-                    alert('La taille de l\'image ne doit pas dépasser 2 Mo.');
-                    imageInput.value = ''; // Réinitialiser l'input
-                }
-            }
-        });
+            });
+        }}
 
         // Validation pour le champ Price
-        priceInput.addEventListener('blur', function(event) {
-            const priceValue = parseFloat(event.target.value);
-            if (isNaN(priceValue) || priceValue <= 0) {
-                alert('Le prix doit être un nombre positif.');
-                event.target.value = ''; // Réinitialiser l'input
-            } else {
-                // Formater à 2 décimales (si nécessaire)
-                event.target.value = priceValue.toFixed(2);
+        if (priceInput) {
+            priceInput.addEventListener('blur', function(event) {
+                const priceValue = parseFloat(event.target.value);
+                if (isNaN(priceValue) || priceValue <= 0) {
+                    alert('Le prix doit être un nombre positif.');
+                    event.target.value = ''; // Réinitialiser l'input
+                } else {
+                    // Formater à 2 décimales (si nécessaire)
+                    event.target.value = priceValue.toFixed(2);
+                }
+            });
+        }
+document.addEventListener("DOMContentLoaded", function() {
+    const generateDescriptionButton = document.getElementById('generate-description');
+    const productNameInput = document.getElementById('product-name');
+    const descriptionField = document.getElementById('description-field');
+
+    if (generateDescriptionButton && productNameInput && descriptionField) {
+        generateDescriptionButton.addEventListener('click', async function()) {
+            const productName = productNameInput.value;
+
+            if (!productName) {
+                alert('Veuillez d\'abord saisir le nom du produit.');
+                return;
             }
-        });
-    });
+
+        }}
+});
 </script>

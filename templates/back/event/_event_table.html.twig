@@ -1,0 +1,156 @@
+{% if isArchived is defined and isArchived %}
+<div class="table-responsive-archived">
+{% endif %}
+
+{% if error_message is defined %}
+<div class="alert alert-danger">
+    {{ error_message }}
+</div>
+{% endif %}
+
+<table class="table table-hover table-bordered align-middle">
+    <thead class="table-primary text-center">
+    <tr>
+        <th>Titre</th>
+        <th>Lieu</th>
+        <th>📆 Début</th>
+        <th>📆 Fin</th>
+        <th>👥 Places</th>
+        <th>📌 Catégorie</th>
+        <th>🖼️ Affiche</th>
+        <th>⚙️ Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for event in events %}
+        <tr>
+            <td class="event-title-cell"><strong title="{{ event.title }}">{{ event.title }}</strong></td>
+            <td class="event-location-cell" title="{{ event.location }}">{{ event.location }}</td>
+            <td>{{ event.startDate ? event.startDate|date('d/m/Y H:i') : 'N/A' }}</td>
+            <td>{{ event.endDate ? event.endDate|date('d/m/Y H:i') : 'N/A' }}</td>
+            <td class="text-center">
+                {% if event.placesDisponibles > 0 %}
+                    <span class="badge bg-success">{{ event.placesDisponibles }}</span>
+                {% else %}
+                    <span class="badge bg-danger">Complet</span>
+                {% endif %}
+            </td>
+            <td class="event-category-cell" title="{{ event.categorie.nom }}"><span class="badge bg-info text-dark">{{ event.categorie.nom }}</span></td>
+            <td class="text-center">
+                {% if event.affiche %}
+                    <img src="{{ asset('uploads/affiches/' ~ event.affiche) }}" class="img-thumbnail" style="max-width: 60px;">
+                {% else %}
+                    <span class="text-muted">Pas d'affiche</span>
+                {% endif %}
+            </td>
+            <td class="text-center">
+                <a href="{{ path('back_event_edit', {'id': event.id}) }}" class="btn btn-warning btn-sm">
+                    <i class="bi bi-pencil-square"></i>
+                </a>
+
+                {% if isArchived is defined and isArchived %}
+                    <button class="btn btn-success btn-sm unarchive-event" data-id="{{ event.id }}">
+                        <i class="bi bi-arrow-repeat"></i>
+                    </button>
+
+                    {% if event.isExpired %}
+                        <button class="btn btn-danger btn-sm delete-event" data-id="{{ event.id }}" data-token="{{ csrf_token('delete' ~ event.id) }}">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    {% endif %}
+                {% else %}
+                    <button class="btn btn-primary btn-sm archive-event" data-id="{{ event.id }}">
+                        <i class="bi bi-archive-fill"></i>
+                    </button>
+                {% endif %}
+            </td>
+
+        </tr>
+    {% else %}
+        <tr>
+            <td colspan="9" class="text-center text-muted">Aucun événement trouvé.</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% if pagination is defined and pagination is not null %}
+<div class="d-flex justify-content-center mt-4 pagination-container">
+    {% if pagination.getTotalItemCount > 0 %}
+        {# Affichage des informations de page #}
+        <div class="pagination-info mb-2 text-muted">
+            Affichage de {{ pagination.getItemNumberPerPage * (pagination.getCurrentPageNumber - 1) + 1 }} à 
+            {% if pagination.getCurrentPageNumber == pagination.getPageCount %}
+                {{ pagination.getTotalItemCount }}
+            {% else %}
+                {{ pagination.getItemNumberPerPage * pagination.getCurrentPageNumber }}
+            {% endif %}
+            sur {{ pagination.getTotalItemCount }} événements
+        </div>
+    {% endif %}
+    
+    {{ knp_pagination_render(pagination, '@KnpPaginator/Pagination/bootstrap_v5_pagination.html.twig', {}, {
+        'align': 'center',
+        'size': 'small',
+        'rounded': true,
+        'prev_message': '<i class="bi bi-chevron-left"></i>',
+        'next_message': '<i class="bi bi-chevron-right"></i>',
+        'first_message': '<i class="bi bi-chevron-double-left"></i>',
+        'last_message': '<i class="bi bi-chevron-double-right"></i>'
+    }) }}
+</div>
+{% endif %}
+
+{% if isArchived is defined and isArchived %}
+</div>
+{% endif %}
+
+<style>
+    /* Styles pour la pagination */
+    .pagination-container {
+        margin: 1.5rem 0;
+        flex-direction: column;
+        align-items: center;
+    }
+    .pagination {
+        display: flex;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        gap: 8px;
+    }
+    .pagination span,
+    .pagination a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        color: #3b7ddd;
+        text-decoration: none;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        min-width: 40px;
+    }
+    .pagination a:hover {
+        background-color: #3b7ddd;
+        color: white;
+        border-color: #3b7ddd;
+    }
+    .pagination .active a {
+        background-color: #3b7ddd;
+        color: white;
+        border-color: #3b7ddd;
+        font-weight: bold;
+    }
+    .pagination .disabled {
+        color: #aaa;
+        border-color: #eee;
+        cursor: not-allowed;
+    }
+    .pagination-info {
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+</style>

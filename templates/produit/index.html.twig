@@ -1,53 +1,75 @@
 {% extends 'baseBackOffice.html.twig' %}
 
+{% block title %}Gestion des Produits{% endblock %}
+
 {% block body %}
-    <div class="container-fluid" style="padding-top: 5%; padding-left: 5%; padding-right: 5%;">
-        <h1 class="mb-4">Product Management</h1>
-
-        <!-- Table with improved styling -->
-        <div class="table-responsive">
+<main id="main" class="main">
+  <div class="pagetitle mb-4">
+    <h1 class="page-title"><i class="bi bi-box"></i> Gestion des Produits</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('app_dashboard') }}">Accueil</a></li>
+        <li class="breadcrumb-item">Produits</li>
+        <li class="breadcrumb-item active">Liste</li>
+      </ol>
+    </nav>
+  </div>
+  <div class="row g-4">
+    <div class="col-12">
+      <div class="card glass-card p-0">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="card-title mb-0"><i class="bi bi-list-task"></i> Liste des Produits</h3>
+            <a href="{{ path('app_produit_new') }}" class="btn btn-success">
+              <i class="bi bi-plus-circle"></i> Ajouter un produit
+            </a>
+          </div>
+          <!-- Table des produits -->
+          <div class="table-responsive">
             <table class="table table-hover table-bordered shadow-sm">
-                <thead class="thead-light">
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Description</th>
-                        <th scope="col">Price</th>
-                        <th scope="col">Image</th>
-                        <th scope="col">Quantity</th>
-                        <th scope="col">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for produit in produits %}
-                        <tr>
-                            <td>{{ produit.id }}</td>
-                            <td>{{ produit.name }}</td>
-                            <td>{{ produit.desciption }}</td>
-                            <td>{{ produit.price|number_format(2) }}DT</td>
-                            <td>
-                                <img src="{{ asset('uploads/images/' ~ produit.image) }}" alt="Product Image" class="img-fluid rounded" style="max-width: 100px;">
-                            </td>
-                            <td>{{ produit.quantity }}</td>
-                            <td>
-                                <a href="{{ path('app_produit_show_back', {'id': produit.id}) }}" class="btn btn-info btn-sm">View</a>
-                               
-                            </td>
-                        </tr>
-                    {% else %}
-                        <tr>
-                            <td colspan="7" class="text-center text-muted">No records found.</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
+              <thead style="background: #dbeafe; color: #222; font-weight: bold; border-top-left-radius: 12px; border-top-right-radius: 12px;">
+                <tr>
+                  <th style="border-top-left-radius: 12px;"><span style='font-size:1.1em; vertical-align: middle;'>📦</span> Nom</th>
+                  <th><span style='font-size:1.1em; vertical-align: middle;'>📝</span> Description</th>
+                  <th><span style='font-size:1.1em; vertical-align: middle; color: #22c55e; font-weight: bold;'>$</span> Prix</th>
+                  <th><span style='font-size:1.1em; vertical-align: middle;'>🖼️</span> Image</th>
+                  <th><span style='font-size:1.1em; vertical-align: middle; color: #2563eb; font-weight: bold;'>🔢</span> Quantité</th>
+                  <th style="border-top-right-radius: 12px;"><span style='font-size:1.1em; vertical-align: middle; color: #a855f7; font-weight: bold;'>⚙️</span> Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for produit in produits %}
+                  <tr>
+                    <td>{{ produit.name }}</td>
+                    <td>{{ produit.desciption }}</td>
+                    <td>{{ produit.price }}</td>
+                    <td>
+                      {% if produit.image %}
+                        <img src="{{ asset('uploads/images/' ~ produit.image) }}" alt="Product Image" class="img-thumbnail" style="max-width: 100px;">
+                      {% else %}
+                        <span class="text-muted">No Image</span>
+                      {% endif %}
+                    </td>
+                    <td>{{ produit.quantity }}</td>
+                    <td class="d-flex gap-1">
+                      <a href="{{ path('app_produit_edit', {'id': produit.id}) }}" class="btn btn-warning btn-sm" title="Modifier"><i class="bi bi-pencil-square"></i></a>
+                      <form method="post" action="{{ path('app_produit_delete', {'id': produit.id}) }}" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ produit.id) }}">
+                        <button class="btn btn-danger btn-sm" title="Supprimer"><i class="bi bi-trash"></i></button>
+                      </form>
+                    </td>
+                  </tr>
+                {% else %}
+                  <tr><td colspan="5" class="text-center">Aucun produit trouvé.</td></tr>
+                {% endfor %}
+              </tbody>
             </table>
+          </div>
         </div>
-
-        <!-- Create new button -->
-        <div class="text-center mt-4">
-            <a href="{{ path('app_produit_new') }}" class="btn btn-success btn-lg">Create New Product</a>
-        </div>
+      </div>
     </div>
+  </div>
+</main>
 {% endblock %}
 
 {% block stylesheets %}
@@ -100,6 +122,18 @@
         }
         .text-muted {
             font-style: italic;
+        }
+        .table tbody tr {
+            background-color: #f3f8ff !important;
+            transition: background-color 0.3s ease;
+        }
+        .table tbody tr:hover {
+            background-color: #e0e7ef !important;
+        }
+        table.table thead tr, table.table thead th, table.table thead {
+          background-color: #dbeafe !important;
+          color: #222 !important;
+          font-weight: bold !important;
         }
     </style>
 {% endblock %}

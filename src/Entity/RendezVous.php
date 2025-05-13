@@ -12,7 +12,8 @@ class RendezVous
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private $id;
-
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $lienJitsi;
     #[ORM\ManyToOne(targetEntity: Medecin::class, inversedBy: 'rendezVous')]
     private $medecin;
 
@@ -30,6 +31,15 @@ private $etat;
 private $statut=false;
 #[ORM\Column(type: 'boolean')]
 private $annule = false; // Valeur par défaut à false (non annulé)
+
+
+
+#[ORM\Column(type: 'string', length: 255, nullable: true)]
+private ?string $cause = null; // Type nullable
+
+
+
+
 public function getDate(): ?\DateTimeInterface
 {
     return $this->date;
@@ -116,6 +126,31 @@ public function setStatut(bool $statut): self
     {
         $this->etat = $etat;
 
+        return $this;
+    }
+
+
+
+    ////////////////////////////meet
+    public function getLienJitsi(): ?string
+    {
+        return $this->lienJitsi;
+    }
+
+    public function setLienJitsi(?string $lienJitsi): self
+    {
+        $this->lienJitsi = $lienJitsi;
+        return $this;
+    }
+
+    public function getCause(): ?string
+    {
+        return $this->cause;
+    }
+
+    public function setCause(?string $cause): self
+    {
+        $this->cause = $cause;
         return $this;
     }
 }

@@ -1,0 +1,37 @@
+{% extends 'baseBackOffice.html.twig' %}
+
+{% block title %}Calendrier des Rendez-vous{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css">
+{% endblock %}
+
+{% block body %}
+<main id="main" class="main">
+
+    <div class="container">
+        <h1>Calendrier des Rendez-vous</h1>
+        <div id="calendar"></div>
+    </div>
+</main>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                events: {{ events|raw }},
+                eventDidMount: function(info) {
+                    // Rendre le titre avec HTML
+                    info.el.innerHTML = info.event.title.replace(/<br>/g, '<br>');
+                }
+            });
+            calendar.render();
+        });
+    </script>
+    
+{% endblock %}

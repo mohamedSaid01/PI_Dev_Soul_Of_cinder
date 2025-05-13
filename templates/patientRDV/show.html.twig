@@ -1,0 +1,28 @@
+{% extends 'baseFrontOffice.html.twig' %}
+
+{% block title %}Détails du Rendez-vous{% endblock %}
+
+{% block body %}
+    <h1>Détails du Rendez-vous</h1>
+
+    <p><strong>Date :</strong> {{ rendezVous.date|date('d/m/Y H:i') }}</p>
+    <p><strong>Médecin :</strong> {{ rendezVous.medecin.user.firstName }} {{ rendezVous.medecin.user.lastName }}</p>
+    <p><strong>Statut :</strong> {{ rendezVous.statut ? 'Accepté' : 'En attente' }}</p>
+
+    {% if rendezVous.statut and rendezVous.lienJitsi %}
+        <h2>Consultation en ligne</h2>
+        <p>Rejoignez la consultation en cliquant sur le lien ou en utilisant l'interface ci-dessous :</p>
+        <a href="{{ rendezVous.lienJitsi }}" target="_blank">Ouvrir dans un nouvel onglet</a>
+
+        <!-- Intégration de Jitsi Meet via iframe -->
+        <iframe
+            src="{{ rendezVous.lienJitsi }}"
+            allow="camera; microphone; fullscreen"
+            style="width: 100%; height: 500px; border: 0;">
+        </iframe>
+    {% else %}
+        <p>Le lien de la consultation n'est pas encore disponible.</p>
+    {% endif %}
+
+    <a href="{{ path('lienmeet') }}">Retour à mes consultations acceptées</a>
+{% endblock %}

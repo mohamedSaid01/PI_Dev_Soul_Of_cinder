@@ -11,6 +11,9 @@ final class FrontController extends AbstractController
     #[Route('/', name: 'display_front')]
     public function index(): Response
     {
+        // if ($this->getUser()){
+        //     dd($this->getUser()->getFirstName());
+        // }
         return $this->render('front/index.html.twig'
         );
     }

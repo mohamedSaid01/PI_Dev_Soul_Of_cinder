@@ -1,0 +1,74 @@
+{% extends 'baseBackOffice.html.twig' %}
+
+
+
+{% block title %}Dossier Médical de {{ patient.user.firstName }} {{ patient.user.lastName }}{% endblock %}
+
+{% block body %}
+<main id="main" class="main">
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <h1 class="text-center mb-4 text-primary">
+                    📄 Dossier Médical de {{ patient.user.firstName }} {{ patient.user.lastName }}
+                </h1>
+
+                <!-- Afficher le fichier médical -->
+                {% if patient.user.medicalFile %}
+                    <div class="card shadow p-4 bg-white border-0 rounded-lg">
+                        <div class="card-body">
+                            <h3 class="card-title text-secondary mb-4">📁 Fichier Médical</h3>
+
+                            <!-- Intégrer le PDF dans une iframe -->
+                            <div class="embed-responsive embed-responsive-16by9">
+                                <iframe 
+                                    src="{{ asset('uploads/medical_files/' ~ patient.user.medicalFile) }}" 
+                                    class="embed-responsive-item" 
+                                    width="100%" 
+                                    height="600px"
+                                    frameborder="0">
+                                </iframe>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="alert alert-warning text-center mt-3">
+                        ⚠ Aucun fichier médical disponible.
+                    </div>
+                {% endif %}
+
+                <div class="text-center mt-4">
+                    <a href="{{ path('medecin_rendez_vous_acceptes') }}" class="btn btn-outline-secondary btn-lg px-4">
+                        🔙 Retour aux Rendez-vous Acceptés
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .card {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        .card-title {
+            font-size: 22px;
+            font-weight: bold;
+        }
+        .btn {
+            padding: 12px 24px;
+            font-size: 16px;
+            transition: all 0.3s ease-in-out;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+            color: white;
+        }
+        iframe {
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</main>
+{% endblock %}

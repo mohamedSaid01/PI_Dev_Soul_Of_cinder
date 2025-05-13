@@ -22,9 +22,13 @@ class Patient
     #[ORM\OneToMany(mappedBy: 'patient', targetEntity: RendezVous::class)]
     private $rendezVous;
 
+    #[ORM\OneToMany(mappedBy: 'patient', targetEntity: Notification::class)]
+    private Collection $notifications;
+
     public function __construct()
     {
         $this->rendezVous = new ArrayCollection();
+        $this->notifications = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -65,6 +69,33 @@ class Patient
             // Définir le côté propriétaire à null (si nécessaire)
             if ($rendezVous->getPatient() === $this) {
                 $rendezVous->setPatient(null);
+            }
+        }
+
+        return $this;
+    }
+
+
+    public function getNotifications(): Collection
+    {
+        return $this->notifications;
+    }
+
+    public function addNotification(Notification $notification): self
+    {
+        if (!$this->notifications->contains($notification)) {
+            $this->notifications->add($notification);
+            $notification->setPatient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNotification(Notification $notification): self
+    {
+        if ($this->notifications->removeElement($notification)) {
+            if ($notification->getPatient() === $this) {
+                $notification->setPatient(null);
             }
         }
 

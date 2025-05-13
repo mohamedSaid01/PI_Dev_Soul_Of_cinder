@@ -3,271 +3,124 @@
 {% block title %}Liste des Posts{% endblock %}
 
 {% block body %}
-    <div class="container mt-4">
-
-        <!-- Filter by Category -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <form method="get" action="{{ path('front_list') }}" class="d-flex">
-                <select name="category" class="form-select me-2">
-                    <option value="">All Categories</option>
-                    {% for category in categories %}
-                        <option value="{{ category.id }}" {{ selectedCategory == category.id ? 'selected' : '' }}>
-                            {{ category.name }}
-                        </option>
-                    {% endfor %}
-                </select>
-                <button type="submit" class="btn btn-secondary btn-sm">Filter</button>
-            </form>
-
-            <a href="{{ path('front_create') }}" class="btn btn-primary btn-lg create-post-btn">Créer un nouveau post</a>
-        </div>
-
-        <!-- Posts List -->
-        <div>
-            {% for post in posts %}
-                <div class="post-container">
-                    
-                    <!-- Dropdown for Edit/Delete (Only for Admin/Author) -->
-                    <div class="dropdown">
-                        <button class="dropdown-toggle">&#8942;</button>
-                        <div class="dropdown-menu">
-                            <a href="{{ path('front_edit', { id: post.id }) }}">Modifier</a>
-                            <a href="#" onclick="event.preventDefault(); if (confirm('Are you sure you want to delete this post?')) { document.getElementById('delete-post-{{ post.id }}').submit(); }">
-                                Supprimer
-                            </a>
-                            <form id="delete-post-{{ post.id }}" method="post" action="{{ path('front_delete', {'id': post.id}) }}">
-                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ post.id) }}">
-                            </form>
-                        </div>
-                    </div>
-
-                    <h2>{{ post.title }}</h2>
-                    <p class="post-description">{{ post.description }}</p>
-                    <p><span class="post-meta-label">Type:</span> <span class="post-meta-value">{{ post.type }}</span></p>
-                    <p><span class="post-meta-label">Catégorie:</span> <span class="post-meta-value">{{ post.category.name }}</span></p>
-                    <p><span class="post-meta-label">Posté par:</span> <span class="post-meta-value">{{ post.author }}</span></p>
-                    <small>Posté {{ post.formattedDate }}</small>
-
-                    <!-- Display the image if it exists -->
-                    {% if post.image %}
-                        <div class="post-image">
-                            <img src="{{ post.imagePath }}" alt="Post Image">
-                        </div>
-                    {% endif %}
-
-                </div>
-            {% else %}
-                <p>Aucun post trouvé.</p>
-            {% endfor %}
-        </div>
+<div class="content-container">
+    <h2 class="page-title">Liste des Posts</h2>
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <!-- Combined Filter and Sorting Form -->
+        <form method="get" action="{{ path('app_front_list') }}" class="d-flex align-items-center">
+            <!-- Filter by Category -->
+            <select name="category" class="form-select me-2">
+                <option value="">All Categories</option>
+                {% for category in categories %}
+                    <option value="{{ category.id }}" {{ selectedCategory == category.id ? 'selected' : '' }}>
+                        {{ category.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        
+            <!-- Filter by Type -->
+            <select name="type" class="form-select me-2">
+                <option value="">All Types</option>
+                {% for type in types %}
+                    <option value="{{ type }}" {{ selectedType == type ? 'selected' : '' }}>
+                        {{ type }}
+                    </option>
+                {% endfor %}
+            </select>
+        
+            <!-- Sorting Dropdown -->
+            <select name="sortBy" class="form-select me-2">
+                <option value="newest" {{ sortBy == 'newest' ? 'selected' : '' }}>Newest First</option>
+                <option value="oldest" {{ sortBy == 'oldest' ? 'selected' : '' }}>Oldest First</option>
+                <option value="most_comments" {{ sortBy == 'most_comments' ? 'selected' : '' }}>Most Comments</option>
+                <option value="least_comments" {{ sortBy == 'least_comments' ? 'selected' : '' }}>Least Comments</option>
+            </select>
+        
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary btn-sm">
+                <i class="bi bi-funnel me-1"></i>Filtrer
+            </button>
+        
+            <!-- Reset Button -->
+            <a href="{{ path('app_front_list') }}" class="btn btn-outline-secondary btn-sm ms-2">
+                <i class="bi bi-arrow-counterclockwise me-1"></i>Réinitialiser
+            </a>
+        </form>
+        
+        <!-- Create post -->
+        {% if app.user is not null %}
+            <a href="{{ path('front_create') }}" class="btn btn-primary btn-sm">
+                <i class="bi bi-plus-circle me-1"></i>Créer un nouveau post
+            </a>
+        {% endif %}
     </div>
 
-<style>
-/* Modern post styling */
-.post-container {
-    max-width: 600px;
-    margin: 20px auto;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background: linear-gradient(135deg, #f9f9f9, #ffffff);
-    position: relative;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.post-container:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-
-.post-container h2 {
-    margin-top: 0;
-    font-size: 1.5rem;
-    color: #333;
-}
-
-.post-description {
-    margin: 10px 0;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    color: #555;
-    line-height: 1.6;
-}
-
-.post-container small {
-    color: #777;
-    font-size: 0.9rem;
-}
-
-.post-container p {
-    margin: 8px 0;
-    color: #444;
-}
-
-/* Style for meta labels (Type, Catégorie, Posté par) */
-.post-meta-label {
-    font-weight: bold;
-    color: #333;
-}
-
-/* Style for meta values (dynamic content) */
-.post-meta-value {
-    color: #007bff;
-    font-weight: 500;
-}
-
-/* Optional: Add a hover effect for meta values */
-.post-meta-value:hover {
-    color: #0056b3;
-    text-decoration: underline;
-}
-
-/* Filter dropdown */
-.form-select {
-    width: 200px;
-}
-
-/* Buttons */
-.btn-primary {
-    background-color: #28a745;
-    border-color: #28a745;
-    transition: background-color 0.3s ease;
-}
-
-.btn-primary:hover {
-    background-color: #218838;
-    border-color: #1e7e34;
-}
-
-.btn-sm {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
-    border-radius: 0.2rem;
-}
-
-/* Create Post Button */
-.create-post-btn {
-    background-color: #28a745;
-    border-color: #28a745;
-    transition: background-color 0.3s ease;
-    padding: 10px 20px;
-    font-size: 1.1rem;
-    border-radius: 5px;
-}
-
-.create-post-btn:hover {
-    background-color: #218838;
-    border-color: #1e7e34;
-}
-
-/* Dropdown menu for edit/delete */
-.dropdown {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-}
-
-.dropdown-toggle {
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    color: #666;
-    transition: color 0.3s ease;
-}
-
-.dropdown-toggle:hover {
-    color: #333;
-}
-
-.dropdown-menu {
-    display: none;
-    position: absolute;
-    right: 0;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    z-index: 1;
-}
-
-.dropdown-menu a {
-    display: block;
-    padding: 8px 16px;
-    text-decoration: none;
-    color: #333;
-    transition: background-color 0.3s ease;
-}
-
-.dropdown-menu a:hover {
-    background-color: #f1f1f1;
-}
-
-.show {
-    display: block;
-}
-
-.post-image {
-    background-color: #f0f0f0;
-    border-radius: 10px;
-    overflow: hidden;
-    margin-top: 15px;
-}
-
-.post-image img {
-    width: 100%;
-    height: auto;
-    max-height: 400px;
-    object-fit: contain;
-    border-radius: 10px;
-}
-
-/* Responsive behavior */
-@media (max-width: 768px) {
-    .post-image img {
-        max-height: 300px;
-    }
-
-    .post-container {
-        padding: 15px;
-    }
-
-    .navbar-nav {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .create-post-btn {
-        width: 100%;
-        margin-top: 10px;
-    }
-}
-</style>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
-        dropdownToggles.forEach(toggle => {
-            toggle.addEventListener('click', function (e) {
-                e.preventDefault();
-                const dropdownMenu = this.nextElementSibling;
-                dropdownMenu.classList.toggle('show');
-            });
-        });
+    <div class="row">
+        {% for post in pagination %}
+            <div class="col-md-4 mb-4">
+                <div class="card card-fixed-size">
+                    {% if post.image %}
+                        <div class="position-relative">
+                            <img src="{{ asset('uploads/' ~ post.image) }}" alt="Post Image" class="card-img-fixed-height">
+                        </div>
+                    {% else %}
+                        <div class="card-img-fixed-height bg-light d-flex align-items-center justify-content-center">
+                            <i class="bi bi-file-text fs-1 text-muted"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="card-body card-body-fixed-height">
+                        <!-- Menu for Edit/Delete (Only for Admin/Author) -->
+                        {% if app.user and app.user.id == post.author.id %}
+                            <div class="dropdown position-absolute" style="top: 10px; right: 10px; z-index: 1;">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton-{{ post.id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton-{{ post.id }}">
+                                    <li><a class="dropdown-item" href="{{ path('front_edit', { id: post.id }) }}">Modifier</a></li>
+                                    <li>
+                                        <a class="dropdown-item text-danger" href="#" onclick="event.preventDefault(); if (confirm('Are you sure you want to delete this post?')) { document.getElementById('delete-post-{{ post.id }}').submit(); }">
+                                            Supprimer
+                                        </a>
+                                        <form id="delete-post-{{ post.id }}" method="post" action="{{ path('front_delete', {'id': post.id}) }}">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ post.id) }}">
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        {% endif %}
+        
+                        <h5 class="card-title fw-bold">{{ post.title }}</h5>
+                        <div class="d-flex flex-wrap gap-2 mb-2">
+                            <span class="badge bg-primary-custom">{{ post.type }}</span>
+                            <span class="badge bg-secondary">{{ post.category.name }}</span>
+                        </div>
+                        
+                        <p class="card-text-truncate mb-2">{{ post.description|slice(0, 80) }}...</p>
+                        
+                        <p class="mb-0"><small class="text-muted">Par: {{ post.author.firstName }} {{ post.author.lastName }}</small></p>
+                        <p class="mb-0"><small class="text-muted">{{ post.formattedDate }}</small></p>
+                    </div>
+                    
+                    <div class="card-footer bg-white border-top-0">
+                        <a href="{{ path('app_front_post_show', { id: post.id, page: pagination.currentPageNumber, category: selectedCategory, type: selectedType, sortBy: sortBy}) }}" class="btn btn-outline-primary btn-sm w-100">
+                            <i class="bi bi-chat-dots me-1"></i>Commentaires 
+                            <span class="badge bg-light text-dark">{{ post.comments|length }}</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info text-center">Aucun post trouvé.</div>
+            </div>
+        {% endfor %}
+    </div>
     
-        // Close dropdown when clicking outside
-        window.addEventListener('click', function (e) {
-            if (!e.target.matches('.dropdown-toggle')) {
-                const dropdownMenus = document.querySelectorAll('.dropdown-menu');
-                dropdownMenus.forEach(menu => {
-                    if (menu.classList.contains('show')) {
-                        menu.classList.remove('show');
-                    }
-                });
-            }
-        });
-    });
-</script>
-
+    <!-- Pagination Navigation -->
+    <div class="pagination">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+</div>
 {% endblock %}

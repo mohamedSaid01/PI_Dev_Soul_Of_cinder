@@ -1,0 +1,150 @@
+{% extends 'baseFrontOffice.html.twig' %}
+
+{% block title %}Chatbot Médical{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }} {# Inclut les styles de base #}
+    <style>
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px; /* Espacement inférieur */
+        }
+
+        .cont {
+            max-width: 600px; /* Largeur maximale du conteneur */
+            width: 100%; /* Prendre toute la largeur disponible */
+            margin: 0 auto; /* Centrer le conteneur */
+            padding: 20px; /* Espacement interne */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 10px; /* Coins arrondis */
+            background-color: white; /* Couleur de fond */
+        }
+
+        .chat {
+            display: flex;
+            flex-direction: column;
+            height: 300px; /* Ajuster la hauteur du chatbot */
+            overflow-y: auto;
+            transition: background-color 0.3s, color 0.3s;
+            padding: 10px; /* Espacement interne */
+            border-radius: 8px; /* Coins arrondis */
+            background-color: #f9f9f9; /* Fond léger */
+        }
+
+        .message {
+            margin: 10px 0;
+            padding: 12px;
+            border-radius: 8px;
+            max-width: 80%;
+            word-wrap: break-word;
+            position: relative; /* Pour les ombres */
+            transition: background-color 0.3s; /* Animation de fond */
+        }
+
+        .message.user {
+            background-color: #d1ecf1; /* Fond clair pour l'utilisateur */
+            align-self: flex-end;
+            margin-left: auto;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .message.bot {
+            background-color: #e9ecef; /* Fond clair pour le bot */
+            align-self: flex-start;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Mode sombre */
+        .chat.dark-mode {
+            background-color: #1a1a1a; /* Fond sombre */
+            color: #e0e0e0; /* Texte clair */
+        }
+
+        .chat.dark-mode .message.user {
+            background-color: #005f73; /* Fond pour l'utilisateur en mode sombre */
+        }
+
+        .chat.dark-mode .message.bot {
+            background-color: #444; /* Fond pour le bot en mode sombre */
+        }
+
+        input[type="text"] {
+            width: calc(100% - 22px);
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: border-color 0.3s; /* Transition de bordure */
+        }
+
+        input[type="text"]:focus {
+            border-color: #5cb85c; /* Bordure verte au focus */
+            outline: none; /* Supprimer le contour par défaut */
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #5cb85c;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer; /* Curseur pointer */
+            transition: background-color 0.3s; /* Transition de couleur de fond */
+        }
+
+        button:hover {
+            background-color: #4cae4c; /* Couleur au survol */
+        }
+
+        #toggle-theme {
+            margin-bottom: 15px; /* Espacement inférieur pour le bouton */
+            cursor: pointer; /* Curseur pointer */
+            background: none; /* Pas de fond */
+            border: none; /* Pas de bordure */
+            font-size: 20px; /* Taille de la police */
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="cont">
+        <h1>Chatbot Médical</h1>
+        <button id="toggle-theme">🌙</button>
+        <div class="chat">
+            {% if messages is not empty %}
+                {% for message in messages %}
+                    <div class="message {{ message.type }}">{{ message.text }}</div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <form method="POST" action="{{ path('chatbot_form') }}">
+            <input type="text" name="question" placeholder="Posez une question médicale" required>
+            <button type="submit">Envoyer</button>
+        </form>
+    </div>
+    <script>
+        const toggleButton = document.getElementById('toggle-theme');
+        const chat = document.querySelector('.chat');
+
+        // Vérifier l'état du mode dans le localStorage
+        if (localStorage.getItem('theme') === 'dark') {
+            chat.classList.add('dark-mode');
+            toggleButton.textContent = '☀️'; // Emoji pour le mode clair
+        }
+
+        toggleButton.addEventListener('click', () => {
+            chat.classList.toggle('dark-mode');
+
+            if (chat.classList.contains('dark-mode')) {
+                toggleButton.textContent = '☀️'; // Emoji pour le mode clair
+                localStorage.setItem('theme', 'dark'); // Enregistrer le mode sombre
+            } else {
+                toggleButton.textContent = '🌙'; // Emoji pour le mode sombre
+                localStorage.setItem('theme', 'light'); // Enregistrer le mode clair
+            }
+        });
+    </script>
+{% endblock %}

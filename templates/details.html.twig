@@ -1,0 +1,61 @@
+{% extends 'baseFrontOffice.html.twig' %}
+
+{% block body %}
+    <section id="product-details" class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <img src="{{ asset('uploads/images/' ~ produit.image) }}" class="img-fluid" alt="{{ produit.name }}">
+                </div>
+                <div class="col-md-6">
+                    <h1>{{ produit.name }}</h1>
+                    <p>{{ produit.desciption }}</p>
+                    <p><strong>Price:</strong> {{ produit.price }} Dt</p>
+                    {% if produit.quantity < 3 %}
+                        <p class="text-danger"><strong>Alert: Only {{ produit.quantity }} left in stock!</strong></p>
+                    {% endif %}
+
+                    <!-- Add to Cart Form -->
+                    {% if app.user %}
+                        <form action="{{ path('add_to_cart', {'id': produit.id}) }}" method="POST">
+                            <input type="hidden" name="_token" value="{{ csrf_token('add_to_cart' ~ produit.id) }}">
+                            <button type="submit" class="btn btn-outline-primary w-100 mb-2">Add To Cart</button>
+                        </form>
+                    {% endif %}
+
+                    <!-- Toggle Favorite Form -->
+                    {% if app.user %}
+                        <form action="{{ path('toggle_favorite', {'id': produit.id}) }}" method="POST">
+                            <input type="hidden" name="_token" value="{{ csrf_token('toggle_favorite' ~ produit.id) }}">
+                            <button type="submit" class="btn btn-outline-danger w-100">
+                                {% if produit in app.user.favoris|map(f => f.produit) %}
+                                    ❤️ Remove from Favorites
+                                {% else %}
+                                    🤍 Add to Favorites
+                                {% endif %}
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Similar Products -->
+            <div class="row mt-5">
+                <h3>Similar Products</h3>
+                {% for similarProduct in similarProducts %}
+                    <div class="col-md-3 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            <img src="{{ asset('uploads/images/' ~ similarProduct.image) }}" class="card-img-top" alt="{{ similarProduct.name }}">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ similarProduct.name }}</h5>
+                                <p class="card-text">{{ similarProduct.desciption }}</p>
+                                <p class="card-text"><strong>Price:</strong> {{ similarProduct.price }} Dt</p>
+                                <a href="{{ path('produit_details', {'id': similarProduct.id}) }}" class="btn btn-outline-primary w-100">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

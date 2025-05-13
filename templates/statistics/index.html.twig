@@ -1,0 +1,110 @@
+{% extends 'baseBackOffice.html.twig' %}
+
+{% block body %}
+  <main id="main" class="main">
+    <div class="container d-flex flex-column align-items-center justify-content-center min-vh-100">
+        <!-- Centered "Back to Product List" button -->
+        <div class="text-center mb-4">
+            <a href="{{ path('app_produit_index') }}" class="btn btn-primary btn-lg shadow">
+                <i class="fas fa-arrow-left"></i> Back to Product List
+            </a>
+        </div>
+
+        <h1 class="text-center mb-4">Order Statistics</h1>
+
+        <!-- Charts container -->
+        <div class="row justify-content-center w-100">
+            <!-- Orders per day chart -->
+            <div class="col-md-6">
+                <div class="card shadow-lg text-center">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="card-title mb-0">Confirmed Orders per Day</h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="chart_orders" style="width: 100%; height: 300px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categories pie chart -->
+            <div class="col-md-6">
+                <div class="card shadow-lg text-center">
+                    <div class="card-header bg-success text-white">
+                        <h3 class="card-title mb-0">Most Ordered Categories</h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="chart_categories" style="width: 100%; height: 300px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Google Charts -->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <!-- Google Charts Script -->
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawCharts);
+
+        function drawCharts() {
+            // Data for orders per day chart
+            const dataOrders = google.visualization.arrayToDataTable({{ chartDataCommandes|json_encode|raw }});
+
+            const optionsOrders = {
+                title: 'Confirmed Orders per Day',
+                hAxis: { 
+                    title: 'Day',
+                    textStyle: { color: '#333', fontSize: 12 },
+                    titleTextStyle: { color: '#333', fontSize: 14, bold: true },
+                    slantedText: true,
+                    slantedTextAngle: 45
+                },
+                vAxis: { 
+                    title: 'Number of Orders',
+                    textStyle: { color: '#333', fontSize: 12 },
+                    titleTextStyle: { color: '#333', fontSize: 14, bold: true },
+                    gridlines: { color: '#eee', count: 10 }
+                },
+                legend: { position: 'none' },
+                colors: ['#007bff'],
+                backgroundColor: '#f9f9f9',
+                chartArea: { width: '85%', height: '70%' },
+                animation: { duration: 1000, easing: 'out', startup: true }
+            };
+
+            const chartOrders = new google.visualization.ColumnChart(document.getElementById('chart_orders'));
+            chartOrders.draw(dataOrders, optionsOrders);
+
+            // Data for category pie chart
+            const dataCategories = google.visualization.arrayToDataTable({{ chartDataCategories|json_encode|raw }});
+
+            const optionsCategories = {
+                title: 'Most Ordered Categories',
+                pieHole: 0.4,
+                backgroundColor: '#f9f9f9',
+                chartArea: { width: '85%', height: '70%' },
+                animation: { duration: 1000, easing: 'out', startup: true },
+                pieSliceText: 'percentage',
+                slices: {
+                    0: { color: '#007bff' },
+                    1: { color: '#28a745' },
+                    2: { color: '#dc3545' },
+                    3: { color: '#ffc107' },
+                    4: { color: '#17a2b8' }
+                }
+            };
+
+            const chartCategories = new google.visualization.PieChart(document.getElementById('chart_categories'));
+            chartCategories.draw(dataCategories, optionsCategories);
+
+            // Resize charts on window resize
+            window.addEventListener('resize', () => {
+                chartOrders.draw(dataOrders, optionsOrders);
+                chartCategories.draw(dataCategories, optionsCategories);
+            });
+        }
+    </script>
+    </main>
+{% endblock %}

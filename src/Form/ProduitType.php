@@ -41,12 +41,6 @@ class ProduitType extends AbstractType
                         
             ->add('quantity')
             ->add('Category')
-            ->add('submit', SubmitType::class, [
-                'label' => 'Valider',
-                'attr' => [
-                    'class' => 'btn btn-primary' // Bootstrap si utilisé
-                ]
-            ])
         ;
     }
 

@@ -1,0 +1,34 @@
+{% extends 'baseBackOffice.html.twig' %}
+
+{% block body %}
+<main id="main" class="main">
+    <h1>Modifier la date et l'heure du rendez-vous</h1>
+
+    <p><strong>Patient :</strong> {{ rendezVous.getPatient().getUser().getFirstName() }} {{ rendezVous.getPatient().getUser().getLastName() }}</p>
+
+    {{ form_start(form) }}
+
+    <div class="mb-3">
+        {{ form_label(form.date) }}
+        {{ form_widget(form.date, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.date) }}
+    </div>
+
+    <div class="mb-3">
+        {{ form_label(form.heure) }}
+        {{ form_widget(form.heure, {'attr': {'class': 'form-select'}}) }}
+        {{ form_errors(form.heure) }}
+    </div>
+
+    <div class="mb-3">
+        {{ form_label(form.cause) }}  {# Affichage de l'étiquette pour la cause #}
+        {{ form_widget(form.cause, {'attr': {'class': 'form-control'}}) }}  {# Champ de texte pour la cause #}
+        {{ form_errors(form.cause) }}  {# Affichage des erreurs pour le champ de cause #}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Modifier</button>
+    <a href="{{ path('medecin_liste_rdv') }}" class="btn btn-secondary">Annuler</a>
+
+    {{ form_end(form) }}
+</main>
+{% endblock %}

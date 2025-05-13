@@ -1,0 +1,396 @@
+{% extends 'baseBackOffice.html.twig' %}
+
+{% block title %}Créer un nouvel événement{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<!-- SweetAlert2 CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+// Fonction de secours si SweetAlert2 n'est pas chargé
+if (typeof Swal === 'undefined') {
+    window.Swal = {
+        fire: function(options) {
+            if (options.icon === 'error' || options.icon === 'warning') {
+                alert(options.title + "\n" + options.text);
+            } else {
+                console.log(options);
+            }
+        },
+        showLoading: function() {},
+        close: function() {}
+    };
+}
+</script>
+{% endblock %}
+
+{% block body %}
+  <main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Créer un nouvel événement</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="">Accueil</a></li>
+                <li class="breadcrumb-item">Événements</li>
+                <li class="breadcrumb-item active">Créer</li>
+            </ol>
+        </nav>
+    </div>
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+                        <!-- Titre -->
+                        <div class="form-group">
+                            {{ form_label(form.title, 'Titre') }}
+                            {{ form_widget(form.title, {'attr': {'class': 'form-control ' ~ (form.title.vars.errors|length > 0 ? 'is-invalid' : ''), 'id': 'event_title'}}) }}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form_label(form.description, 'Description') }}
+                            {{ form_widget(form.description, {'attr': {'id': 'event_description'}}) }}
+                            <button type="button" id="generate-description" class="btn btn-primary">
+                                Générer une description
+                            </button>
+                        </div>
+
+                        <!-- Date de début -->
+                        <div class="form-group">
+                            {{ form_label(form.startDate, 'Date de début') }}
+                            {{ form_widget(form.startDate, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+
+                        <!-- Date de fin -->
+                        <div class="form-group">
+                            {{ form_label(form.endDate, 'Date de fin') }}
+                            {{ form_widget(form.endDate, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+
+                        <!-- Lieu -->
+                        <div class="form-group">
+                            {{ form_label(form.location, 'Lieu') }}
+                            {{ form_widget(form.location, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+
+                        <!-- Latitude -->
+                        <!-- Carte Leaflet pour la sélection de la position -->
+                        <div class="form-group">
+                            <label for="map">Localisation</label>
+                            <div id="map" style="height: 400px; width: 100%; border-radius: 10px;"></div>
+                        </div>
+
+                        <!-- Champs cachés pour stocker Latitude et Longitude -->
+                        <p>Latitude sélectionnée : <span id="lat-display">Aucune</span></p>
+                        <p>Longitude sélectionnée : <span id="lng-display">Aucune</span></p>
+
+                        {{ form_widget(form.latitude, {'attr': {'id': 'latitude', 'type': 'hidden'}}) }}
+                        {{ form_widget(form.longitude, {'attr': {'id': 'longitude', 'type': 'hidden'}}) }}
+
+
+                        <!-- Places disponibles -->
+                        <div class="form-group">
+                            {{ form_label(form.placesDisponibles, 'Places Disponibles') }}
+                            {{ form_widget(form.placesDisponibles, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+
+                        <!-- Catégorie -->
+                        <div class="form-group">
+                            {{ form_label(form.categorie, 'Catégorie') }}
+                            {{ form_widget(form.categorie, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+
+                        <br>
+                        <!-- Affiche de l'événement placée juste avant les boutons -->
+                        <div class="form-group mb-4">
+                            <label for="event_image" class="form-label fw-semibold">Affiche de l'événement</label>
+                            <div class="d-flex flex-column flex-md-row align-items-start gap-3">
+                                <!-- Bouton pour tester l'API -->
+                                <button type="button" id="test-stability-api" class="btn btn-secondary mb-2 mb-md-0">
+                                    <i class="fa fa-check-circle me-2"></i> Tester l'API
+                                </button>
+                                <!-- Bouton Stability AI -->
+                                <button type="button" id="generate-stability-image" class="btn btn-primary mb-2 mb-md-0">
+                                    <i class="fa fa-wand-magic-sparkles me-2"></i> Générer une affiche automatiquement
+                                </button>
+                                <!-- Prévisualisation de l'image -->
+                                <img id="event_image_preview" src="" alt="Prévisualisation de l'affiche" style="max-width: 180px; border-radius: 8px; box-shadow: 0 2px 8px #0001; display: none;">
+                                <!-- Champ caché pour stocker le nom de l'image générée -->
+                                <input type="hidden" id="generated_image_name" name="generated_image_name" value="">
+                            </div>
+                            <div id="api-test-result" class="mt-2"></div>
+                            {{ form_widget(form.afficheFile, {'attr': {'class': 'form-control mt-2'}}) }}
+                        </div>
+
+                        <div class="d-flex gap-2 mt-3">
+                            <button type="submit" class="btn btn-primary px-4"><i class="fa fa-plus me-2"></i>Créer</button>
+                            <a href="{{ path('back_event_index') }}" class="btn btn-outline-secondary px-4"><i class="fa fa-arrow-left me-2"></i>Retour à la liste</a>
+                        </div>
+
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- SweetAlert pour afficher les erreurs -->
+    {% if errors is defined and errors|length > 0 %}
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                Swal.fire({
+                    title: "Erreur de validation",
+                    html: "{% for error in errors %} <p class='text-danger'><i class='bi bi-exclamation-circle-fill'></i> {{ error }}</p> {% endfor %}",
+                    icon: "error"
+                });
+            });
+        </script>
+
+    {% endif %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Générer une description
+            document.getElementById('generate-description').addEventListener('click', function () {
+                const title = document.getElementById('event_title').value;
+                const descField = document.getElementById('event_description');
+
+                if (!title) {
+                    Swal.fire({
+                        title: 'Attention',
+                        text: 'Veuillez entrer un titre avant de générer une description.',
+                        icon: 'warning'
+                    });
+                    return;
+                }
+
+                if (!descField) {
+                    console.error('Erreur: Le champ description est introuvable.');
+                    alert('Une erreur est survenue : Champ description non trouvé.');
+                    return;
+                }
+
+                fetch('{{ path('event_generate') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ title: title }),
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erreur serveur');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        descField.value = data.description;
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la génération de la description :', error);
+                        alert('Une erreur est survenue lors de la génération de la description. Veuillez réessayer.');
+                    });
+            });
+
+            // Générer une image avec Stability AI
+            document.getElementById('generate-stability-image').addEventListener('click', function () {
+                const title = document.getElementById('event_title').value;
+                const description = document.getElementById('event_description').value;
+                const imagePreview = document.getElementById('event_image_preview');
+                const generatedImageNameField = document.getElementById('generated_image_name');
+
+                if (!title) {
+                    Swal.fire({
+                        title: 'Attention',
+                        text: 'Veuillez entrer un titre avant de générer une image.',
+                        icon: 'warning'
+                    });
+                    return;
+                }
+                
+                // Changer le texte du bouton pendant le chargement
+                this.disabled = true;
+                this.innerHTML = '<i class="fa fa-spinner fa-spin me-2"></i> Génération en cours...';
+                
+                // Afficher un message de chargement
+                Swal.fire({
+                    title: 'Génération en cours',
+                    text: 'La génération peut prendre jusqu\'à 30 secondes...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                fetch('/event/api/generate-stability-image', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        title: title,
+                        description: description
+                    }),
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erreur serveur');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            // Fermer le message de chargement
+                            Swal.close();
+                            
+                            // Afficher l'image générée
+                            imagePreview.src = data.image_url;
+                            imagePreview.style.display = 'block';
+                            
+                            // Stocker le nom de l'image générée
+                            generatedImageNameField.value = data.image_name;
+                            
+                            // Afficher un message de succès
+                            Swal.fire({
+                                title: 'Succès !',
+                                text: 'L\'image a été générée avec succès.',
+                                icon: 'success',
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                        } else {
+                            throw new Error(data.error || 'Erreur inconnue');
+                        }
+                        
+                        // Réactiver le bouton
+                        this.disabled = false;
+                        this.innerHTML = '<i class="fa fa-wand-magic-sparkles me-2"></i> Générer une affiche automatiquement';
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la génération de l\'image :', error);
+                        
+                        // Fermer le message de chargement
+                        Swal.close();
+                        
+                        // Afficher un message d'erreur
+                        Swal.fire({
+                            title: 'Erreur',
+                            text: 'Une erreur est survenue lors de la génération de l\'image : ' + error.message,
+                            icon: 'error'
+                        });
+                        
+                        // Réactiver le bouton
+                        this.disabled = false;
+                        this.innerHTML = '<i class="fa fa-wand-magic-sparkles me-2"></i> Générer une affiche automatiquement';
+                    });
+            });
+
+            // Tester l'API Stability
+            document.getElementById('test-stability-api').addEventListener('click', function() {
+                this.disabled = true;
+                this.innerHTML = '<i class="fa fa-spinner fa-spin me-2"></i> Test en cours...';
+                const resultDiv = document.getElementById('api-test-result');
+                
+                fetch('/event/api/test-stability')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            resultDiv.innerHTML = `<div class="alert alert-success">
+                                <i class="fa fa-check-circle"></i> ${data.message} (Disponible: ${data.is_available})
+                            </div>`;
+                        } else {
+                            resultDiv.innerHTML = `<div class="alert alert-danger">
+                                <i class="fa fa-times-circle"></i> ${data.message}
+                            </div>`;
+                        }
+                        
+                        this.disabled = false;
+                        this.innerHTML = '<i class="fa fa-check-circle me-2"></i> Tester l\'API';
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors du test de l\'API:', error);
+                        resultDiv.innerHTML = `<div class="alert alert-danger">
+                            <i class="fa fa-times-circle"></i> Erreur de connexion: ${error.message}
+                        </div>`;
+                        
+                        this.disabled = false;
+                        this.innerHTML = '<i class="fa fa-check-circle me-2"></i> Tester l\'API';
+                    });
+            });
+        });
+    </script>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var map = L.map('map').setView([36.8065, 10.1815], 6); // Centrer sur la Tunisie
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            var marker;
+
+            // Sélectionne les champs de latitude et longitude
+            var latField = document.querySelector("input[name='event[latitude]']");
+            var lngField = document.querySelector("input[name='event[longitude]']");
+
+            // Vérifie si les champs sont trouvés
+            if (!latField || !lngField) {
+                console.error("❌ Champs latitude/longitude introuvables !");
+                return;
+            }
+
+            // Ajoute un événement au clic sur la carte
+            map.on('click', function (e) {
+                var lat = e.latlng.lat.toFixed(6);
+                var lng = e.latlng.lng.toFixed(6);
+
+                console.log("✅ Nouvelle position sélectionnée :", lat, lng);
+
+                // Supprime le marqueur précédent s'il existe
+                if (marker) {
+                    map.removeLayer(marker);
+                }
+
+                // Ajoute un nouveau marqueur
+                marker = L.marker([lat, lng]).addTo(map);
+
+                // Met à jour les champs cachés du formulaire
+                latField.value = lat;
+                lngField.value = lng;
+
+                // Met à jour l'affichage des coordonnées
+                document.getElementById('lat-display').textContent = lat;
+                document.getElementById('lng-display').textContent = lng;
+
+                console.log("✅ Latitude mise à jour :", latField.value);
+                console.log("✅ Longitude mise à jour :", lngField.value);
+            });
+
+            // Si des coordonnées existent déjà, les afficher sur la carte
+            if (latField.value && lngField.value) {
+                var lat = parseFloat(latField.value);
+                var lng = parseFloat(lngField.value);
+                marker = L.marker([lat, lng]).addTo(map);
+                map.setView([lat, lng], 10);
+                console.log("📌 Position existante chargée :", lat, lng);
+            }
+        });
+
+
+    </script>
+</main>
+{% endblock %}

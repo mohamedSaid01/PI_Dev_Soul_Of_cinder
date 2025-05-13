@@ -1,0 +1,117 @@
+{% extends 'baseBackOffice.html.twig' %}
+
+{% block title %}Liste des Categories{% endblock %}
+
+{% block body %}
+  <main id="main" class="main">
+    <div class="main-content-glass">
+        <div class="pagetitle mb-4">
+            <h1 class="page-title">Gestion des Catégories</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="">Accueil</a></li>
+                    <li class="breadcrumb-item">Événements</li>
+                    <li class="breadcrumb-item active">Catégories</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="row g-4">
+            <div class="col-12">
+                <div class="card glass-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h3 class="card-title mb-0">Liste des Catégories</h3>
+                            <a href="{{ path('categorie_event_new') }}" class="btn btn-success px-3">
+                                <i class="fa fa-plus me-2"></i>Nouvelle catégorie
+                            </a>
+                        </div>
+                        <table class="table table-hover table-striped align-middle mb-0 table-responsive">
+                            <thead>
+                                <tr>
+                                    <th>Nom</th>
+                                    <th>Description</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for categorie in categories %}
+                                    <tr>
+                                        <td>{{ categorie.nom }}</td>
+                                        <td>{{ categorie.description }}</td>
+                                        <td>
+                                            <a href="{{ path('categorie_event_edit', {'id': categorie.id}) }}" class="btn btn-warning btn-sm me-1">
+                                                <i class="fa fa-pencil"></i>
+                                            </a>
+                                            <button class="btn btn-danger btn-sm delete-category" data-id="{{ categorie.id }}">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.querySelectorAll('.delete-category').forEach(button => {
+        button.addEventListener('click', function () {
+            const id = this.getAttribute('data-id');
+
+            Swal.fire({
+                title: 'Confirmer la suppression',
+                text: 'Êtes-vous sûr de vouloir supprimer cette catégorie ? Cette action est irréversible.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Oui, supprimer',
+                cancelButtonText: 'Annuler'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/categorie-event/delete/${id}`, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            _token: '{{ csrf_token("delete") }}'
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire(
+                                'Supprimé !',
+                                'La catégorie a été supprimée avec succès.',
+                                'success'
+                            );
+                            button.closest('tr').remove();
+                        } else {
+                            Swal.fire(
+                                'Erreur',
+                                data.message || 'Une erreur est survenue.',
+                                'error'
+                            );
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la suppression :', error);
+                        Swal.fire(
+                            'Erreur',
+                            'Une erreur est survenue. Veuillez réessayer.',
+                            'error'
+                        );
+                    });
+                }
+            });
+        });
+    });
+</script>
+</main>
+{% endblock %}

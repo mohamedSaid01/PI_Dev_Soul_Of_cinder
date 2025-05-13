@@ -1,0 +1,25 @@
+{# templates/medecin/login.html.twig #}
+{% extends 'baseBackOffice.html.twig' %}
+
+{% block title %}Connexion Médecin{% endblock %}
+
+{% block body %}
+<main id="main" class="main">
+<div class="container my-5">
+    <h2>Connexion Médecin</h2>
+
+    {% for flashMessage in app.flashes('error') %}
+        <div class="alert alert-danger">{{ flashMessage }}</div>
+    {% endfor %}
+
+    <form method="post">
+        <div class="mb-3">
+            <label for="id_medecin" class="form-label">ID Médecin :</label>
+            <input type="text" id="id_medecin" name="id_medecin" class="form-control" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Se Connecter</button>
+    </form>
+</main>
+</div>
+{% endblock %}

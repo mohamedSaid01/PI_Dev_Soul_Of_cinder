@@ -3,43 +3,142 @@
 {% block title %}Créer un Post{% endblock %}
 
 {% block body %}
+{% for type, messages in app.flashes %}
+    {% for message in messages %}
+        <div class="alert alert-{{ type }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endfor %}
+
+<!-- Loading Spinner Container -->
+<div id="loading-container">
+    <div class="spinner"></div>
+    <div id="loading-message">Analyzing the image ....</div>
+</div>
+
 <div class="post-container">
     <h1 class="text-center mb-4">Créer un Post</h1>
 
-    {{ form_start(form) }}
-        <div class="form-group">
-            {{ form_label(form.title, null, {'label_attr': {'class': 'form-label'}}) }}
-            {{ form_widget(form.title, {'attr': {'class': 'form-control', 'placeholder': 'Titre du post'}}) }}
+{{ form_start(form, {'attr': {'id': 'post-form', 'class': 'needs-validation', 'novalidate': 'true'}}) }}
+    <div class="mb-3">
+        <label class="form-label">Titre du post</label>
+        {{ form_widget(form.title, {'attr': {'class': 'form-control' ~ (form.title.vars.errors|length > 0 ? ' is-invalid' : ''), 'placeholder': 'Titre du post'}}) }}
+        <div class="invalid-feedback">
+            {{ form_errors(form.title) }} {# Display validation errors for the title field #}
         </div>
+    </div>
 
-        <div class="form-group">
-            {{ form_label(form.description, null, {'label_attr': {'class': 'form-label'}}) }}
-            {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 5, 'placeholder': 'Description du post'}}) }}
+    <div class="mb-3">
+        <label class="form-label">Description du post</label>
+        {{ form_widget(form.description, {'attr': {'class': 'form-control' ~ (form.description.vars.errors|length > 0 ? ' is-invalid' : ''), 'placeholder': 'Description du post', 'rows': '5'}}) }}
+        <div class="invalid-feedback">
+            {{ form_errors(form.description) }} {# Display validation errors for the description field #}
         </div>
+    </div>
 
-        <div class="form-group">
-            {{ form_label(form.type, null, {'label_attr': {'class': 'form-label'}}) }}
-            {{ form_widget(form.type, {'attr': {'class': 'form-control'}}) }}
+    <div class="mb-3">
+        <label class="form-label">Type</label>
+        {{ form_widget(form.type, {'attr': {'class': 'form-control' ~ (form.type.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+        <div class="invalid-feedback">
+            {{ form_errors(form.type) }} {# Display validation errors for the type field #}
         </div>
+    </div>
 
-        <div class="form-group">
-            {{ form_label(form.image, null, {'label_attr': {'class': 'form-label'}}) }}
-            {{ form_widget(form.image, {'attr': {'class': 'form-control-file'}}) }}
-            <small class="form-text text-muted">Formats supportés: JPG, PNG, GIF</small>
+    <div class="mb-3">
+        <label class="form-label">Image</label>
+        {{ form_widget(form.image, {'attr': {'class': 'form-control-file' ~ (form.image.vars.errors|length > 0 ? ' is-invalid' : ''), 'id': 'image-upload'}}) }}
+        <small class="form-text text-muted">Formats supportés: JPG, PNG, GIF</small>
+        <div class="invalid-feedback">
+            {{ form_errors(form.image) }} {# Display validation errors for the image field #}
         </div>
+    </div>
 
-        <div class="form-group">
-            {{ form_label(form.category, null, {'label_attr': {'class': 'form-label'}}) }}
-            {{ form_widget(form.category, {'attr': {'class': 'form-control'}}) }}
+    <div class="mb-3">
+        <label class="form-label">Catégorie</label>
+        {{ form_widget(form.category, {'attr': {'class': 'form-control' ~ (form.category.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+        <div class="invalid-feedback">
+            {{ form_errors(form.category) }} {# Display validation errors for the category field #}
         </div>
+    </div>
 
-        <button class="btn btn-primary btn-block">Créer</button>
-    {{ form_end(form) }}
+    <button type="submit" class="btn btn-primary w-100">
+        <i class="fas fa-save"></i> Créer
+    </button>
+{{ form_end(form) }}
 
-    <a href="{{ path('front_list') }}" class="btn btn-secondary btn-block mt-3">Retour à la liste</a>
+    <a href="{{ path('app_front_list') }}" class="btn btn-secondary btn-block mt-3">Retour à la liste</a>
 </div>
 
 <style>
+    /* Loading spinner styles */
+    .spinner {
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border-left-color: #0d6efd;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    #loading-container {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.8);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    #loading-message {
+        margin-top: 15px;
+        font-weight: 500;
+    }
+    
+    /* Alert styles */
+    .alert {
+        padding: 15px;
+        margin-bottom: 20px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        display: flex;
+        justify-content: center;
+    }
+    
+    .alert-success {
+        color: #0f5132;
+        background-color: #d1e7dd;
+        border-color: #badbcc;
+    }
+    
+    .alert-danger, .alert-error {
+        color: #842029;
+        background-color: #f8d7da;
+        border-color: #f5c2c7;
+    }
+    
+    .alert-warning {
+        color: #664d03;
+        background-color: #fff3cd;
+        border-color: #ffecb5;
+    }
+    
+    .alert-info {
+        color: #055160;
+        background-color: #cff4fc;
+        border-color: #b6effb;
+    }
+
     /* Container styling */
     .post-container {
         max-width: 600px;
@@ -161,6 +260,7 @@
             padding: 10px 20px;
         }
     }
+
 </style>
 
 <script>
@@ -183,6 +283,36 @@
                 reader.readAsDataURL(file);
             } else {
                 imagePreview.style.display = 'none';
+            }
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('post-form');
+        const imageUpload = document.getElementById('post_image'); // Use the correct ID
+        const loadingContainer = document.getElementById('loading-container');
+    
+        console.log('Form:', form); // Debug: Check if the form is found
+        console.log('Image Upload:', imageUpload); // Debug: Check if the file input is found
+        console.log('Loading Container:', loadingContainer); // Debug: Check if the spinner container is found
+    
+        form.addEventListener('submit', function (e) {
+            console.log('Form submitted'); // Debug: Check if the form submission is intercepted
+    
+            // Only show loading spinner if an image has been selected
+            if (imageUpload.files.length > 0) {
+                console.log('Image uploaded, showing spinner'); // Debug: Check if this block is executed
+                e.preventDefault(); // Prevent default form submission
+    
+                // Show loading spinner
+                loadingContainer.style.display = 'flex';
+                console.log('Spinner should be visible now'); // Debug: Check if the spinner is shown
+    
+                // Submit the form programmatically after a short delay
+                setTimeout(function () {
+                    console.log('Submitting form...'); // Debug: Check if the form is submitted
+                    form.submit();
+                }, 200); // Increased delay to ensure spinner is visible
             }
         });
     });
